@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98c8a12f697972147b25fd6fd1599df4, type: 3}
-  m_Name: Monster2
+  m_Name: Monster3
   m_EditorClassIdentifier: 
   name: 
-  atk: 0
-  shape: {fileID: 0}
+  atk: 6
+  resources: 0100000001000000

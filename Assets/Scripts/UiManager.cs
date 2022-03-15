@@ -11,12 +11,14 @@ using UnityEngine.UIElements;
 
 public class UiManager : MonoBehaviour
 {
+    public static UiManager instance;
     [SerializeField] private TMP_Text numberRound;
     
     [SerializeField] private TMP_Text dice1;
     [SerializeField] private TMP_Text dice2;
     [SerializeField] private TMP_Text dice3;
-    [SerializeField] private TMP_Text FPS;
+    [SerializeField] private TMP_Text fps;
+    [SerializeField] private TMP_Text hp;
     
     [SerializeField] private GameObject uiPlayerTurn;
     [SerializeField] private GameObject endTurn;
@@ -26,7 +28,13 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject menuYesChoice;
     [SerializeField] private GameObject menuNoChoice;
     
-    [SerializeField] private GameObject rotationMenu;
+    [SerializeField] private RectTransform content;
+
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -46,9 +54,30 @@ public class UiManager : MonoBehaviour
         EnableDisableMenuNoChoice();
         
         UpdateDice();
-        EnableDisableRotateMenu();
+        UpdateFPS();
+        UpdateHp();
+    }
 
-        FPS.text = "" + 1 / Time.deltaTime;
+    void UpdateHp()
+    {
+        hp.text = "PV : " + LifeManager.instance.GetOwnLife();
+    }
+    void UpdateFPS()
+    {
+        fps.text = "" + 1 / Time.deltaTime;
+    }
+
+    public void UpdateListCard()
+    {
+        for (int i = 0; i < content.childCount; i++)
+        {
+            Destroy(content.GetChild(i).gameObject);
+        }
+
+        foreach (var unit in DeckManager.instance.GetMonsters())
+        {
+            Instantiate(unit,content);
+        }
     }
 
     void EnableDisableThrowDiceButton()
@@ -93,7 +122,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableMenuNoChoice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4 || RoundManager.instance.GetStateRound()==2)
         {
             menuNoChoice.SetActive(true);
         }
@@ -114,24 +143,10 @@ public class UiManager : MonoBehaviour
             menuBattlePhase.SetActive(false);
         }
     }
-    
-    void EnableDisableRotateMenu()
-    {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==3)
-        {
-            rotationMenu.SetActive(true);
-        }
-        else
-        {
-            rotationMenu.SetActive(false);
-        }
-    }
-    
     void EnableDisableEndTurn()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==5)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==3)
         {
             endTurn.SetActive(true);
         }
@@ -166,9 +181,9 @@ public class UiManager : MonoBehaviour
 
     void UpdateDice()
     {
-        dice1.text = ""+DiceManager.instance.GetDiceDeck()[0];
-        dice2.text = ""+DiceManager.instance.GetDiceDeck()[1];
-        dice3.text = ""+DiceManager.instance.GetDiceDeck()[2];
+        dice1.text = ""+DiceManager.instance.GetDiceChoosen()[0];
+        dice2.text = ""+DiceManager.instance.GetDiceChoosen()[1];
+        dice3.text = ""+DiceManager.instance.GetDiceChoosen()[2];
     }
     
     

@@ -6,7 +6,8 @@ public class DiceManager : MonoBehaviour
 {
     public static DiceManager instance;
     
-    private List<int> diceDeck;
+    [SerializeField] private List<DiceScriptable> diceDeck;
+    
     private int[] diceChoosen = new int[3];
 
     private void Awake()
@@ -20,7 +21,10 @@ public class DiceManager : MonoBehaviour
         {
             diceChoosen[i] = PickDice();
         }
+        
+        DeckManager.instance.CheckUnitWithRessources();
         RoundManager.instance.SetStateRound(1);
+        UiManager.instance.UpdateListCard();
     }
 
     public bool DeckEmpy()
@@ -36,12 +40,35 @@ public class DiceManager : MonoBehaviour
         return true;
     }
 
-    private int PickDice()
+    public void DeleteAllResources(List<int> resource)
     {
-        return Random.Range(1, 7);
+        for (int i = 0; i < resource.Count; i++)
+        {
+            DeleteResource(resource[i]);
+        }
+        
+        DeckManager.instance.CheckUnitWithRessources();
+        UiManager.instance.UpdateListCard();
     }
 
-    public int[] GetDiceDeck()
+    public void DeleteResource(int i)
+    {
+        for (int j = 0; j < diceChoosen.Length; j++)
+        {
+            if (i.Equals(diceChoosen[j]))
+            {
+                diceChoosen[j] = 0;
+                return;
+            }
+        }
+    }
+
+    private int PickDice()
+    {
+        return diceDeck[Random.Range(0, diceDeck.Count)].faces[Random.Range(0, 6)];
+    }
+
+    public int[] GetDiceChoosen()
     {
         return diceChoosen;
     }

@@ -6,10 +6,6 @@ using UnityEngine;
 public class PlacementManager : MonoBehaviour
 {
     public static PlacementManager instance;
-    
-    [SerializeField] private PhotonView inputManagerView;
-    [SerializeField] private Material ownerMonsterColor;
-    [SerializeField] private Material ennemiMonsterColor;
 
     private GameObject goPrefabMonster;
     private GameObject currentUnit;
@@ -82,6 +78,9 @@ public class PlacementManager : MonoBehaviour
                                 
                                 Destroy(currentUnit);
                                 RoundManager.instance.SetStateRound(1);
+                                
+                                DiceManager.instance.DeleteAllResources(currentUnit.GetComponent<Monster>().GetStat().resources);
+                                
                                 goPrefabMonster = null;
                                 currentUnit = null;
                                 isPlacing = false;
@@ -97,23 +96,25 @@ public class PlacementManager : MonoBehaviour
             }
         }
     }
+
+    public void CancelSelection()
+    {
+        Destroy(currentUnit);
+        RoundManager.instance.SetStateRound(1);
+        goPrefabMonster = null;
+        currentUnit = null;
+        isPlacing = false;
+    }
+    
     
     public bool CheckAllPosition(GameObject obj)
     {
-        foreach (var center in obj.GetComponent<PlatformMonster>().GetCenters())
+        foreach (var center in obj.GetComponent<Monster>().GetCenters())
         {
-            Debug.Log(center.position);
-            
-            if ((int)Mathf.Abs(center.position.x) > 3.5 || (int)Mathf.Abs(center.position.z) > 4.5)
-            {
-                return false;
-            }
-            
             if (CheckLinkWithOthers(center.position))
             {
                 return true;
             }
-
         }
         
         return false;
@@ -129,14 +130,12 @@ public class PlacementManager : MonoBehaviour
         if (Mathf.FloorToInt(v.z) == -5 &&
             (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 1)
         {
-            Debug.Log("test2");
             return true;
         }
 
         if ((int)v.z + 1 == 5 &&
             (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 2)
         {
-            Debug.Log("test3");
             return true;
         }
 
@@ -145,10 +144,9 @@ public class PlacementManager : MonoBehaviour
 
     public bool CheckPositionBoard(Vector2 positionUnit)
     {
-        Debug.Log("test4");
         foreach (var data in board)
         {
-            if (data.monster.GetComponent<PlatformMonster>().GetOwner() ==
+            if (data.monster.GetComponent<Monster>().GetOwner() ==
                 (int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"])
             {
                 foreach (var vector in data.emplacement)
@@ -167,12 +165,16 @@ public class PlacementManager : MonoBehaviour
         
         return false;
     }
-    
-    
+
     bool CheckAlreadyHere(GameObject obj)
     {
-        foreach (var tiles in obj.GetComponent<PlatformMonster>().GetCenters())
+        foreach (var tiles in obj.GetComponent<Monster>().GetCenters())
         {
+            if ((int)Mathf.Abs(tiles.position.x) > 3.5 || (int)Mathf.Abs(tiles.position.z) > 4.5)
+            {
+                return true;
+            }
+            
             foreach (var data in board)
             {
                 foreach (var vector in data.emplacement)
@@ -194,16 +196,44 @@ public class PlacementManager : MonoBehaviour
         Case data = new Case();
         data.monster = obj;
         data.emplacement = new List<Vector2>();
-        foreach (var center in obj.GetComponent<PlatformMonster>().GetCenters())
+        foreach (var center in obj.GetComponent<Monster>().GetCenters())
         {
             data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
         }
         board.Add(data);
+    }
+    
+    public void AddExtentionMonsterBoard(GameObject exten, GameObject mother)
+    {
+        foreach (var unit in board)
+        {
+            if (unit.monster.Equals(mother))
+            {
+                 unit.emplacement.Add(new Vector2(Mathf.FloorToInt(exten.transform.position.x) + 0.5f,
+                    Mathf.FloorToInt(exten.transform.position.z) + 0.5f));
+            }
+        }
+    }
+    
+    public float CenterMoreFar(GameObject obj)
+    {
+        float zcenter=-10;
+        foreach (var center in obj.GetComponent<Monster>().GetCenters())
+        {
+            if (center.position.z > zcenter)
+            {
+                zcenter = center.position.z;
+            }
+        }
+
+        return zcenter;
     }
 
     public List<Case> GetBoard()
     {
         return board;
     }
+    
+    
 
 }

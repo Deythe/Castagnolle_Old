@@ -21,6 +21,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
+                Debug.Log("NIQUE");
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
                 SceneManager.LoadScene(1);
@@ -96,5 +97,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
         find = true;
         
         Debug.Log("Loading");
+    }
+
+    public void GoToDeckScene()
+    {
+        SceneManager.LoadScene(2);
     }
 }

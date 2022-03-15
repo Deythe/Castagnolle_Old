@@ -10,7 +10,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerPref;
     [SerializeField] private PhotonView playerView;
    
-    private int roundState; // Oui c'est l'équivalent d'une state machine coucou Benji // 0 première phase, des pas choisi // 1 les des sont lancé / 2
+    private int roundState; 
     private GameObject playerInstance;
 
     private void Awake()
@@ -45,6 +45,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public void EndRound()
     {
         roundState = 0;
+        BattlePhaseManager.instance.ClearUnits();
         playerView.RPC("RPC_EndTurn", RpcTarget.All);
     }
 
@@ -52,11 +53,18 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         roundState = 3;
     }
-    
-    public void RotationPhase()
+
+    public void CancelAction()
     {
-        BattlePhaseManager.instance.ClearUnits();
-        roundState = 5;
+        switch (roundState)
+        {
+            case 2:
+                PlacementManager.instance.CancelSelection();
+                break;
+            case 4:
+                BattlePhaseManager.instance.CancelSelection();
+                break;
+        }
     }
     
     [PunRPC]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class PlatformMonster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
+public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {    
     [SerializeField] private Material ownerMonsterColor;
     [SerializeField] private Material ennemiMonsterColor;
@@ -20,17 +20,23 @@ public class PlatformMonster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCa
     [SerializeField] private List<Transform> centers;
     [SerializeField] private List<MeshRenderer> mrs;
     
-    [SerializeField] private MonsterCardScriptable stats;
-    
+    [SerializeField] private CardData card;
+    private MonsterCardScriptable stats;
+
+    private List<GameObject> extension;
     private RaycastHit hit;
-    
-    
+
+    private void Awake()
+    {
+        stats = card.GetStat();
+    }
+
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         owner = view.OwnerActorNr;
         atk = stats.atk;
         id = view.ViewID;
-
+        extension = new List<GameObject>();
         foreach (var ms in mrs)
         {   
             if (view.AmOwner)
@@ -50,13 +56,12 @@ public class PlatformMonster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCa
     {
         for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
         {
-            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<PlatformMonster>().id == id)
+            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().id == id)
             {
                 PlacementManager.instance.GetBoard().Remove(PlacementManager.instance.GetBoard()[i]);
             }
         }
     }
-
     public void BeChoosen()
     {
         foreach (var ms in mrs)
@@ -71,7 +76,7 @@ public class PlatformMonster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCa
             }
         }
     }
-    
+
     public void NotChossen()
     {
         foreach (var ms in mrs)
@@ -86,34 +91,50 @@ public class PlatformMonster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCa
             }
         }
     }
-
+    
+    public void CardChoosen()
+    {
+        PlacementManager.instance.SetGOPrefabsMonster(gameObject);
+        RoundManager.instance.SetStateRound(2);
+    }
+    
+    public MonsterCardScriptable GetStat()
+    {
+        return stats;
+    }
+    
     public List<Transform> GetCenters()
     {
         return centers;
     }
-
-    public void SetStats(MonsterCardScriptable monster)
+    
+    public List<MeshRenderer> GetMeshRenderers()
     {
-        stats = monster;
+        return mrs;
     }
 
+    public void SetAtk(int i)
+    {
+        atk = i;
+    }
+    
     public int GetOwner()
     {
         return owner;
     }
-    
-    public void SetOwner(int i)
-    {
-        owner = i;
-    }
-    
-    public void SetAtk(int a)
-    {
-        atk = a;
-    }
-    
+
     public int GetAtk()
     {
         return atk;
+    }
+
+    public PhotonView GetView()
+    {
+        return view;
+    }
+
+    public List<GameObject> GetExtention()
+    {
+        return extension;
     }
 }

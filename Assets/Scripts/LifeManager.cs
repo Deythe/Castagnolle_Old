@@ -22,17 +22,52 @@ public class LifeManager : MonoBehaviour
           life = 20;
           ennemiLife = 20;
      }
-     
-     public void TakeDamageHimself(int i)
+
+     public void TakeDamageHimself(int degats)
      {
-          life -= i;
-          lifeManagerView.RPC("RPC_TakeDamageHimself", RpcTarget.Others, i);
+          life -= 1;
+          //mob.GetComponent<Monster>().SetAtk(1);
+          lifeManagerView.RPC("RPC_TakeDamageHimself", RpcTarget.Others, 1);
      }
 
-     public void TakeDamageEnnemi(int i)
+
+     public void TakeDamageEnnemi(float i)
      {
-          ennemiLife -= i;
-          lifeManagerView.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, i);
+          int result=0;
+          
+          if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
+          {
+               Debug.Log("test1");
+               if (i<=-0.5f)
+               {
+                    Debug.Log("test2");
+                    result = 1;
+               }
+               else
+               {
+                    Debug.Log("test3");
+                    result = Mathf.Abs(Mathf.FloorToInt(i))+1;
+               }
+          }
+          else
+          {
+               if (i>=0.5f)
+               {
+                    result = 1;
+               }
+               else
+               {
+                    result = Mathf.Abs((int)i);
+               }
+          }
+          Debug.Log(result);
+          ennemiLife -= result;
+          lifeManagerView.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, result);
+     }
+
+     public int GetOwnLife()
+     {
+          return life;
      }
 
      public void CheckEndGame()
