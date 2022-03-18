@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98c8a12f697972147b25fd6fd1599df4, type: 3}
   m_Name: Monster1
   m_EditorClassIdentifier: 
-  name: Monster
   atk: 2
   resources: 01000000
+  prefabs: {fileID: 1764594795200175919, guid: 1699930bff5871b45be02f44277aef68, type: 3}

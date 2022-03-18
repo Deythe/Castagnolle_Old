@@ -7,6 +7,7 @@ TagManager:
   - Card
   - Monster
   - Field
+  - DeadZone
   layers:
   - Default
   - TransparentFX

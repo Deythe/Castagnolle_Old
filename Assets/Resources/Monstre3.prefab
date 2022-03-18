@@ -106,6 +106,7 @@ MonoBehaviour:
   - {fileID: 4829781766712334609}
   - {fileID: 1814729206719777262}
   card: {fileID: 5933185828017948179, guid: e74b7eaba023a4542af023ee2b544ba6, type: 3}
+  attacked: 0
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0

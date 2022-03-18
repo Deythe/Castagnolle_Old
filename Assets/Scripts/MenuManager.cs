@@ -1,3 +1,4 @@
+using System;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -13,6 +14,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
     
     private bool find;
     private Hashtable hash = new Hashtable();
+
+    private void Start()
+    {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    }
+
     private void Update()
     {
         EnableDisableInQueue();
@@ -21,7 +28,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
-                Debug.Log("NIQUE");
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
                 SceneManager.LoadScene(1);

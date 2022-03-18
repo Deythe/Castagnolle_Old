@@ -9,7 +9,8 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<GameObject> cardDeck;
     
     private List<GameObject> monsterPossible = new List<GameObject>();
-    private int[] checks = new int[3];
+    [SerializeField] private int[] checks = new int[6];
+    
     private int[] ressources;
     private void Awake()
     {
@@ -23,8 +24,10 @@ public class DeckManager : MonoBehaviour
         for (int i = 0; i < cardDeck.Count; i++)
         {
             Array.Copy(DiceManager.instance.GetDiceChoosen(), checks, 3);
+            Array.Copy(DiceManager.instance.GetGauge(),0, checks,3,3);
+            
             ressources = cardDeck[i].GetComponent<CardData>().GetStat().resources.ToArray();
- 
+
             for (int j = 0; j < ressources.Length; j++)
             {
                 if (ressources[j] == checks[0])
@@ -42,11 +45,29 @@ public class DeckManager : MonoBehaviour
                     checks[2] = 0;
                     ressources[j] = 0;
                 }
+                else if (ressources[j] == checks[3])
+                {
+                    checks[3] = 0;
+                    ressources[j] = 0;
+                }
+                else if (ressources[j] == checks[4])
+                {
+                    checks[4] = 0;
+                    ressources[j] = 0;
+                }
+                else if (ressources[j] == checks[5])
+                {
+                    checks[5] = 0;
+                    ressources[j] = 0;
+                }
             }
 
             if (AllCheckValide(ressources))
             {
-                monsterPossible.Add(cardDeck[i]);
+                if (!monsterPossible.Contains(cardDeck[i]))
+                {
+                    monsterPossible.Add(cardDeck[i]);
+                }
             }
         }
     }

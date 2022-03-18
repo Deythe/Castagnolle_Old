@@ -8,8 +8,9 @@ public class DiceManager : MonoBehaviour
     
     [SerializeField] private List<DiceScriptable> diceDeck;
     
-    private int[] diceChoosen = new int[3];
-
+    [SerializeField] private int[] diceChoosen = new int[3];
+    [SerializeField] private int[] diceGauge = new int[3];
+    
     private void Awake()
     {
         instance = this;
@@ -29,15 +30,26 @@ public class DiceManager : MonoBehaviour
 
     public bool DeckEmpy()
     {
-        foreach (var dice in diceChoosen)
+        for (int i = 0; i < 3; i++)
         {
-            if (dice!=0)
+            if (diceChoosen[i]!=0 || diceGauge[i]!=0)
             {
                 return false;
             }
         }
-
+        
         return true;
+    }
+
+    public void PutInGauge(int i)
+    {
+        if (diceChoosen[i] != 0)
+        {
+            diceGauge[i] = diceChoosen[i];
+            diceChoosen[i] = 0;
+            DeckManager.instance.CheckUnitWithRessources();
+            UiManager.instance.UpdateListCard();
+        }
     }
 
     public void DeleteAllResources(List<int> resource)
@@ -53,12 +65,23 @@ public class DiceManager : MonoBehaviour
 
     public void DeleteResource(int i)
     {
-        for (int j = 0; j < diceChoosen.Length; j++)
+        for (int j = 0; j < diceChoosen.Length+diceGauge.Length; j++)
         {
-            if (i.Equals(diceChoosen[j]))
+            if (j < diceChoosen.Length)
             {
-                diceChoosen[j] = 0;
-                return;
+                if (i.Equals(diceChoosen[j]))
+                {
+                    diceChoosen[j] = 0;
+                    return;
+                }
+            }
+            else
+            {
+                if (i.Equals(diceGauge[j-diceGauge.Length]))
+                {
+                    diceGauge[j-diceGauge.Length] = 0;
+                    return;
+                }
             }
         }
     }
@@ -71,5 +94,10 @@ public class DiceManager : MonoBehaviour
     public int[] GetDiceChoosen()
     {
         return diceChoosen;
+    }
+    
+    public int[] GetGauge()
+    {
+        return diceGauge;
     }
 }

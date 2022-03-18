@@ -60,7 +60,7 @@ public class BattlePhaseManager : MonoBehaviour
                                 {
                                     if (RoundManager.instance.GetStateRound() == 3)
                                     {
-                                        if (unit.monster.GetComponent<Monster>().GetView().IsMine &&
+                                        if (unit.monster.GetComponent<Monster>().GetView().IsMine && !unit.monster.GetComponent<Monster>().GetAttacked() &&
                                             !unitsSelected.Contains(unit.monster))
                                         {
                                             GameObject current = unit.monster;
@@ -99,6 +99,7 @@ public class BattlePhaseManager : MonoBehaviour
     public void Attack()
     {
         int result = atkAlly - unitTarget.GetComponent<Monster>().GetAtk();
+        AllMonsterAttacked(true);
         switch (result)
         {
             case 0:
@@ -125,11 +126,12 @@ public class BattlePhaseManager : MonoBehaviour
                 {
                     AddAllExtension(StrongerMonster(), 2);
                 }
-
+                
+                ActivateAllEffect(1);
+                
                 break;
             
             case <0:
-
                 LifeManager.instance.TakeDamageHimself(1);
                 
                 deadUnitCenters = unitsSelected[Random.Range(0, unitsSelected.Count)].GetComponent<Monster>().GetCenters();
@@ -151,10 +153,19 @@ public class BattlePhaseManager : MonoBehaviour
 
                 break;
         }
-        
+
         RoundManager.instance.SetStateRound(3);
         isAttaking = false;
+        
         ClearUnits();
+    }
+
+    public void AllMonsterAttacked(bool b)
+    {
+        foreach (var unit in unitsSelected)
+        {
+            unit.GetComponent<Monster>().SetAttacked(b);
+        }
     }
 
     private GameObject StrongerMonster()
@@ -255,6 +266,7 @@ public class BattlePhaseManager : MonoBehaviour
         {
             unitsSelected[i].GetComponent<Monster>().NotChossen();
         }
+        
         unitsSelected.Clear();
 
         if (unitTarget != null)
@@ -272,6 +284,16 @@ public class BattlePhaseManager : MonoBehaviour
             atkAlly += unit.GetComponent<Monster>().GetAtk();
         }
     }
+
+    private void ActivateAllEffect(int i)
+    {
+        foreach (var unit in unitsSelected)
+        {
+            unit.GetComponent<Monster>().ActivateEffects(i);
+        }
+    }
+    
+    
 
     public bool GetIsAttacking()
     {

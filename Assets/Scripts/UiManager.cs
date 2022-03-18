@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 public class UiManager : MonoBehaviour
 {
@@ -17,6 +18,11 @@ public class UiManager : MonoBehaviour
     [SerializeField] private TMP_Text dice1;
     [SerializeField] private TMP_Text dice2;
     [SerializeField] private TMP_Text dice3;
+    
+    [SerializeField] private TMP_Text gauge1;
+    [SerializeField] private TMP_Text gauge2;
+    [SerializeField] private TMP_Text gauge3;
+    
     [SerializeField] private TMP_Text fps;
     [SerializeField] private TMP_Text hp;
     
@@ -29,8 +35,10 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject menuNoChoice;
     
     [SerializeField] private RectTransform content;
+    [SerializeField] private GameObject bigCart;
 
-
+    [SerializeField] private GameObject card;
+    
     private void Awake()
     {
         instance = this;
@@ -44,6 +52,7 @@ public class UiManager : MonoBehaviour
     void Update()
     {
         ChangeRoundUI();
+        ChangePosition();
         
         EnableDisableThrowDiceButton();
         EnableDisableDice();
@@ -54,6 +63,7 @@ public class UiManager : MonoBehaviour
         EnableDisableMenuNoChoice();
         
         UpdateDice();
+        UpdateGauge();
         UpdateFPS();
         UpdateHp();
     }
@@ -65,6 +75,28 @@ public class UiManager : MonoBehaviour
     void UpdateFPS()
     {
         fps.text = "" + 1 / Time.deltaTime;
+    }
+
+    public void AbleUpdateCard(Image card)
+    {
+        bigCart.GetComponent<Image>().sprite = card.sprite;
+        bigCart.SetActive(true);
+    }
+
+    public void ChangePosition()
+    {
+        if (card != null)
+        {
+            if(Input.touchCount > 0)
+            {
+                card.GetComponent<RectTransform>().position = new Vector3(card.GetComponent<RectTransform>().position.x,Input.touches[0].position.y,card.GetComponent<RectTransform>().position.z);
+            }
+        }
+    }
+
+    public void ShowingOffBigCard()
+    {
+        bigCart.SetActive(false);
     }
 
     public void UpdateListCard()
@@ -122,7 +154,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableMenuNoChoice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4 || RoundManager.instance.GetStateRound()==2)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4)
         {
             menuNoChoice.SetActive(true);
         }
@@ -160,7 +192,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableDice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && !DiceManager.instance.DeckEmpy())
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"])
         {
             dice1.enabled = true;
             dice2.enabled = true;
@@ -181,11 +213,39 @@ public class UiManager : MonoBehaviour
 
     void UpdateDice()
     {
-        dice1.text = ""+DiceManager.instance.GetDiceChoosen()[0];
-        dice2.text = ""+DiceManager.instance.GetDiceChoosen()[1];
-        dice3.text = ""+DiceManager.instance.GetDiceChoosen()[2];
+        dice1.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetDiceChoosen()[0]);
+        dice2.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetDiceChoosen()[1]);
+        dice3.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetDiceChoosen()[2]);
     }
     
+    void UpdateGauge()
+    {
+        gauge1.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetGauge()[0]);
+        gauge2.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetGauge()[1]);
+        gauge3.text = ""+TranslateDiceFaceToNumber(DiceManager.instance.GetGauge()[2]);
+    }
+
+    string TranslateDiceFaceToNumber(int i)
+    {
+        switch (i)
+        {
+            case 1 :
+                return "▲";
+                break;
+        }
+
+        return ""+i;
+    }
+
+    public void SetCard(GameObject obj)
+    {
+        card = obj;
+    }
+
+    public GameObject GetCard()
+    {
+        return card;
+    }
     
     
 }
