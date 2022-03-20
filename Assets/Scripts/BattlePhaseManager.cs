@@ -17,7 +17,7 @@ public class BattlePhaseManager : MonoBehaviour
     
     private List<Transform> deadUnitCenters;
     
-    private GameObject unitTarget;
+    private GameObject unitTarget = null;
     private GameObject unitFusion;
 
     private int atkAlly;
@@ -71,7 +71,7 @@ public class BattlePhaseManager : MonoBehaviour
                                     else if (RoundManager.instance.GetStateRound() == 4)
                                     {
                                         if (!unit.monster.GetComponent<Monster>().GetView().IsMine &&
-                                            CheckInRange(unit.monster))
+                                            CheckInRange(unit.monster) && unitTarget == null)
                                         {
                                             unitTarget = unit.monster;
                                             unitTarget.GetComponent<Monster>().BeChoosen();
@@ -96,6 +96,17 @@ public class BattlePhaseManager : MonoBehaviour
         }
     }
 
+    public void ReInitAttackMonster()
+    {
+        foreach (var card in PlacementManager.instance.GetBoard())
+        {
+            if (card.monster.GetComponent<PhotonView>().AmOwner)
+            {
+                card.monster.GetComponent<Monster>().SetAttacked(false);
+            }
+        }
+    }
+    
     public void Attack()
     {
         int result = atkAlly - unitTarget.GetComponent<Monster>().GetAtk();

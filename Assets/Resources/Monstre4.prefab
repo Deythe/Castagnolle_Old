@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: -4557785253544110790}
   - component: {fileID: 3531432135879127181}
   - component: {fileID: 4270691505904609697}
-  - component: {fileID: -2961409230490207930}
   m_Layer: 0
   m_Name: Monstre4
   m_TagString: Monster
@@ -138,18 +137,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.1, z: 1}
   m_Center: {x: 1, y: 0, z: 1}
---- !u!114 &-2961409230490207930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1764594795200175919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca9bf616a3c5dd04c8f15ccce39f7076, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1550968276560702506
 PrefabInstance:
   m_ObjectHideFlags: 0

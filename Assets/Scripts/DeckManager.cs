@@ -23,9 +23,7 @@ public class DeckManager : MonoBehaviour
         
         for (int i = 0; i < cardDeck.Count; i++)
         {
-            Array.Copy(DiceManager.instance.GetDiceChoosen(), checks, 3);
-            Array.Copy(DiceManager.instance.GetGauge(),0, checks,3,3);
-            
+            InitCheck();
             ressources = cardDeck[i].GetComponent<CardData>().GetStat().resources.ToArray();
 
             for (int j = 0; j < ressources.Length; j++)
@@ -68,6 +66,21 @@ public class DeckManager : MonoBehaviour
                 {
                     monsterPossible.Add(cardDeck[i]);
                 }
+            }
+        }
+    }
+
+    private void InitCheck()
+    {
+        for (int j = 0; j < DiceManager.instance.GetDiceChoosen().Length+DiceManager.instance.GetGauge().Length; j++)
+        {
+            if (j < DiceManager.instance.GetDiceChoosen().Length)
+            {
+                checks[j] = DiceManager.instance.GetDiceChoosen()[j];
+            }
+            else
+            {
+                checks[j] = DiceManager.instance.GetGauge()[j-DiceManager.instance.GetGauge().Length];
             }
         }
     }

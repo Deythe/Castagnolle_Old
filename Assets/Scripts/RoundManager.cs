@@ -52,6 +52,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public void BattlePhase()
     {
+        BattlePhaseManager.instance.ReInitAttackMonster();
         roundState = 3;
     }
 

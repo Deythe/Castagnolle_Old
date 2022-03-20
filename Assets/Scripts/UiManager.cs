@@ -232,6 +232,9 @@ public class UiManager : MonoBehaviour
             case 1 :
                 return "▲";
                 break;
+            case 2:
+                return "■";
+                break;
         }
 
         return ""+i;
