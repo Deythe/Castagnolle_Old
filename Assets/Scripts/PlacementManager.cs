@@ -54,6 +54,18 @@ public class PlacementManager : MonoBehaviour
 
             isPlacing = true;
     }
+    
+    public void ReInitMonster()
+    {
+        foreach (var card in board)
+        {
+            if (card.monster.GetComponent<PhotonView>().AmOwner)
+            {
+                card.monster.GetComponent<Monster>().SetAttacked(false);
+                card.monster.GetComponent<Monster>().ReActivadeAllEffect();
+            }
+        }
+    }
 
     void ShowMonsterEmplacement()
     {

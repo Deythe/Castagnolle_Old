@@ -96,17 +96,6 @@ public class BattlePhaseManager : MonoBehaviour
         }
     }
 
-    public void ReInitAttackMonster()
-    {
-        foreach (var card in PlacementManager.instance.GetBoard())
-        {
-            if (card.monster.GetComponent<PhotonView>().AmOwner)
-            {
-                card.monster.GetComponent<Monster>().SetAttacked(false);
-            }
-        }
-    }
-    
     public void Attack()
     {
         int result = atkAlly - unitTarget.GetComponent<Monster>().GetAtk();
@@ -138,7 +127,7 @@ public class BattlePhaseManager : MonoBehaviour
                     AddAllExtension(StrongerMonster(), 2);
                 }
                 
-                ActivateAllEffect(1);
+                ActivateAllEffectInUnitSelected(1);
                 
                 break;
             
@@ -296,7 +285,7 @@ public class BattlePhaseManager : MonoBehaviour
         }
     }
 
-    private void ActivateAllEffect(int i)
+    private void ActivateAllEffectInUnitSelected(int i)
     {
         foreach (var unit in unitsSelected)
         {

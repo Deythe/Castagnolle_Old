@@ -61,10 +61,19 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         foreach (var effet in effects)
         {
-            if (effet.GetPhaseActivation().Equals(i))
+            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
             {
                 effet.OnCast();
+                effet.SetUsed(true);
             }
+        }
+    }
+
+    public void ReActivadeAllEffect()
+    {
+        foreach (var effet in effects)
+        {
+            effet.SetUsed(true);
         }
     }
 

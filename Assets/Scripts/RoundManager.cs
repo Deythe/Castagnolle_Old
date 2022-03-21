@@ -45,6 +45,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public void EndRound()
     {
         roundState = 0;
+        PlacementManager.instance.ReInitMonster();
+        
         BattlePhaseManager.instance.AllMonsterAttacked(false);
         BattlePhaseManager.instance.ClearUnits();
         playerView.RPC("RPC_EndTurn", RpcTarget.All);
@@ -52,7 +54,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public void BattlePhase()
     {
-        BattlePhaseManager.instance.ReInitAttackMonster();
         roundState = 3;
     }
 
