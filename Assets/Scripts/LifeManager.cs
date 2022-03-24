@@ -26,7 +26,6 @@ public class LifeManager : MonoBehaviour
      public void TakeDamageHimself(int degats)
      {
           life -= 1;
-          //mob.GetComponent<Monster>().SetAtk(1);
           lifeManagerView.RPC("RPC_TakeDamageHimself", RpcTarget.Others, 1);
      }
 
@@ -37,35 +36,60 @@ public class LifeManager : MonoBehaviour
           
           if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
           {
-               Debug.Log("test1");
-               if (i<=-0.5f)
+               if (i < -0.5)
                {
-                    Debug.Log("test2");
+                    Debug.Log("test1");
                     result = 1;
                }
-               else
+               else if (i.Equals(0.5f) || i.Equals(1.5f))
+               {
+                    Debug.Log("test2");
+                    result = 2;
+               }
+               else if(i.Equals(2.5f) || i.Equals(3.5f))
                {
                     Debug.Log("test3");
-                    result = Mathf.Abs(Mathf.FloorToInt(i))+1;
+                    result = 4;
+               }else if (i.Equals(4.5f))
+               {
+                    Debug.Log("test4");
+                    result = 6;
                }
           }
           else
           {
-               if (i>=0.5f)
+               if (i > 0.5)
                {
+                    Debug.Log("test1");
                     result = 1;
                }
-               else
+               else if (i.Equals(-0.5f) || i.Equals(-1.5f))
                {
-                    result = Mathf.Abs((int)i);
+                    Debug.Log("test2");
+                    result = 2;
+               }
+               else if(i.Equals(-2.5f) || i.Equals(-3.5f))
+               {
+                    Debug.Log("test3");
+                    result = 4;
+               }else if (i.Equals(-4.5f))
+               {
+                    Debug.Log("test4");
+                    result = 6;
                }
           }
           Debug.Log(result);
+          
           ennemiLife -= result;
           lifeManagerView.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, result);
      }
 
      public int GetOwnLife()
+     {
+          return life;
+     }
+     
+     public int GetEnnemiLife()
      {
           return life;
      }

@@ -8,6 +8,8 @@ TagManager:
   - Monster
   - Field
   - DeadZone
+  - Dice
+  - Gauge
   layers:
   - Default
   - TransparentFX

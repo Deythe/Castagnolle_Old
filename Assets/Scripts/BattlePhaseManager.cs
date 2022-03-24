@@ -100,10 +100,15 @@ public class BattlePhaseManager : MonoBehaviour
     {
         int result = atkAlly - unitTarget.GetComponent<Monster>().GetAtk();
         AllMonsterAttacked(true);
+        
         switch (result)
         {
             case 0:
                 playerView.RPC("RPC_Atk", RpcTarget.Others, unitTarget.GetComponent<PhotonView>().ViewID);
+                
+                LifeManager.instance.TakeDamageEnnemi(1);
+                LifeManager.instance.TakeDamageHimself(1);
+                
                 foreach (var unit in unitsSelected)
                 {
                     DeleteMonsterExten(unit);
@@ -292,7 +297,6 @@ public class BattlePhaseManager : MonoBehaviour
             unit.GetComponent<Monster>().ActivateEffects(i);
         }
     }
-    
     
 
     public bool GetIsAttacking()

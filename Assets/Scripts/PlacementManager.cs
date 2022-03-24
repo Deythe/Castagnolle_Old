@@ -41,7 +41,6 @@ public class PlacementManager : MonoBehaviour
             {
                 ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
                 Physics.Raycast(ray, out hit);
-                Debug.Log(hit.collider);
             }
         }
     }

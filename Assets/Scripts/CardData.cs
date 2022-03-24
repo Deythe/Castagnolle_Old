@@ -1,17 +1,14 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
     [SerializeField] private MonsterCardScriptable stats;
     [SerializeField] private Image card;
-    private float initalYPosition;
     
+    private float initalYPosition;
     private bool waiting;
     private void Start()
     {
@@ -51,6 +48,7 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
+                UiManager.instance.AbleUpdateCard(card);
                 waiting = true;
                 StopAllCoroutines();
                 StartCoroutine(CoroutineShow());
@@ -74,7 +72,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             waiting = false;
             GetComponentInParent<ScrollRect>().horizontal = false;
-            UiManager.instance.AbleUpdateCard(card);
             UiManager.instance.SetCard(gameObject);
         }
     }
