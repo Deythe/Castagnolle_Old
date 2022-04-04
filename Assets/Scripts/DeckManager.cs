@@ -6,7 +6,8 @@ public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
 
-    [SerializeField] private List<GameObject> cardDeck;
+    [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
+    [SerializeField] private AllCarScriptable listDeck;
     
     private List<GameObject> monsterPossible = new List<GameObject>();
     [SerializeField] private int[] checks = new int[6];
@@ -15,6 +16,20 @@ public class DeckManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        InitDeck();
+    }
+
+    private void InitDeck()
+    {
+        for (int i = 0; i < FireBaseManager.instance.GetUser().currentDeck.Length; i++)
+        {
+            cardDeck.Add(listDeck.cards[FireBaseManager.instance.GetUser().currentDeck[i]]);
+        }
     }
 
     public void CheckUnitWithRessources()

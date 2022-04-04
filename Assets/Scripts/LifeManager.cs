@@ -91,7 +91,7 @@ public class LifeManager : MonoBehaviour
      
      public int GetEnnemiLife()
      {
-          return life;
+          return ennemiLife;
      }
 
      public void CheckEndGame()

@@ -7,12 +7,12 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
     [SerializeField] private MonsterCardScriptable stats;
     [SerializeField] private Image card;
-    
+    private RectTransform rec;
     private float initalYPosition;
     private bool waiting;
     private void Start()
     {
-        initalYPosition = GetComponent<RectTransform>().position.y;
+        rec = GetComponent<RectTransform>();
     }
 
     private void Update()
@@ -48,6 +48,7 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
+                initalYPosition = transform.position.y;
                 UiManager.instance.AbleUpdateCard(card);
                 waiting = true;
                 StopAllCoroutines();
@@ -60,7 +61,7 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     {
         waiting = false;
         UiManager.instance.ShowingOffBigCard();
-        transform.position = new Vector3(transform.position.x, initalYPosition, transform.position.z);
+        rec.localPosition = new Vector3(rec.localPosition.x, 0, rec.localPosition.z);
         GetComponentInParent<ScrollRect>().horizontal = true;
         UiManager.instance.SetCard(null);
     }

@@ -1,7 +1,9 @@
+using DG.Tweening;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
+
 
 public class UiManager : MonoBehaviour
 {
@@ -121,11 +123,11 @@ public class UiManager : MonoBehaviour
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
             (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==1 && !DiceManager.instance.DeckEmpy())
         {
-            scrollView.SetActive(true);
+            scrollView.GetComponent<RectTransform>().DOMoveY(200, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            scrollView.SetActive(false);
+            scrollView.GetComponent<RectTransform>().DOMoveY(-50, 0.5f).SetEase(Ease.Linear);
         }
     }
     

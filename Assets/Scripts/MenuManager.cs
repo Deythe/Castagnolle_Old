@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private TMP_Text nickname;
     [SerializeField] private TMP_Text searching;
     [SerializeField] private GameObject notQueueMenu;
     [SerializeField] private GameObject queueMenu;
@@ -18,6 +19,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        nickname.text = FireBaseManager.instance.GetUser().userName;
     }
 
     private void Update()
@@ -26,13 +28,14 @@ public class MenuManager : MonoBehaviourPunCallbacks
         
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
             }
         }
+        
     }
 
     void EnableDisableInQueue()
@@ -59,7 +62,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("On connected To Master");
-        
+        PhotonNetwork.AuthValues.UserId = FireBaseManager.instance.GetUserFireBase().UserId;
         PhotonNetwork.JoinLobby();
     }
     
@@ -85,7 +88,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("On joined Room");
-        
+        Debug.Log(PhotonNetwork.AuthValues.UserId);
         base.OnJoinedRoom();
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
@@ -107,6 +110,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void GoToDeckScene()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
 }
