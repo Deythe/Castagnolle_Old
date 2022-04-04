@@ -573,7 +573,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -640,12 +640,51 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3133498875991405556, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
       propertyPath: m_Name
       value: Choppe
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6239307199968206982, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
+--- !u!1 &6236612187515112489 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}
+  m_PrefabInstance: {fileID: 6507011432955572600}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &2279258311029089195
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236612187515112489}
+  m_Mesh: {fileID: 0}
+--- !u!114 &8081764773388383906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236612187515112489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72f282529d8d7364faff840710f109a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storeInTexcoordChannel: 1
+  cospatialVertexDistance: 0.01
 --- !u!4 &6757428114298869395 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7b0bc7ef5c9bb4d44a573468f78a169f, type: 3}

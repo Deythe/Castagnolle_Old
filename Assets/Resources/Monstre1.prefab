@@ -186,6 +186,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FinalSkeleton2
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
 --- !u!4 &1496919239548015783 stripped
@@ -193,6 +197,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
   m_PrefabInstance: {fileID: 1390655037378163532}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2273738036603080221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
+  m_PrefabInstance: {fileID: 1390655037378163532}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3238197679362471364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2273738036603080221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72f282529d8d7364faff840710f109a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storeInTexcoordChannel: 1
+  cospatialVertexDistance: 0.01
 --- !u!1001 &2565519518575101398
 PrefabInstance:
   m_ObjectHideFlags: 0
