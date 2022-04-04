@@ -6,14 +6,30 @@ public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
 
-    [SerializeField] private List<GameObject> cardDeck;
+    [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
+    [SerializeField] private AllCarScriptable listDeck;
     
     private List<GameObject> monsterPossible = new List<GameObject>();
-    private int[] checks = new int[3];
+    [SerializeField] private int[] checks = new int[6];
+    
     private int[] ressources;
     private void Awake()
     {
         instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        InitDeck();
+    }
+
+    private void InitDeck()
+    {
+        for (int i = 0; i < FireBaseManager.instance.GetUser().currentDeck.Length; i++)
+        {
+            cardDeck.Add(listDeck.cards[FireBaseManager.instance.GetUser().currentDeck[i]]);
+        }
     }
 
     public void CheckUnitWithRessources()
@@ -22,9 +38,9 @@ public class DeckManager : MonoBehaviour
         
         for (int i = 0; i < cardDeck.Count; i++)
         {
-            Array.Copy(DiceManager.instance.GetDiceChoosen(), checks, 3);
+            InitCheck();
             ressources = cardDeck[i].GetComponent<CardData>().GetStat().resources.ToArray();
- 
+
             for (int j = 0; j < ressources.Length; j++)
             {
                 if (ressources[j] == checks[0])
@@ -42,11 +58,44 @@ public class DeckManager : MonoBehaviour
                     checks[2] = 0;
                     ressources[j] = 0;
                 }
+                else if (ressources[j] == checks[3])
+                {
+                    checks[3] = 0;
+                    ressources[j] = 0;
+                }
+                else if (ressources[j] == checks[4])
+                {
+                    checks[4] = 0;
+                    ressources[j] = 0;
+                }
+                else if (ressources[j] == checks[5])
+                {
+                    checks[5] = 0;
+                    ressources[j] = 0;
+                }
             }
 
             if (AllCheckValide(ressources))
             {
-                monsterPossible.Add(cardDeck[i]);
+                if (!monsterPossible.Contains(cardDeck[i]))
+                {
+                    monsterPossible.Add(cardDeck[i]);
+                }
+            }
+        }
+    }
+
+    private void InitCheck()
+    {
+        for (int j = 0; j < DiceManager.instance.GetDiceChoosen().Length+DiceManager.instance.GetGauge().Length; j++)
+        {
+            if (j < DiceManager.instance.GetDiceChoosen().Length)
+            {
+                checks[j] = DiceManager.instance.GetDiceChoosen()[j];
+            }
+            else
+            {
+                checks[j] = DiceManager.instance.GetGauge()[j-DiceManager.instance.GetGauge().Length];
             }
         }
     }

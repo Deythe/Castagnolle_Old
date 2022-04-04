@@ -45,6 +45,27 @@ public class PlacementManager : MonoBehaviour
         }
     }
 
+    public void InstantiateCurrent()
+    {
+        currentUnit = Instantiate(goPrefabMonster,
+                new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
+                PlayerSetup.instance.transform.rotation);
+
+            isPlacing = true;
+    }
+    
+    public void ReInitMonster()
+    {
+        foreach (var card in board)
+        {
+            if (card.monster.GetComponent<PhotonView>().AmOwner)
+            {
+                card.monster.GetComponent<Monster>().SetAttacked(false);
+                card.monster.GetComponent<Monster>().ReActivadeAllEffect();
+            }
+        }
+    }
+
     void ShowMonsterEmplacement()
     {
         if (RoundManager.instance.GetStateRound() == 2)
@@ -54,33 +75,31 @@ public class PlacementManager : MonoBehaviour
                 switch (Input.GetTouch(0).phase)
                 {
                     case TouchPhase.Began:
-                        currentUnit = Instantiate(goPrefabMonster, new Vector3(hit.point.x, 0.55f, hit.point.z)+PlayerSetup.instance.transform.forward,
-                            PlayerSetup.instance.transform.rotation);
-
-                        isPlacing = true;
+                        InstantiateCurrent();
                         break;
                     
                     case TouchPhase.Moved:
-                        currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z)+PlayerSetup.instance.transform.forward;
+                        currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z) +
+                                                         PlayerSetup.instance.transform.forward;
                         break;
-                    
+
                     case TouchPhase.Ended:
                         if (isPlacing)
                         {
                             currentUnit.transform.position = new Vector3(
                                 Mathf.FloorToInt(currentUnit.transform.position.x) + 0.5f, 0.55f,
                                 Mathf.FloorToInt(currentUnit.transform.position.z) + 0.5f);
-                            
+
                             if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                             {
                                 PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
                                     PlayerSetup.instance.transform.rotation, 0);
                                 
-                                Destroy(currentUnit);
                                 RoundManager.instance.SetStateRound(1);
+                                DiceManager.instance.DeleteAllResources(currentUnit.GetComponent<Monster>()
+                                    .GetStat().resources);
                                 
-                                DiceManager.instance.DeleteAllResources(currentUnit.GetComponent<Monster>().GetStat().resources);
-                                
+                                Destroy(currentUnit);
                                 goPrefabMonster = null;
                                 currentUnit = null;
                                 isPlacing = false;
@@ -89,8 +108,9 @@ public class PlacementManager : MonoBehaviour
                             {
                                 Destroy(currentUnit);
                             }
-                                
+
                         }
+
                         break;
                 }
             }

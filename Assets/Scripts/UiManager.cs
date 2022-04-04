@@ -1,24 +1,19 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
 using Photon.Pun;
-using Photon.Realtime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
+
 
 public class UiManager : MonoBehaviour
 {
     public static UiManager instance;
     [SerializeField] private TMP_Text numberRound;
-    
-    [SerializeField] private TMP_Text dice1;
-    [SerializeField] private TMP_Text dice2;
-    [SerializeField] private TMP_Text dice3;
+   
     [SerializeField] private TMP_Text fps;
     [SerializeField] private TMP_Text hp;
+    [SerializeField] private TMP_Text hpEnnemi;
+    
     
     [SerializeField] private GameObject uiPlayerTurn;
     [SerializeField] private GameObject endTurn;
@@ -29,8 +24,10 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject menuNoChoice;
     
     [SerializeField] private RectTransform content;
+    [SerializeField] private GameObject bigCart;
 
-
+    [SerializeField] private GameObject card;
+    
     private void Awake()
     {
         instance = this;
@@ -44,16 +41,16 @@ public class UiManager : MonoBehaviour
     void Update()
     {
         ChangeRoundUI();
+        ChangePosition();
         
         EnableDisableThrowDiceButton();
-        EnableDisableDice();
         EnableDisableScrollView();
         EnableDisableEndTurn();
         EnableDisableBattleButton();
         EnableDisableMenuYesChoice();
         EnableDisableMenuNoChoice();
         
-        UpdateDice();
+        UpdateHpEnnemi();
         UpdateFPS();
         UpdateHp();
     }
@@ -62,9 +59,37 @@ public class UiManager : MonoBehaviour
     {
         hp.text = "PV : " + LifeManager.instance.GetOwnLife();
     }
+    
+    void UpdateHpEnnemi()
+    {
+        hpEnnemi.text = "PV : " + LifeManager.instance.GetEnnemiLife();
+    }
+    
     void UpdateFPS()
     {
         fps.text = "" + 1 / Time.deltaTime;
+    }
+
+    public void AbleUpdateCard(Image card)
+    {
+        bigCart.GetComponent<Image>().sprite = card.sprite;
+        bigCart.SetActive(true);
+    }
+
+    public void ChangePosition()
+    {
+        if (card != null)
+        {
+            if(Input.touchCount > 0)
+            {
+                card.GetComponent<RectTransform>().position = new Vector3(card.GetComponent<RectTransform>().position.x,Input.touches[0].position.y,card.GetComponent<RectTransform>().position.z);
+            }
+        }
+    }
+
+    public void ShowingOffBigCard()
+    {
+        bigCart.SetActive(false);
     }
 
     public void UpdateListCard()
@@ -98,11 +123,11 @@ public class UiManager : MonoBehaviour
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
             (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==1 && !DiceManager.instance.DeckEmpy())
         {
-            scrollView.SetActive(true);
+            scrollView.GetComponent<RectTransform>().DOMoveY(200, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            scrollView.SetActive(false);
+            scrollView.GetComponent<RectTransform>().DOMoveY(-50, 0.5f).SetEase(Ease.Linear);
         }
     }
     
@@ -122,7 +147,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableMenuNoChoice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4 || RoundManager.instance.GetStateRound()==2)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4)
         {
             menuNoChoice.SetActive(true);
         }
@@ -155,37 +180,20 @@ public class UiManager : MonoBehaviour
             endTurn.SetActive(false);
         }
     }
-    
-
-    void EnableDisableDice()
-    {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && !DiceManager.instance.DeckEmpy())
-        {
-            dice1.enabled = true;
-            dice2.enabled = true;
-            dice3.enabled = true;
-        }
-        else
-        {
-            dice1.enabled = false;
-            dice2.enabled = false;
-            dice3.enabled = false;
-        }
-    }
-    
     void ChangeRoundUI()
     {
         numberRound.text = "" + (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"];
     }
 
-    void UpdateDice()
+    public void SetCard(GameObject obj)
     {
-        dice1.text = ""+DiceManager.instance.GetDiceChoosen()[0];
-        dice2.text = ""+DiceManager.instance.GetDiceChoosen()[1];
-        dice3.text = ""+DiceManager.instance.GetDiceChoosen()[2];
+        card = obj;
     }
-    
+
+    public GameObject GetCard()
+    {
+        return card;
+    }
     
     
 }

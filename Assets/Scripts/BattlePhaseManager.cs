@@ -17,7 +17,7 @@ public class BattlePhaseManager : MonoBehaviour
     
     private List<Transform> deadUnitCenters;
     
-    private GameObject unitTarget;
+    private GameObject unitTarget = null;
     private GameObject unitFusion;
 
     private int atkAlly;
@@ -60,7 +60,7 @@ public class BattlePhaseManager : MonoBehaviour
                                 {
                                     if (RoundManager.instance.GetStateRound() == 3)
                                     {
-                                        if (unit.monster.GetComponent<Monster>().GetView().IsMine &&
+                                        if (unit.monster.GetComponent<Monster>().GetView().IsMine && !unit.monster.GetComponent<Monster>().GetAttacked() &&
                                             !unitsSelected.Contains(unit.monster))
                                         {
                                             GameObject current = unit.monster;
@@ -71,7 +71,7 @@ public class BattlePhaseManager : MonoBehaviour
                                     else if (RoundManager.instance.GetStateRound() == 4)
                                     {
                                         if (!unit.monster.GetComponent<Monster>().GetView().IsMine &&
-                                            CheckInRange(unit.monster))
+                                            CheckInRange(unit.monster) && unitTarget == null)
                                         {
                                             unitTarget = unit.monster;
                                             unitTarget.GetComponent<Monster>().BeChoosen();
@@ -99,10 +99,16 @@ public class BattlePhaseManager : MonoBehaviour
     public void Attack()
     {
         int result = atkAlly - unitTarget.GetComponent<Monster>().GetAtk();
+        AllMonsterAttacked(true);
+        
         switch (result)
         {
             case 0:
                 playerView.RPC("RPC_Atk", RpcTarget.Others, unitTarget.GetComponent<PhotonView>().ViewID);
+                
+                LifeManager.instance.TakeDamageEnnemi(1);
+                LifeManager.instance.TakeDamageHimself(1);
+                
                 foreach (var unit in unitsSelected)
                 {
                     DeleteMonsterExten(unit);
@@ -125,11 +131,12 @@ public class BattlePhaseManager : MonoBehaviour
                 {
                     AddAllExtension(StrongerMonster(), 2);
                 }
-
+                
+                ActivateAllEffectInUnitSelected(1);
+                
                 break;
             
             case <0:
-
                 LifeManager.instance.TakeDamageHimself(1);
                 
                 deadUnitCenters = unitsSelected[Random.Range(0, unitsSelected.Count)].GetComponent<Monster>().GetCenters();
@@ -151,10 +158,19 @@ public class BattlePhaseManager : MonoBehaviour
 
                 break;
         }
-        
+
         RoundManager.instance.SetStateRound(3);
         isAttaking = false;
+        
         ClearUnits();
+    }
+
+    public void AllMonsterAttacked(bool b)
+    {
+        foreach (var unit in unitsSelected)
+        {
+            unit.GetComponent<Monster>().SetAttacked(b);
+        }
     }
 
     private GameObject StrongerMonster()
@@ -255,6 +271,7 @@ public class BattlePhaseManager : MonoBehaviour
         {
             unitsSelected[i].GetComponent<Monster>().NotChossen();
         }
+        
         unitsSelected.Clear();
 
         if (unitTarget != null)
@@ -272,6 +289,15 @@ public class BattlePhaseManager : MonoBehaviour
             atkAlly += unit.GetComponent<Monster>().GetAtk();
         }
     }
+
+    private void ActivateAllEffectInUnitSelected(int i)
+    {
+        foreach (var unit in unitsSelected)
+        {
+            unit.GetComponent<Monster>().ActivateEffects(i);
+        }
+    }
+    
 
     public bool GetIsAttacking()
     {

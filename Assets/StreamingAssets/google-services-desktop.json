@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "683921915153",
+    "project_id": "summoners-dice",
+    "storage_bucket": "summoners-dice.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683921915153:android:31ace50871db5fa3ffe0b0",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.ProjectDice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683921915153-88gre2phtcmknlpqofevne28vtvf1q52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj703IZd0coRMXtGsKBJ2ntqYhVyIodUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683921915153-88gre2phtcmknlpqofevne28vtvf1q52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

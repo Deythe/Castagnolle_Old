@@ -21,8 +21,12 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private List<MeshRenderer> mrs;
     
     [SerializeField] private CardData card;
+
+    [SerializeField] private bool attacked; 
+    
     private MonsterCardScriptable stats;
 
+    private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension;
     private RaycastHit hit;
 
@@ -33,6 +37,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        AddAllEffects();
         owner = view.OwnerActorNr;
         atk = stats.atk;
         id = view.ViewID;
@@ -52,6 +57,34 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         PlacementManager.instance.AddMonsterBoard(gameObject);
     }
 
+    public void ActivateEffects(int i)
+    {
+        foreach (var effet in effects)
+        {
+            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
+            {
+                effet.OnCast();
+                effet.SetUsed(true);
+            }
+        }
+    }
+
+    public void ReActivadeAllEffect()
+    {
+        foreach (var effet in effects)
+        {
+            effet.SetUsed(true);
+        }
+    }
+
+    private void AddAllEffects()
+    {
+        foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
+        {
+            effects.Add(effet);
+        }    
+    }
+    
     private void OnDestroy()
     {
         for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
@@ -91,13 +124,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             }
         }
     }
-    
-    public void CardChoosen()
-    {
-        PlacementManager.instance.SetGOPrefabsMonster(gameObject);
-        RoundManager.instance.SetStateRound(2);
-    }
-    
+
     public MonsterCardScriptable GetStat()
     {
         return stats;
@@ -136,5 +163,15 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public List<GameObject> GetExtention()
     {
         return extension;
+    }
+    
+    public bool GetAttacked()
+    {
+        return attacked;
+    }
+    
+    public void SetAttacked(bool b)
+    {
+        attacked = b;
     }
 }
