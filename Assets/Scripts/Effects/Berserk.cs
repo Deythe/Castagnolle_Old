@@ -1,15 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class Berserk : MonoBehaviour, IEffects
 {
+    [SerializeField] private PhotonView view;
     private int usingPhase = 1;
     private bool used;
     
-    public void OnCast()
+    public void OnCast(int phase)
     {
-        transform.GetComponent<Monster>().SetAttacked(false);
+        if (usingPhase == phase)
+        {
+            if (view.AmOwner)
+            {
+                transform.GetComponent<Monster>().Attacked = false;
+                used = true;
+            }
+        }
     }
     
     public int GetPhaseActivation()

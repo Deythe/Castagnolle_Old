@@ -12,6 +12,16 @@ public class RoundManager : MonoBehaviourPunCallbacks
    
     private int roundState; 
     private GameObject playerInstance;
+    
+    public int StateRound
+    {
+        get => roundState;
+        set
+        {
+            roundState = value;
+            UiManager.instance.ChangeRoundUI();
+        }
+    }
 
     private void Awake()
     {
@@ -56,6 +66,22 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         roundState = 3;
     }
+    
+    public void Action()
+    {
+        switch (roundState)
+        {
+            case 4:
+                BattlePhaseManager.instance.Attack();
+                break;
+            case 5:
+                EffectManager.instance.Action();
+                break;
+            case 6:
+                EffectManager.instance.Action();
+                break;
+        }
+    }
 
     public void CancelAction()
     {
@@ -63,6 +89,12 @@ public class RoundManager : MonoBehaviourPunCallbacks
         {
             case 4:
                 BattlePhaseManager.instance.CancelSelection();
+                break;
+            case 5:
+                EffectManager.instance.CancelSelection();
+                break;
+            case 6:
+                EffectManager.instance.CancelSelection();
                 break;
         }
     }
@@ -94,16 +126,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public override void OnDisconnected (DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        SceneManager.LoadScene(0);
-    }
-
-    public void SetStateRound(int i)
-    {
-        roundState = i;
-    }
-
-    public int GetStateRound()
-    {
-        return roundState;
+        SceneManager.LoadScene(1);
     }
 }

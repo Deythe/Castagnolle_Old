@@ -107,14 +107,13 @@ MonoBehaviour:
   ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
-  atk: 0
   id: 0
   centers:
   - {fileID: 8411546079355229961}
   mrs:
   - {fileID: 6119622623529183915}
-  card: {fileID: 5933185828017948179, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
   attacked: 0
+  status: 0
 --- !u!1001 &1390655037378163532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -144,7 +143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.055
+      value: 0.119
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f9c2782c7ef0134fb697704bc155c33, type: 3}
       propertyPath: m_LocalPosition.z
@@ -271,7 +270,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
 --- !u!4 &1472367892023536926 stripped
 Transform:

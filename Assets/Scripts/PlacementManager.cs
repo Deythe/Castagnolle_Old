@@ -9,11 +9,11 @@ public class PlacementManager : MonoBehaviour
 
     private GameObject goPrefabMonster;
     private GameObject currentUnit;
-
+    private GameObject currentUnitPhoton;
     private bool isPlacing;
     private Ray ray;
     private RaycastHit hit;
-
+    private CardData currentCardSelection;
     [SerializeField] private List<Case> board;
 
     [Serializable]
@@ -22,6 +22,14 @@ public class PlacementManager : MonoBehaviour
         public List<Vector2> emplacement;
     }
 
+    public CardData CurrentCardSelection
+    {
+        get => currentCardSelection;
+        set 
+        {
+            currentCardSelection = value;
+        }
+    }
     private void Awake()
     {
         instance = this;
@@ -35,7 +43,7 @@ public class PlacementManager : MonoBehaviour
 
     void CheckRaycast()
     {
-        if (RoundManager.instance.GetStateRound()==2)
+        if (RoundManager.instance.StateRound==2)
         {
             if (Input.touchCount>0)
             {
@@ -60,7 +68,7 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                card.monster.GetComponent<Monster>().SetAttacked(false);
+                card.monster.GetComponent<Monster>().Attacked = false;
                 card.monster.GetComponent<Monster>().ReActivadeAllEffect();
             }
         }
@@ -68,7 +76,7 @@ public class PlacementManager : MonoBehaviour
 
     void ShowMonsterEmplacement()
     {
-        if (RoundManager.instance.GetStateRound() == 2)
+        if (RoundManager.instance.StateRound == 2)
         {
             if (Input.touchCount > 0)
             {
@@ -92,13 +100,19 @@ public class PlacementManager : MonoBehaviour
 
                             if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                             {
-                                PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
-                                    PlayerSetup.instance.transform.rotation, 0);
+                                object[] data = new object[] {currentCardSelection.Atk, currentCardSelection.IsChampion};
                                 
-                                RoundManager.instance.SetStateRound(1);
-                                DiceManager.instance.DeleteAllResources(currentUnit.GetComponent<Monster>()
-                                    .GetStat().resources);
+                                currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
+                                    PlayerSetup.instance.transform.rotation, 0, data);
                                 
+                                if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
+                                {
+                                    RoundManager.instance.StateRound = 1;
+                                }
+                                
+                                DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+                                currentCardSelection = null;
+                                currentUnitPhoton = null;
                                 Destroy(currentUnit);
                                 goPrefabMonster = null;
                                 currentUnit = null;
@@ -120,7 +134,7 @@ public class PlacementManager : MonoBehaviour
     public void CancelSelection()
     {
         Destroy(currentUnit);
-        RoundManager.instance.SetStateRound(1);
+        RoundManager.instance.StateRound =1 ;
         goPrefabMonster = null;
         currentUnit = null;
         isPlacing = false;
@@ -164,7 +178,7 @@ public class PlacementManager : MonoBehaviour
 
     public bool CheckPositionBoard(Vector2 positionUnit)
     {
-        foreach (var data in board)
+        foreach (Case data in board)
         {
             if (data.monster.GetComponent<Monster>().GetOwner() ==
                 (int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"])
@@ -253,7 +267,9 @@ public class PlacementManager : MonoBehaviour
     {
         return board;
     }
-    
-    
 
+    public GameObject GetPrefabUnit()
+    {
+        return goPrefabMonster;
+    }
 }

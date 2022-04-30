@@ -19,7 +19,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        nickname.text = FireBaseManager.instance.GetUser().userName;
+        nickname.text = FireBaseManager.instance.User.userName;
     }
 
     private void Update()
@@ -62,7 +62,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("On connected To Master");
-        PhotonNetwork.AuthValues.UserId = FireBaseManager.instance.GetUserFireBase().UserId;
+        PhotonNetwork.AuthValues.UserId = FireBaseManager.instance.UserFireBase.UserId;
         PhotonNetwork.JoinLobby();
     }
     

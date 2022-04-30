@@ -14,34 +14,71 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private PhotonView view;
     
     [SerializeField] private int owner;
-    [SerializeField] private int atk;
+    private int atk;
     [SerializeField] private int id;
 
     [SerializeField] private List<Transform> centers;
     [SerializeField] private List<MeshRenderer> mrs;
-    
-    [SerializeField] private CardData card;
 
-    [SerializeField] private bool attacked; 
-    
-    private MonsterCardScriptable stats;
 
+    [SerializeField] private bool attacked;
+    [SerializeField] private int status; //0 = normal, 1 = Immobile
+    
     private List<IEffects> effects = new List<IEffects>();
-    private List<GameObject> extension;
+    private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
+    private bool isChampion;
 
-    private void Awake()
+    public int Status
     {
-        stats = card.GetStat();
+        get => status;
+        set
+        {
+            status = value;
+        }
     }
+    public int Atk
+    {
+        get => atk;
+        set
+        {
+            atk = value;
+        }
+    }
+    public bool IsChampion
+    {
+        get => isChampion;
+        set
+        {
+            isChampion = value;
+        }
+    }
+    
+    public bool Attacked
+    {
+        get => attacked;
+        set
+        {
+            attacked = value;
+        }
+    }
+    
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        object[] instantiationData = info.photonView.InstantiationData;
+        
         AddAllEffects();
         owner = view.OwnerActorNr;
-        atk = stats.atk;
+        
+        if (instantiationData!=null)
+        {
+            atk = (int) instantiationData[0];
+            isChampion = (bool) instantiationData[1];
+        }
+
         id = view.ViewID;
-        extension = new List<GameObject>();
+
         foreach (var ms in mrs)
         {   
             if (view.AmOwner)
@@ -55,16 +92,29 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     
         PlacementManager.instance.AddMonsterBoard(gameObject);
+        ActivateEffects(0);
+    }
+
+    public bool HaveAnEffectThisTurn(int i)
+    {
+        foreach (var effet in effects)
+        {
+            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void ActivateEffects(int i)
     {
         foreach (var effet in effects)
         {
-            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
+            if (!effet.GetUsed())
             {
-                effet.OnCast();
-                effet.SetUsed(true);
+                effet.OnCast(i);
             }
         }
     }
@@ -73,20 +123,36 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         foreach (var effet in effects)
         {
-            effet.SetUsed(true);
+            if (effet.GetPhaseActivation() == 3)
+            {
+                effet.SetUsed(true);
+            }
         }
     }
 
     private void AddAllEffects()
     {
-        foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
+        if (view.AmOwner)
         {
-            effects.Add(effet);
-        }    
+            foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
+            {
+                effects.Add(effet);
+            }
+        }
     }
     
     private void OnDestroy()
     {
+        foreach (IEffects effet in effects)
+        {
+            effet.OnCast(2);
+        }
+        
+        for (int i = extension.Count - 1; i >= 0; i--)
+        {
+            PhotonNetwork.Destroy(extension[i]);
+        }
+
         for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
         {
             if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().id == id)
@@ -97,7 +163,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     }
     public void BeChoosen()
     {
-        foreach (var ms in mrs)
+        foreach (MeshRenderer ms in mrs)
         {
             if (view.AmOwner)
             {
@@ -125,11 +191,6 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
 
-    public MonsterCardScriptable GetStat()
-    {
-        return stats;
-    }
-    
     public List<Transform> GetCenters()
     {
         return centers;
@@ -139,20 +200,9 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         return mrs;
     }
-
-    public void SetAtk(int i)
-    {
-        atk = i;
-    }
-    
     public int GetOwner()
     {
         return owner;
-    }
-
-    public int GetAtk()
-    {
-        return atk;
     }
 
     public PhotonView GetView()
@@ -163,15 +213,5 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public List<GameObject> GetExtention()
     {
         return extension;
-    }
-    
-    public bool GetAttacked()
-    {
-        return attacked;
-    }
-    
-    public void SetAttacked(bool b)
-    {
-        attacked = b;
     }
 }

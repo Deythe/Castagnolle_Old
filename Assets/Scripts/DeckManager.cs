@@ -5,7 +5,6 @@ using UnityEngine;
 public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
-
     [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
     [SerializeField] private AllCarScriptable listDeck;
     
@@ -13,10 +12,28 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private int[] checks = new int[6];
     
     private int[] ressources;
+    
+    public List<GameObject> CardDeck
+    {
+        get => cardDeck;
+        set
+        {
+            cardDeck = value;
+        }
+    }
+    
+    public List<GameObject> MonsterPossible
+    {
+        get => monsterPossible;
+        set
+        {
+            monsterPossible = value;
+        }
+    }
+    
     private void Awake()
     {
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -24,11 +41,12 @@ public class DeckManager : MonoBehaviour
         InitDeck();
     }
 
+
     private void InitDeck()
     {
-        for (int i = 0; i < FireBaseManager.instance.GetUser().currentDeck.Length; i++)
+        for (int i = 0; i < FireBaseManager.instance.User.currentDeck.Length; i++)
         {
-            cardDeck.Add(listDeck.cards[FireBaseManager.instance.GetUser().currentDeck[i]]);
+            cardDeck.Add(UiManager.instance.InitCard(listDeck.cards[FireBaseManager.instance.User.currentDeck[i]]));
         }
     }
 
@@ -39,8 +57,7 @@ public class DeckManager : MonoBehaviour
         for (int i = 0; i < cardDeck.Count; i++)
         {
             InitCheck();
-            ressources = cardDeck[i].GetComponent<CardData>().GetStat().resources.ToArray();
-
+            ressources = cardDeck[i].GetComponent<CardData>().Ressources.ToArray();
             for (int j = 0; j < ressources.Length; j++)
             {
                 if (ressources[j] == checks[0])
@@ -77,25 +94,37 @@ public class DeckManager : MonoBehaviour
 
             if (AllCheckValide(ressources))
             {
-                if (!monsterPossible.Contains(cardDeck[i]))
-                {
-                    monsterPossible.Add(cardDeck[i]);
-                }
+                CheckCardAlreadyPossible(cardDeck[i]);
             }
         }
     }
 
+    private void CheckCardAlreadyPossible(GameObject go)
+    {
+        for (int j = 0; j < monsterPossible.Count; j++)
+        {
+            if (monsterPossible[j].GetComponent<CardData>().Prefabs == go.GetComponent<CardData>().Prefabs)
+            {
+                return;
+            }    
+        }
+        
+        monsterPossible.Add(go);
+        
+        
+    }
+
     private void InitCheck()
     {
-        for (int j = 0; j < DiceManager.instance.GetDiceChoosen().Length+DiceManager.instance.GetGauge().Length; j++)
+        for (int j = 0; j < DiceManager.instance.DiceChoosen.Length+DiceManager.instance.Gauge.Length; j++)
         {
-            if (j < DiceManager.instance.GetDiceChoosen().Length)
+            if (j < DiceManager.instance.DiceChoosen.Length)
             {
-                checks[j] = DiceManager.instance.GetDiceChoosen()[j];
+                checks[j] = DiceManager.instance.DiceChoosen[j];
             }
             else
             {
-                checks[j] = DiceManager.instance.GetGauge()[j-DiceManager.instance.GetGauge().Length];
+                checks[j] = DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length];
             }
         }
     }
@@ -122,11 +151,6 @@ public class DeckManager : MonoBehaviour
         }
 
         return true;
-    }
-
-    public List<GameObject> GetMonsters()
-    {
-        return monsterPossible;
     }
 
 

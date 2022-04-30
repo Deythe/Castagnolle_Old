@@ -132,8 +132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ownerMonsterColor: {fileID: 2100000, guid: 74117f645ca87544896e430b75e9a316, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d1a5903867c8f0a4a8a94c3fe36dad11, type: 2}
-  ownerMonsterColorChoosen: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
-  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
   unitParent: {fileID: 0}
   ms: {fileID: 8608571531186319229}
   center: {fileID: 6278403805223342815}

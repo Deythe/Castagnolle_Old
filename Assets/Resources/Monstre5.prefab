@@ -98,7 +98,6 @@ MonoBehaviour:
   ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
-  atk: 0
   id: 0
   centers:
   - {fileID: 2055852406104699769}
@@ -110,8 +109,8 @@ MonoBehaviour:
   - {fileID: 7129742866031199063}
   - {fileID: 2518197629253603223}
   - {fileID: 2964230268499255474}
-  card: {fileID: 5933185828017948179, guid: f2e4fb22cbc748e4280c43bd1dc3d467, type: 3}
   attacked: 0
+  status: 0
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -137,6 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca9bf616a3c5dd04c8f15ccce39f7076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  view: {fileID: 5347874786083823171}
 --- !u!1001 &1550968276560702506
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -192,7 +192,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
 --- !u!4 &2482131888329458914 stripped
 Transform:
@@ -238,7 +239,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.05
+      value: 0.175
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -280,6 +281,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Liche
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
 --- !u!4 &2447323219601908678 stripped
@@ -287,6 +292,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
   m_PrefabInstance: {fileID: 2773121144689165357}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3079744356905630076 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 45e2a10b71fcfd44fa9dd95e344df6dd, type: 3}
+  m_PrefabInstance: {fileID: 2773121144689165357}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6836544384707135262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3079744356905630076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72f282529d8d7364faff840710f109a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storeInTexcoordChannel: 1
+  cospatialVertexDistance: 0.01
 --- !u!1001 &5451189680245367206
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -342,7 +366,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
 --- !u!4 &2055852406104699769 stripped
 Transform:
@@ -414,7 +439,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
 --- !u!4 &190553797201670709 stripped
 Transform:
@@ -486,7 +512,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile 4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
 --- !u!4 &681621844481088784 stripped
 Transform:

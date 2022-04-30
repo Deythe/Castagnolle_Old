@@ -19,6 +19,33 @@ public class FireBaseManager : MonoBehaviour
     [SerializeField] private bool create;
     [SerializeField] private string email;
     [SerializeField] private string password;
+    
+    public FirebaseUser UserFireBase
+    {
+        get => userFirebase;
+        set
+        {
+            userFirebase = value;
+        }
+    }
+    
+    public User User
+    {
+        get => user;
+        set
+        {
+            user = value;
+        }
+    }
+    
+    public bool Create
+    {
+        get => create;
+        set
+        {
+            create = value;
+        }
+    }
 
     public void SetEmail(string value)
     {
@@ -90,7 +117,10 @@ public class FireBaseManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        root.Child("users").Child(userFirebase.UserId).Child("isConnected").SetValueAsync(false);
+        if(userFirebase!=null)
+        {
+            root.Child("users").Child(userFirebase.UserId).Child("isConnected").SetValueAsync(false);
+        }
     }
 
     public void CreateUser()
@@ -115,34 +145,11 @@ public class FireBaseManager : MonoBehaviour
 
         });
     }
-
-    public bool GetCreate()
-    {
-        return create;
-    }
-
-    public void SetCreate(bool b)
-    {
-        create = b;
-    }
-
-    public FirebaseUser GetUserFireBase()
-    {
-        return userFirebase;
-    }
+    
+    
 
     public string GetStringRequest()
     {
         return stringRequest;
-    }
-
-    public User GetUser()
-    {
-        return user;
-    }
-
-    public void SetUser(User s)
-    {
-        user = s;
     }
 }

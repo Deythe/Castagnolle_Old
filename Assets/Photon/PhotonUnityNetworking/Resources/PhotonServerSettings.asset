@@ -49,6 +49,7 @@ MonoBehaviour:
   - RPC_SynchColors
   - RPC_SyncUnit
   - RPC_SynchGaugeDice
+  - RPC_Action
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
