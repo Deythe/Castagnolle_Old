@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: mat_UI_Glow
   m_Shader: {fileID: -6465566751694194690, guid: 6e62da36d9bae2f4ea52d17b89fff818, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -61,6 +61,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_883d7379526d49cfa8367849494e972d_Texture_1:
         m_Texture: {fileID: 2800000, guid: 5490475a83b5ca8488219ce146337127, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_adfaee3aa117448cbee34bbf857a03d8_Texture_1:
+        m_Texture: {fileID: 2800000, guid: ee77589f320963548b3527d4043a4015, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_e3ff5ef2a9b24560a7492885b27be81e_Texture_1:
