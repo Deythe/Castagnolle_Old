@@ -82,7 +82,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         room.IsOpen = true;
         room.MaxPlayers = 2;
         room.IsVisible = true;
-        PhotonNetwork.CreateRoom(PhotonNetwork.AuthValues.UserId, room, null);    
+        PhotonNetwork.CreateRoom(PhotonNetwork.AuthValues.UserId, room, null);
     }
 
     public override void OnJoinedRoom()

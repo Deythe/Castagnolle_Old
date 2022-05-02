@@ -32,8 +32,15 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject card;
     [SerializeField] private RectTransform cardListChose;
     [SerializeField] private GameObject shader;
+    [SerializeField] private GameObject settingsMenu;
+    [SerializeField] private GameObject settingsButtonMenu;
+    [SerializeField] private GameObject viewButton;
+    
+    private bool settingsOnOff;
     private bool viewTacticsOn;
     private float originalScrolPositionY;
+    private float framerate;
+    private float deltaTime;
 
     public Canvas CanvasPublic
     {
@@ -94,7 +101,9 @@ public class UiManager : MonoBehaviour
     
     void UpdateFPS()
     {
-        fps.text = "" + 1 / Time.deltaTime;
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        framerate = 1.0f / deltaTime;
+        fps.text = Mathf.Ceil (framerate).ToString ();
     }
 
     public void AbleUpdateCard(Sprite card)
@@ -230,6 +239,15 @@ public class UiManager : MonoBehaviour
         PlayerSetup.instance.ChangeView(viewTacticsOn);
     }
 
+    public void ChangeSettingStatus()
+    {
+        settingsOnOff = !settingsOnOff;
+        settingsButtonMenu.SetActive(!settingsOnOff);
+        settingsMenu.SetActive(settingsOnOff);
+        viewButton.SetActive(!settingsOnOff);
+        scrollView.SetActive(!settingsOnOff);
+    }
+
     private void ChangeShader()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
@@ -242,5 +260,7 @@ public class UiManager : MonoBehaviour
             shader.SetActive(false);
         }
     }
+    
+    
     
 }

@@ -93,5 +93,5 @@ MonoBehaviour:
   bigCard: {fileID: 21300000, guid: 63692e621042e4e488be5e2ae73fa502, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: 441f8d0906f640c46a0f56cf031058b4, type: 3}
   atk: 5
-  resources: 
+  resources: 010000000100000001000000
   isChampion: 1

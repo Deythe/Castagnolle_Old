@@ -56,9 +56,17 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         roundState = 0;
         PlacementManager.instance.ReInitMonster();
-        
-        BattlePhaseManager.instance.AllMonsterAttacked(false);
+
+        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        {
+            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().Status.Equals(0) && PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().photonView.AmOwner)
+            {
+                PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().Attacked = false;
+            }
+        }
+
         BattlePhaseManager.instance.ClearUnits();
+
         playerView.RPC("RPC_EndTurn", RpcTarget.All);
     }
 

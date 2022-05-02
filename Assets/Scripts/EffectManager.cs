@@ -54,8 +54,10 @@ public class EffectManager : MonoBehaviour
                     case TouchPhase.Began:
                         if (hit.collider != null)
                         {
+                            Debug.Log(hit.collider.name);
                             if (hit.collider.GetComponent<Monster>() != null)
                             {
+                                Debug.Log("Oui3");
                                 switch (RoundManager.instance.StateRound)
                                 {
                                     case 1:

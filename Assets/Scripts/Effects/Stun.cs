@@ -29,6 +29,7 @@ public class Stun : MonoBehaviour, IEffects
             }
             else if (phase == 6)
             {
+                Debug.Log("Oui2");
                 targetUnit = EffectManager.instance.TargetUnit;
                 view.RPC("RPC_Action", RpcTarget.All, targetUnit.GetComponent<PhotonView>().ViewID);
                 used = true;

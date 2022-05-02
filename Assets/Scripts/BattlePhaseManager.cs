@@ -15,7 +15,7 @@ public class BattlePhaseManager : MonoBehaviour
         private Ray ray;
         private RaycastHit hit;
 
-        private List<GameObject> unitsSelected;
+        private GameObject unitsSelected;
 
         private List<Transform> deadUnitCenters;
 
@@ -26,6 +26,11 @@ public class BattlePhaseManager : MonoBehaviour
         private bool isAttacking;
         private int numberView;
         private float sizeListCentersEnnemi;
+
+        public GameObject UnitSelected
+        {
+            get => unitsSelected;
+        }
         public bool IsAttacking
         {
             get => isAttacking;
@@ -42,7 +47,6 @@ public class BattlePhaseManager : MonoBehaviour
 
         private void Start()
         {
-            unitsSelected = new List<GameObject>();
         }
 
         void Update()
@@ -73,12 +77,11 @@ public class BattlePhaseManager : MonoBehaviour
                                         if (RoundManager.instance.StateRound == 3)
                                         {
                                             if (unit.monster.GetComponent<Monster>().GetView().IsMine &&
-                                                !unit.monster.GetComponent<Monster>().Attacked &&
-                                                !unitsSelected.Contains(unit.monster))
+                                                !unit.monster.GetComponent<Monster>().Attacked)
                                             {
                                                 GameObject current = unit.monster;
                                                 current.GetComponent<Monster>().BeChoosen();
-                                                unitsSelected.Add(current);
+                                                unitsSelected = current;
                                             }
                                         }
                                         else if (RoundManager.instance.StateRound == 4)
@@ -99,9 +102,8 @@ public class BattlePhaseManager : MonoBehaviour
 
                     else if (Input.GetTouch(0).phase == TouchPhase.Ended)
                     {
-                        if (unitsSelected.Count != 0)
+                        if (unitsSelected != null)
                         {
-                            CalculAlliesAtk();
                             RoundManager.instance.StateRound = 4;
                         }
                     }
@@ -119,10 +121,7 @@ public class BattlePhaseManager : MonoBehaviour
                     LifeManager.instance.TakeDamageEnnemi(1);
                     LifeManager.instance.TakeDamageHimself();
 
-                    foreach (var unit in unitsSelected)
-                    {
-                        PhotonNetwork.Destroy(unit);
-                    }
+                    PhotonNetwork.Destroy(unitsSelected);
 
                     break;
 
@@ -131,24 +130,21 @@ public class BattlePhaseManager : MonoBehaviour
 
                     playerView.RPC("RPC_Atk", RpcTarget.Others, unitTarget.GetComponent<PhotonView>().ViewID);
 
-                    LifeManager.instance.TakeDamageEnnemi(AllCenterMoreFar());
+                    LifeManager.instance.TakeDamageEnnemi( PlacementManager.instance.CenterMoreFar(unitsSelected));
 
-                    AddAllExtension(StrongerMonster(), true);
+                    AddAllExtension(unitsSelected, true);
 
-                    ActivateAllEffectInUnitSelected(1);
+                    unitsSelected.GetComponent<Monster>().ActivateEffects(1);
 
                     break;
 
                 case <0:
                     LifeManager.instance.TakeDamageHimself();
 
-                    deadUnitCenters = unitsSelected[Random.Range(0, unitsSelected.Count)].GetComponent<Monster>()
+                    deadUnitCenters = unitsSelected.GetComponent<Monster>()
                         .GetCenters();
 
-                    foreach (var unit in unitsSelected)
-                    {
-                        PhotonNetwork.Destroy(unit);
-                    }
+                    PhotonNetwork.Destroy(unitsSelected);
 
                     AddAllExtension(unitTarget, false);
 
@@ -160,7 +156,7 @@ public class BattlePhaseManager : MonoBehaviour
         public void Attack()
         {
             int result = atkAlly - unitTarget.GetComponent<Monster>().Atk;
-            AllMonsterAttacked(true);
+            unitsSelected.GetComponent<Monster>().Attacked = true;
 
             ResultAttack(result);
 
@@ -169,33 +165,7 @@ public class BattlePhaseManager : MonoBehaviour
 
             ClearUnits();
         }
-
-        public void AllMonsterAttacked(bool b)
-        {
-            foreach (var unit in unitsSelected)
-            {
-                if (unit.GetComponent<Monster>().Status.Equals(0))
-                {
-                    unit.GetComponent<Monster>().Attacked = b;
-                }
-            }
-        }
-
-        private GameObject StrongerMonster()
-        {
-            GameObject unitSelected = unitsSelected[0];
-
-            foreach (var unit in unitsSelected)
-            {
-                if (unit.GetComponent<Monster>().Atk > unitSelected.GetComponent<Monster>().Atk)
-                {
-                    unitSelected = unit;
-                }
-            }
-
-            return unitSelected;
-        }
-
+        
         void AddExtension(GameObject unitMore, bool owner)
         {
             numberView = PhotonNetwork.ViewCount;
@@ -226,10 +196,6 @@ public class BattlePhaseManager : MonoBehaviour
                         }
                         
                         deadUnitCenters.RemoveAt(x);
-                        
-                        do
-                        {
-                        } while (numberView + 1 != PhotonNetwork.ViewCount);
 
                         return;
                     }
@@ -248,42 +214,27 @@ public class BattlePhaseManager : MonoBehaviour
             deadUnitCenters.Clear();
         }
 
-        public float AllCenterMoreFar()
-        {
-            float farCenter = -10;
-            foreach (var unit in unitsSelected)
-            {
-                if (PlacementManager.instance.CenterMoreFar(unit) > farCenter)
-                {
-                    farCenter = PlacementManager.instance.CenterMoreFar(unit);
-                }
-            }
-
-            return farCenter;
-        }
-
         public bool CheckInRange(GameObject v)
         {
-            foreach (var unit in unitsSelected)
-            {
-                bool unitCheck = false;
+            
+            bool unitCheck = false;
 
-                foreach (var center in unit.GetComponent<Monster>().GetCenters())
+            foreach (var center in unitsSelected.GetComponent<Monster>().GetCenters())
+            {
+                foreach (var targetCenter in v.GetComponent<Monster>().GetCenters())
                 {
-                    foreach (var targetCenter in v.GetComponent<Monster>().GetCenters())
+                    if (Vector3.Distance(center.position, targetCenter.position).Equals(range))
                     {
-                        if (Vector3.Distance(center.position, targetCenter.position).Equals(range))
-                        {
-                            unitCheck = true;
-                        }
+                        unitCheck = true;
                     }
                 }
-
-                if (!unitCheck)
-                {
-                    return false;
-                }
             }
+
+            if (!unitCheck)
+            {
+                return false;
+            }
+
 
             return true;
         }
@@ -297,12 +248,11 @@ public class BattlePhaseManager : MonoBehaviour
 
         public void ClearUnits()
         {
-            for (int i = 0; i < unitsSelected.Count; i++)
+            if (unitsSelected != null)
             {
-                unitsSelected[i].GetComponent<Monster>().NotChossen();
+                unitsSelected.GetComponent<Monster>().NotChossen();
+                unitsSelected = null;
             }
-
-            unitsSelected.Clear();
 
             if (unitTarget != null)
             {
@@ -310,23 +260,7 @@ public class BattlePhaseManager : MonoBehaviour
                 unitTarget = null;
             }
         }
-
-        public void CalculAlliesAtk()
-        {
-            atkAlly = 0;
-            foreach (var unit in unitsSelected)
-            {
-                atkAlly += unit.GetComponent<Monster>().Atk;
-            }
-        }
-
-        private void ActivateAllEffectInUnitSelected(int i)
-        {
-            foreach (var unit in unitsSelected)
-            {
-                unit.GetComponent<Monster>().ActivateEffects(i);
-            }
-        }
+        
 
         [PunRPC]
         private void RPC_SyncUnit(int idMore, float x, float z)

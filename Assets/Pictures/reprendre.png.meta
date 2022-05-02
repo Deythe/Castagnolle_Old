@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 48027457d7285cd43a2232a1ca93f00e
+guid: d20cedbfea56bef4d8f2f6b020fe6b32
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -50,7 +50,7 @@ TextureImporter:
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
-  alphaUsage: 2
+  alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
@@ -66,7 +66,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 512
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -152,7 +152,7 @@ TextureImporter:
     nameFileIdTable: {}
   spritePackingTag: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 1
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

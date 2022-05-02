@@ -42,7 +42,7 @@ public class PlayerSetup : MonoBehaviour
     {
         if (b)
         {
-            cam.transform.DOMove(new Vector3(0, 16, 1.5f * Math.Sign(startCamPos.z)), 0.3f);
+            cam.transform.DOMove(new Vector3(0, 17, 1.5f * Math.Sign(startCamPos.z)), 0.3f);
             cam.transform.DORotateQuaternion(Quaternion.Euler(90, startCamRot.eulerAngles.y, startCamRot.eulerAngles.z), 0.3f);
         }
         else

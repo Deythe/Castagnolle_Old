@@ -59,10 +59,11 @@ public class InvokeMonsterActivable : MonoBehaviour, IEffects
                 foreach (var empl in cases.emplacement)
                 {
                     if (empl.x.Equals(tiles.position.x+v.x) &&
-                        empl.y.Equals(tiles.position.z+v.y))
+                        (empl.y.Equals(tiles.position.z+v.y)))
                     {
+                        
                         return true;
-                    }  
+                    }
                 }
             }
         }

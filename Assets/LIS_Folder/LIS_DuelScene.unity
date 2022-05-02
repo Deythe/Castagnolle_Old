@@ -2797,6 +2797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71d47af65e987da429edc96832c84b59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
   numberRound: {fileID: 1425923863}
   fps: {fileID: 1683941970}
   hp: {fileID: 740192928}
@@ -2810,6 +2811,8 @@ MonoBehaviour:
   content: {fileID: 555112589}
   bigCart: {fileID: 949326286}
   card: {fileID: 0}
+  cardListChose: {fileID: 0}
+  shader: {fileID: 0}
 --- !u!1 &1187501207
 GameObject:
   m_ObjectHideFlags: 0
@@ -5780,6 +5783,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 526926679522105649, guid: 948b80a65e2893a4d94d8dff64d62066, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2181589800469262937, guid: 948b80a65e2893a4d94d8dff64d62066, type: 3}
       propertyPath: m_Name
       value: Player_pour_Joris
@@ -6255,14 +6262,13 @@ MonoBehaviour:
   ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
   view: {fileID: 5972364365164085369}
   owner: 0
-  atk: 0
   id: 0
   centers:
   - {fileID: 7813392273332865331}
   mrs:
   - {fileID: 5492186120552936593}
-  card: {fileID: 5933185828017948179, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
   attacked: 0
+  status: 0
 --- !u!1 &6661334618912234936
 GameObject:
   m_ObjectHideFlags: 0
@@ -6317,8 +6323,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ownerMonsterColor: {fileID: 2100000, guid: 74117f645ca87544896e430b75e9a316, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d1a5903867c8f0a4a8a94c3fe36dad11, type: 2}
-  ownerMonsterColorChoosen: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
-  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
   unitParent: {fileID: 0}
   ms: {fileID: 5492186120552936593}
   center: {fileID: 7813392273332865331}
