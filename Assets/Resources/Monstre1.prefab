@@ -101,19 +101,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerMonsterColor: {fileID: 2100000, guid: 74117f645ca87544896e430b75e9a316, type: 2}
-  ennemiMonsterColor: {fileID: 2100000, guid: d1a5903867c8f0a4a8a94c3fe36dad11, type: 2}
-  ownerMonsterColorChoosen: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
-  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
+  ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
+  ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
+  ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
+  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 614d14a9b05c28143a1ebc0e727d7f71, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
   id: 0
   centers:
   - {fileID: 8411546079355229961}
   mrs:
-  - {fileID: 6119622623529183915}
+  - {fileID: 6888182385996691750}
   attacked: 0
   status: 0
+  animator: {fileID: 0}
 --- !u!1001 &1390655037378163532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -278,9 +279,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4031962616493566152, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 2565519518575101398}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &6119622623529183915 stripped
+--- !u!23 &6888182385996691750 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 2565519518575101398}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8411546079355229961 stripped

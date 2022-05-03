@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -16,7 +14,7 @@ public class NeedLessRessources : MonoBehaviour, IEffects
     private int[] pivotRessourceList;
     private int pivot;
     
-    public void OnCast(int phase)    
+    public void OnCast(int phase)
     {
         if (usingPhase == phase)
         {
@@ -32,16 +30,13 @@ public class NeedLessRessources : MonoBehaviour, IEffects
                     {
                         if (card.GetComponent<CardData>().IsChampion)
                         {
-                            if (!originalCard.ContainsKey(card.GetComponent<CardData>().Prefabs))
+                            pivotRessourceList = new int[card.GetComponent<CardData>().Ressources.Count];
+                            for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
                             {
-                                pivotRessourceList = new int[card.GetComponent<CardData>().Ressources.Count];
-                                for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
-                                {
-                                    pivotRessourceList[i] = card.GetComponent<CardData>().Ressources[i];
-                                }
-
-                                originalCard.Add(card.GetComponent<CardData>().Prefabs, pivotRessourceList);
+                                pivotRessourceList[i] = card.GetComponent<CardData>().Ressources[i];
                             }
+
+                            originalCard.Add(card.GetComponent<CardData>().Prefabs, pivotRessourceList);
                         }
                     }
                 }

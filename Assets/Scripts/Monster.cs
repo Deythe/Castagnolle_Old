@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     [SerializeField] private bool attacked;
     [SerializeField] private int status; //0 = normal, 1 = Immobile
+    [SerializeField] private Animator animator;
     
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
@@ -45,6 +47,12 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             atk = value;
         }
     }
+
+    public Animator Animator
+    {
+        get => animator;
+    }
+    
     public bool IsChampion
     {
         get => isChampion;
@@ -62,7 +70,8 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             attacked = value;
         }
     }
-    
+
+
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
@@ -83,11 +92,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {   
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColor.mainTexture;
+                ms.material.color = ownerMonsterColor.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColor.mainTexture;
+                ms.material.color = ennemiMonsterColor.color;
             }
         }
     
@@ -167,11 +176,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColorChoosen.mainTexture;
+                ms.material.color = ownerMonsterColorChoosen.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColorChoosen.mainTexture;
+                ms.material.color = ennemiMonsterColorChoosen.color;
             }
         }
     }
@@ -182,11 +191,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColor.mainTexture;
+                ms.material.color = ownerMonsterColor.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColor.mainTexture;
+                ms.material.color = ennemiMonsterColor.color;
             }
         }
     }

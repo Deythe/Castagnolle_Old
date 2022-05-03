@@ -22,7 +22,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         nickname.text = FireBaseManager.instance.User.userName;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         EnableDisableInQueue();
         
@@ -88,7 +88,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("On joined Room");
-        Debug.Log(PhotonNetwork.AuthValues.UserId);
         base.OnJoinedRoom();
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)

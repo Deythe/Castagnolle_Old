@@ -91,10 +91,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerMonsterColor: {fileID: 2100000, guid: 74117f645ca87544896e430b75e9a316, type: 2}
-  ennemiMonsterColor: {fileID: 2100000, guid: d1a5903867c8f0a4a8a94c3fe36dad11, type: 2}
-  ownerMonsterColorChoosen: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
-  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
+  ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
+  ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
+  ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
+  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 614d14a9b05c28143a1ebc0e727d7f71, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
   id: 0
@@ -103,11 +103,12 @@ MonoBehaviour:
   - {fileID: 7156290318078764211}
   - {fileID: 4141519817748640844}
   mrs:
-  - {fileID: 3689533111441128382}
-  - {fileID: 4829781766712334609}
-  - {fileID: 1814729206719777262}
+  - {fileID: 4055812426513557555}
+  - {fileID: 5223100063378950812}
+  - {fileID: 1321190358541326947}
   attacked: 0
   status: 0
+  animator: {fileID: 0}
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -207,9 +208,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4031962616493566152, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 3778835509634840172}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &4829781766712334609 stripped
+--- !u!23 &5223100063378950812 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 3778835509634840172}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7156290318078764211 stripped
@@ -284,9 +285,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6278403805223342815, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 4919075262649062595}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &3689533111441128382 stripped
+--- !u!23 &4055812426513557555 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 4919075262649062595}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8336295129662569483 stripped
@@ -356,9 +357,9 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 6823432029056325444, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
---- !u!23 &1814729206719777262 stripped
+--- !u!23 &1321190358541326947 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 7951382956879750803}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &4141519817748640844 stripped

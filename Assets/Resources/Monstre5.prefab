@@ -92,10 +92,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerMonsterColor: {fileID: 2100000, guid: 74117f645ca87544896e430b75e9a316, type: 2}
-  ennemiMonsterColor: {fileID: 2100000, guid: d1a5903867c8f0a4a8a94c3fe36dad11, type: 2}
-  ownerMonsterColorChoosen: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
-  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 68d9464d0cd4fbf48a81abf378167c7f, type: 2}
+  ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
+  ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
+  ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
+  ennemiMonsterColorChoosen: {fileID: 2100000, guid: 614d14a9b05c28143a1ebc0e727d7f71, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
   id: 0
@@ -105,12 +105,13 @@ MonoBehaviour:
   - {fileID: 190553797201670709}
   - {fileID: 681621844481088784}
   mrs:
-  - {fileID: 4382369757625208539}
-  - {fileID: 7129742866031199063}
-  - {fileID: 2518197629253603223}
-  - {fileID: 2964230268499255474}
+  - {fileID: 4011501291470822742}
+  - {fileID: 7605197015674491098}
+  - {fileID: 2992807283100851226}
+  - {fileID: 2475280506440266559}
   attacked: 0
   status: 0
+  animator: {fileID: 0}
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -205,9 +206,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6278403805223342815, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 1550968276560702506}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &7129742866031199063 stripped
+--- !u!23 &7605197015674491098 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 1550968276560702506}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2773121144689165357
@@ -374,9 +375,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6278403805223342815, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 5451189680245367206}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &4382369757625208539 stripped
+--- !u!23 &4011501291470822742 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 5451189680245367206}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8958482655130421614 stripped
@@ -447,9 +448,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6278403805223342815, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 6162513446765256938}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &2518197629253603223 stripped
+--- !u!23 &2992807283100851226 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 6162513446765256938}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7093677350868617250 stripped
@@ -520,9 +521,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6278403805223342815, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 6797274941918891983}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &2964230268499255474 stripped
+--- !u!23 &2475280506440266559 stripped
 MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8608571531186319229, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8938856954926693616, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
   m_PrefabInstance: {fileID: 6797274941918891983}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7611273761836082951 stripped

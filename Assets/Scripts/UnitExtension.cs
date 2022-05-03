@@ -17,11 +17,11 @@ public class UnitExtension : MonoBehaviour, IPunInstantiateMagicCallback
         
         if (view.AmOwner)
         {
-            ms.material.mainTexture = ownerMonsterColor.mainTexture;
+            ms.material.color = ownerMonsterColor.color;
         }
         else
         {
-            ms.material.mainTexture = ennemiMonsterColor.mainTexture;
+            ms.material.color = ennemiMonsterColor.color;
         }
         
         unitParent = PhotonView.Find((int)instantiationData[0]).gameObject;

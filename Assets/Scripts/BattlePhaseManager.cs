@@ -21,8 +21,7 @@ public class BattlePhaseManager : MonoBehaviour
 
         private GameObject unitTarget = null;
         private GameObject unitFusion;
-
-        private int atkAlly;
+        
         private bool isAttacking;
         private int numberView;
         private float sizeListCentersEnnemi;
@@ -43,10 +42,6 @@ public class BattlePhaseManager : MonoBehaviour
         private void Awake()
         {
             instance = this;
-        }
-
-        private void Start()
-        {
         }
 
         void Update()
@@ -79,9 +74,8 @@ public class BattlePhaseManager : MonoBehaviour
                                             if (unit.monster.GetComponent<Monster>().GetView().IsMine &&
                                                 !unit.monster.GetComponent<Monster>().Attacked)
                                             {
-                                                GameObject current = unit.monster;
-                                                current.GetComponent<Monster>().BeChoosen();
-                                                unitsSelected = current;
+                                                unitsSelected = unit.monster;
+                                                unitsSelected.GetComponent<Monster>().BeChoosen();
                                             }
                                         }
                                         else if (RoundManager.instance.StateRound == 4)
@@ -153,17 +147,32 @@ public class BattlePhaseManager : MonoBehaviour
 
         }
 
-        public void Attack()
+        IEnumerator CoroutineAttack()
         {
-            int result = atkAlly - unitTarget.GetComponent<Monster>().Atk;
+            int result = unitsSelected.GetComponent<Monster>().Atk - unitTarget.GetComponent<Monster>().Atk;
             unitsSelected.GetComponent<Monster>().Attacked = true;
+            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            {
+                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            
+            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            {
+                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", false);
+            }
 
             ResultAttack(result);
-
             RoundManager.instance.StateRound = 3;
             isAttacking = false;
 
             ClearUnits();
+        }
+
+        public void Attack()
+        {
+            StartCoroutine(CoroutineAttack());
         }
         
         void AddExtension(GameObject unitMore, bool owner)

@@ -31,7 +31,6 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private GameObject card;
     [SerializeField] private RectTransform cardListChose;
-    [SerializeField] private GameObject shader;
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject settingsButtonMenu;
     [SerializeField] private GameObject viewButton;
@@ -78,7 +77,6 @@ public class UiManager : MonoBehaviour
     void Update()
     {
         ChangePosition();
-        ChangeShader();
         EnableDisableThrowDiceButton();
         EnableDisableScrollView();
         EnableDisableEndTurn();
@@ -247,19 +245,7 @@ public class UiManager : MonoBehaviour
         viewButton.SetActive(!settingsOnOff);
         scrollView.SetActive(!settingsOnOff);
     }
-
-    private void ChangeShader()
-    {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound!=2)
-        {
-            shader.SetActive(true);
-        }
-        else
-        {
-            shader.SetActive(false);
-        }
-    }
+    
     
     
     

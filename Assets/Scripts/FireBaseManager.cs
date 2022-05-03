@@ -99,10 +99,10 @@ public class FireBaseManager : MonoBehaviour
 
     public void WriteNewUser()
     {
-        int[] tab = new int[20];
-        for (int i = 0; i < 20; i++)
+        int[] tab = new int[8];
+        for (int i = 0; i < 8; i++)
         {
-            tab[i] = 1;
+            tab[i] = i;
         }
         user = new User(MenuLoginManager.instance.GetNickname(), true, tab);
         string json = JsonUtility.ToJson(user);
