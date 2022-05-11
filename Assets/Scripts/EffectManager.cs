@@ -7,12 +7,21 @@ using UnityEngine;
 public class EffectManager : MonoBehaviour
 {
     public static EffectManager instance;
-
+    [SerializeField] private GameObject targetUnitAlly;
     [SerializeField] private GameObject currentUnit;
-    [SerializeField] private GameObject targetUnit;
+    [SerializeField] private GameObject targetUnitEnnemi;
     private Ray ray;
     private RaycastHit hit;
-    
+
+    public GameObject AllieUnit
+    {
+        get => targetUnitAlly;
+        set
+        {
+            targetUnitAlly = value;
+        }
+    }
+
     public GameObject CurrentUnit
     {
         get => currentUnit;
@@ -24,10 +33,10 @@ public class EffectManager : MonoBehaviour
 
     public GameObject TargetUnit
     {
-        get => targetUnit;
+        get => targetUnitEnnemi;
         set
         {
-            targetUnit = value;
+            targetUnitEnnemi = value;
         }
     }
     private void Awake()
@@ -54,10 +63,8 @@ public class EffectManager : MonoBehaviour
                     case TouchPhase.Began:
                         if (hit.collider != null)
                         {
-                            Debug.Log(hit.collider.name);
                             if (hit.collider.GetComponent<Monster>() != null)
                             {
-                                Debug.Log("Oui3");
                                 switch (RoundManager.instance.StateRound)
                                 {
                                     case 1:
@@ -74,9 +81,17 @@ public class EffectManager : MonoBehaviour
                                     case 6 :
                                         if (!hit.collider.GetComponent<PhotonView>().AmOwner)
                                         {
-                                            targetUnit = hit.collider.gameObject;
+                                            Debug.Log("Enemi");
+                                            targetUnitEnnemi = hit.collider.gameObject;
                                             currentUnit.GetComponent<Monster>().ActivateEffects(RoundManager.instance.StateRound);
-                                            CancelSelection();
+                                        }
+                                        break;
+                                    case 7 :
+                                        if (hit.collider.GetComponent<PhotonView>().AmOwner)
+                                        {
+                                            Debug.Log("Ally");
+                                            targetUnitAlly = hit.collider.gameObject;
+                                            currentUnit.GetComponent<Monster>().ActivateEffects(RoundManager.instance.StateRound);
                                         }
                                         break;
                                 }
@@ -95,7 +110,8 @@ public class EffectManager : MonoBehaviour
 
     public void CancelSelection()
     {
-        targetUnit = null;
+        targetUnitAlly = null;
+        targetUnitEnnemi = null;
         currentUnit = null;
         RoundManager.instance.StateRound = 1;
     }

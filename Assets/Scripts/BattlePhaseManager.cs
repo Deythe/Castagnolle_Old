@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using UnityEngine;
 
@@ -21,10 +21,27 @@ public class BattlePhaseManager : MonoBehaviour
 
         private GameObject unitTarget = null;
         private GameObject unitFusion;
-        
+
+        private int result;
         private bool isAttacking;
         private int numberView;
         private float sizeListCentersEnnemi;
+        private int targetUnitAttack;
+
+        public int TargetUnitAttack
+        {
+            get => targetUnitAttack;
+        }
+
+        public int Result
+        {
+            get => result;
+        }
+        
+        public GameObject TargetUnit
+        {
+            get => unitTarget;
+        }
 
         public GameObject UnitSelected
         {
@@ -105,52 +122,66 @@ public class BattlePhaseManager : MonoBehaviour
             }
         }
 
-        public void ResultAttack(int result)
+        IEnumerator ResultAttack(int result)
         {
             switch (result)
             {
                 case 0:
-                    playerView.RPC("RPC_Atk", RpcTarget.Others, unitTarget.GetComponent<PhotonView>().ViewID);
-
-                    LifeManager.instance.TakeDamageEnnemi(1);
+                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.All, unitsSelected.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk,unitTarget.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk);
+                    
+                    LifeManager.instance.View.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, 1);
+                    LifeManager.instance.EnnemiLife--;
                     LifeManager.instance.TakeDamageHimself();
-
-                    PhotonNetwork.Destroy(unitsSelected);
 
                     break;
 
                 case >0:
                     deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
-
-                    playerView.RPC("RPC_Atk", RpcTarget.Others, unitTarget.GetComponent<PhotonView>().ViewID);
-
+                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer, unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk, unitTarget.GetComponent<PhotonView>().ViewID,unitsSelected.GetComponent<Monster>().Atk);
+                    
                     LifeManager.instance.TakeDamageEnnemi( PlacementManager.instance.CenterMoreFar(unitsSelected));
-
                     AddAllExtension(unitsSelected, true);
-
-                    unitsSelected.GetComponent<Monster>().ActivateEffects(1);
-
+                    
+                    if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisTurn(1))
+                    {
+                        unitsSelected.GetComponent<Monster>().ActivateEffects(1);
+                        yield return new WaitUntil(()=>unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect(0));
+                    }
+                    
                     break;
 
                 case <0:
                     LifeManager.instance.TakeDamageHimself();
+                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer, unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk, unitTarget.GetComponent<PhotonView>().ViewID,unitsSelected.GetComponent<Monster>().Atk);
 
                     deadUnitCenters = unitsSelected.GetComponent<Monster>()
                         .GetCenters();
 
-                    PhotonNetwork.Destroy(unitsSelected);
-
                     AddAllExtension(unitTarget, false);
-
+                    
                     break;
             }
-
+            
+            foreach (var cases in PlacementManager.instance.GetBoard())
+            {
+                if (cases.monster.GetComponent<Monster>().HaveAnEffectThisTurn(5))
+                {
+                    cases.monster.GetComponent<Monster>().ActivateEffects(5);
+                }
+            }
+            
+            RoundManager.instance.StateRound = 3;
+            isAttacking = false;
+            
+            ClearUnits();
         }
 
         IEnumerator CoroutineAttack()
         {
-            int result = unitsSelected.GetComponent<Monster>().Atk - unitTarget.GetComponent<Monster>().Atk;
+            targetUnitAttack = unitTarget.GetComponent<Monster>().Atk;
+            result = unitsSelected.GetComponent<Monster>().Atk - targetUnitAttack;
             unitsSelected.GetComponent<Monster>().Attacked = true;
+            
             if (unitsSelected.GetComponent<Monster>().Animator != null)
             {
                 unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
@@ -163,13 +194,9 @@ public class BattlePhaseManager : MonoBehaviour
                 unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", false);
             }
 
-            ResultAttack(result);
-            RoundManager.instance.StateRound = 3;
-            isAttacking = false;
-
-            ClearUnits();
+            StartCoroutine(ResultAttack(result));
         }
-
+        
         public void Attack()
         {
             StartCoroutine(CoroutineAttack());
@@ -225,7 +252,6 @@ public class BattlePhaseManager : MonoBehaviour
 
         public bool CheckInRange(GameObject v)
         {
-            
             bool unitCheck = false;
 
             foreach (var center in unitsSelected.GetComponent<Monster>().GetCenters())
@@ -268,6 +294,8 @@ public class BattlePhaseManager : MonoBehaviour
                 unitTarget.GetComponent<Monster>().NotChossen();
                 unitTarget = null;
             }
+
+            targetUnitAttack = 0;
         }
         
 
@@ -283,11 +311,14 @@ public class BattlePhaseManager : MonoBehaviour
         [PunRPC]
         private void RPC_Atk(int id)
         {
-            PhotonView ph = PhotonView.Find(id);
-            if (ph.IsMine)
-            {
-                PhotonNetwork.Destroy(ph.gameObject);
-            }
+            PhotonNetwork.Destroy(PhotonView.Find(id).gameObject);
+        }
+
+        [PunRPC]
+        private void RPC_TakeDamageUnit(int unit1, int damage, int unit2, int damage2)
+        {
+            PlacementManager.instance.SearchMobWithID(unit1).Atk -= Mathf.Abs(damage);
+            PlacementManager.instance.SearchMobWithID(unit2).Atk -= Mathf.Abs(damage2);
         }
 
     }

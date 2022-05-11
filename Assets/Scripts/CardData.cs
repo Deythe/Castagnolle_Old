@@ -106,7 +106,7 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 
     IEnumerator CoroutineShow()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         if (waiting)
         {
             waiting = false;

@@ -1,7 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 
 public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
@@ -14,23 +14,28 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     [SerializeField] private PhotonView view;
     
-    [SerializeField] private int owner;
-    private int atk;
+    [SerializeField] private int owner = 0;
+    [SerializeField] private int atk;
     [SerializeField] private int id;
 
     [SerializeField] private List<Transform> centers;
     [SerializeField] private List<MeshRenderer> mrs;
-
-
+    
+    [SerializeField] private TMP_Text hpView;
+    [SerializeField] private Canvas canvasRenderer;
+    
     [SerializeField] private bool attacked;
     [SerializeField] private int status; //0 = normal, 1 = Immobile
     [SerializeField] private Animator animator;
-    
+    [SerializeField] private bool isChampion;
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
-    private bool isChampion;
 
+    public int ID
+    {
+        get => id;
+    }
     public int Status
     {
         get => status;
@@ -45,6 +50,19 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         set
         {
             atk = value;
+            hpView.text = ""+atk;
+            CheckDeath();
+        }
+    }
+
+    public void CheckDeath()
+    {
+        if (atk <= 0)
+        {
+            if (view.AmOwner)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 
@@ -72,6 +90,13 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     }
 
 
+    private void Update()
+    {
+        if (owner!=0)
+        {
+            hpView.enabled = UiManager.instance.ViewTacticsOn;
+        }
+    }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
@@ -82,7 +107,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         
         if (instantiationData!=null)
         {
-            atk = (int) instantiationData[0];
+            Atk = (int) instantiationData[0];
             isChampion = (bool) instantiationData[1];
         }
 
@@ -99,7 +124,10 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 ms.material.color = ennemiMonsterColor.color;
             }
         }
-    
+
+        canvasRenderer.worldCamera = PlayerSetup.instance.GetCam();
+        canvasRenderer.GetComponentInParent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
+        
         PlacementManager.instance.AddMonsterBoard(gameObject);
         ActivateEffects(0);
     }
@@ -117,6 +145,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         return false;
     }
 
+    public bool ReturnUsedOfAnEffect(int i)
+    {
+        return effects[i].GetUsed();
+    }
+
     public void ActivateEffects(int i)
     {
         foreach (var effet in effects)
@@ -132,22 +165,20 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         foreach (var effet in effects)
         {
-            if (effet.GetPhaseActivation() == 3)
+            if (effet.GetPhaseActivation() == 3 || effet.GetPhaseActivation() == 1 && view.AmOwner)
             {
-                effet.SetUsed(true);
+                effet.SetUsed(false);
             }
         }
     }
 
     private void AddAllEffects()
     {
-        if (view.AmOwner)
+        foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
         {
-            foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
-            {
-                effects.Add(effet);
-            }
+            effects.Add(effet);
         }
+
     }
     
     private void OnDestroy()
@@ -159,16 +190,13 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         
         for (int i = extension.Count - 1; i >= 0; i--)
         {
-            PhotonNetwork.Destroy(extension[i]);
-        }
-
-        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
-        {
-            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().id == id)
+            if (view.AmOwner)
             {
-                PlacementManager.instance.GetBoard().Remove(PlacementManager.instance.GetBoard()[i]);
+                PhotonNetwork.Destroy(extension[i]);
             }
         }
+        
+        PlacementManager.instance.RemoveMonsterBoard(id);
     }
     public void BeChoosen()
     {

@@ -92,9 +92,10 @@ public class DeckManager : MonoBehaviour
                 }
             }
 
-            if (AllCheckValide(ressources))
+            if (AllCheckValide(ressources) && !(PlacementManager.instance.HaveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().IsChampion))
             {
-                CheckCardAlreadyPossible(cardDeck[i]);
+                //CheckCardAlreadyPossible(cardDeck[i]);
+                monsterPossible.Add(cardDeck[i]);
             }
         }
     }

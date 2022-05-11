@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_Text searching;
     [SerializeField] private GameObject notQueueMenu;
     [SerializeField] private GameObject queueMenu;
+    [SerializeField] private GameObject buttonDeck;
     
     private bool find;
     private Hashtable hash = new Hashtable();
@@ -28,7 +29,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
@@ -41,8 +42,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     void EnableDisableInQueue()
     {
         searching.enabled = find;
-        queueMenu.SetActive(find);
         notQueueMenu.SetActive(!find);
+        buttonDeck.SetActive(!find);
     }
 
     public void QuitQueue()
@@ -70,7 +71,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedLobby();
         Debug.Log("On Joined Lobby");
-        
+        Debug.Log(PhotonNetwork.CountOfRooms);
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -82,7 +83,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         room.IsOpen = true;
         room.MaxPlayers = 2;
         room.IsVisible = true;
-        PhotonNetwork.CreateRoom(PhotonNetwork.AuthValues.UserId, room, null);
+        PhotonNetwork.CreateRoom(null, room, null);
     }
 
     public override void OnJoinedRoom()
@@ -94,9 +95,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             hash["PlayerNumber"] = 1;
         }
-        else
+        else if(PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
             hash["PlayerNumber"] = 2;
+        }
+        else
+        {
+            PhotonNetwork.Disconnect();
         }
         
         hash["RoundNumber"] = 1;

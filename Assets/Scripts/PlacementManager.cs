@@ -15,13 +15,18 @@ public class PlacementManager : MonoBehaviour
     private RaycastHit hit;
     private CardData currentCardSelection;
     [SerializeField] private List<Case> board;
-
+    [SerializeField] private bool haveAChampionOnBoard;
+    
     [Serializable]
     public class Case{
         public GameObject monster;
         public List<Vector2> emplacement;
     }
 
+    public bool HaveAChampionOnBoard
+    {
+        get => haveAChampionOnBoard;
+    }
     public CardData CurrentCardSelection
     {
         get => currentCardSelection;
@@ -68,7 +73,11 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                card.monster.GetComponent<Monster>().Attacked = false;
+                if (card.monster.GetComponent<Monster>().Status.Equals(0))
+                {
+                    card.monster.GetComponent<Monster>().Attacked = false;
+                }
+                
                 card.monster.GetComponent<Monster>().ReActivadeAllEffect();
             }
         }
@@ -104,19 +113,20 @@ public class PlacementManager : MonoBehaviour
                                 
                                 currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
                                     PlayerSetup.instance.transform.rotation, 0, data);
+
+                                DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+                                currentCardSelection = null;
+                                Destroy(currentUnit);
+                                
+                                goPrefabMonster = null;
+                                currentUnit = null;
+                                isPlacing = false;
                                 
                                 if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
                                 {
                                     RoundManager.instance.StateRound = 1;
                                 }
-                                
-                                DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
-                                currentCardSelection = null;
                                 currentUnitPhoton = null;
-                                Destroy(currentUnit);
-                                goPrefabMonster = null;
-                                currentUnit = null;
-                                isPlacing = false;
                             }
                             else
                             {
@@ -129,6 +139,19 @@ public class PlacementManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public Monster SearchMobWithID(int unitID)
+    {
+        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        {
+            if (GetBoard()[i].monster.GetComponent<Monster>().ID.Equals(unitID))
+            {
+                return GetBoard()[i].monster.GetComponent<Monster>();
+            }
+        }
+
+        return null;
     }
 
     public void CancelSelection()
@@ -235,6 +258,27 @@ public class PlacementManager : MonoBehaviour
             data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
         }
         board.Add(data);
+        if (obj.GetComponent<Monster>().IsChampion && obj.GetComponent<PhotonView>().AmOwner)
+        {
+            Debug.Log("HAve a Champion");
+            haveAChampionOnBoard = true;
+        }
+    }
+
+    public void RemoveMonsterBoard(int id)
+    {
+        for (int i = 0; i < GetBoard().Count; i++)
+        {
+            if (GetBoard()[i].monster.GetComponent<Monster>().ID == id)
+            {
+                if (GetBoard()[i].monster.GetComponent<Monster>().IsChampion && GetBoard()[i].monster.GetComponent<PhotonView>().AmOwner)
+                {
+                    Debug.Log("Not Have A Champion");
+                    haveAChampionOnBoard = false;
+                }
+                GetBoard().Remove(GetBoard()[i]);
+            }
+        }
     }
     
     public void AddExtentionMonsterBoard(GameObject exten, GameObject mother)
@@ -251,12 +295,28 @@ public class PlacementManager : MonoBehaviour
     
     public float CenterMoreFar(GameObject obj)
     {
-        float zcenter=-10;
-        foreach (var center in obj.GetComponent<Monster>().GetCenters())
+        float zcenter;
+        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
         {
-            if (center.position.z > zcenter)
+            zcenter = -10;
+            foreach (var center in obj.GetComponent<Monster>().GetCenters())
             {
-                zcenter = center.position.z;
+                if (center.position.z > zcenter)
+                {
+                    zcenter = center.position.z;
+                }
+
+            }
+        }
+        else
+        {
+            zcenter = 10;
+            foreach (var center in obj.GetComponent<Monster>().GetCenters())
+            {
+                if (center.position.z < zcenter)
+                {
+                    zcenter = center.position.z;
+                }
             }
         }
 

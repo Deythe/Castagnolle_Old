@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     [SerializeField] private GameObject playerPref;
     [SerializeField] private PhotonView playerView;
-   
+    
     private int roundState; 
     private GameObject playerInstance;
     
@@ -28,8 +29,9 @@ public class RoundManager : MonoBehaviourPunCallbacks
         instance = this;
     }
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return new WaitForSeconds(1);
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 30;
         roundState = 0;
@@ -56,15 +58,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         roundState = 0;
         PlacementManager.instance.ReInitMonster();
-
-        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
-        {
-            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().Status.Equals(0) && PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().photonView.AmOwner)
-            {
-                PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().Attacked = false;
-            }
-        }
-
         BattlePhaseManager.instance.ClearUnits();
 
         playerView.RPC("RPC_EndTurn", RpcTarget.All);
@@ -85,9 +78,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             case 5:
                 EffectManager.instance.Action();
                 break;
-            case 6:
-                EffectManager.instance.Action();
-                break;
+            
         }
     }
 
@@ -99,11 +90,11 @@ public class RoundManager : MonoBehaviourPunCallbacks
                 BattlePhaseManager.instance.CancelSelection();
                 break;
             case 5:
-                EffectManager.instance.CancelSelection();
-                break;
             case 6:
+            case 7:
                 EffectManager.instance.CancelSelection();
                 break;
+          
         }
     }
     

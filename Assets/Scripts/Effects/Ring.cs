@@ -6,31 +6,47 @@ using UnityEngine;
 
 public class Ring : MonoBehaviour,IEffects
 {
-    private int numberMonster;
-    private int usingPhase = 1;
+    [SerializeField] private PhotonView view;
+    private int usingPhase = 5;
     private bool used;
-    private int kill = 0;
 
-    private void Start()
-    {
-        numberMonster = PhotonNetwork.ViewCount;
-    }
-
-    private void Update()
-    {
-        if (numberMonster < PhotonNetwork.ViewCount)
-        {
-            OnCast(0);
-        }
-    }
 
     public void OnCast(int phase)
     {
-        if ( BattlePhaseManager.instance.UnitSelected!=null)
+        if (usingPhase==phase)
         {
-            BattlePhaseManager.instance.UnitSelected.GetComponent<Monster>().Atk++;
+            switch (BattlePhaseManager.instance.Result)
+            {
+                case >0:
+                    if (view.AmOwner)
+                    {
+                        Debug.Log("RingAllié");
+                        view.RPC("RPC_Ring", RpcTarget.AllViaServer,
+                            BattlePhaseManager.instance.UnitSelected.GetComponent<PhotonView>().ViewID);
+                    }
+
+                    break;
+
+                case <0:
+                    if (!view.AmOwner)
+                    {
+                        Debug.Log("RingEnnemy");
+                        view.RPC("RPC_Ring", RpcTarget.AllViaServer,
+                            BattlePhaseManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
+                    }
+
+                    break;
+            }
         }
     }
+    
+    [PunRPC]
+    private void RPC_Ring(int unitID)
+    {
+        Debug.Log("Rpc Ring");
+        PlacementManager.instance.SearchMobWithID(unitID).Atk++;
+    }
+
 
     public int GetPhaseActivation()
     {

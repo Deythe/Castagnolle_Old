@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Evolve : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
+    [SerializeField] private GameObject blankCard;
     
     [SerializeField] private Sprite evolve1;
     [SerializeField] private Sprite evolve2;
@@ -22,7 +23,6 @@ public class Evolve : MonoBehaviour, IEffects
     private void Start()
     {
         cardListEvolve = UiManager.instance.CarListChose;
-        unitPivot = new GameObject();
     }
 
 
@@ -33,22 +33,21 @@ public class Evolve : MonoBehaviour, IEffects
             if (usingPhase == phase)
             {
                 kill++;
+                Debug.Log("Kill++");
                 if (kill == 3)
                 {
                     if (cardListEvolve.childCount==0)
                     {
+                        Debug.Log("Effet Rey Mysteriorc");
                         EffectManager.instance.CurrentUnit = gameObject;
+                        
+                        unitPivot = Instantiate(blankCard, cardListEvolve);
+                        unitPivot.GetComponent<Image>().sprite = evolve1;
+                        unitPivot.GetComponent<CardEvolve>().unit = unit1;
 
-                        unitPivot.AddComponent<Image>().sprite = evolve1;
-                        unitPivot.AddComponent<CardEvolve>().unit = unit1;
-                        unitPivot = Instantiate(unitPivot, cardListEvolve);
-                        unitPivot.GetComponent<RectTransform>().sizeDelta = new Vector3(300, 400);
-
-                        unitPivot = new GameObject();
-                        unitPivot.AddComponent<Image>().sprite = evolve2;
-                        unitPivot.AddComponent<CardEvolve>().unit = unit2;
-                        unitPivot = Instantiate(unitPivot, cardListEvolve);
-                        unitPivot.GetComponent<RectTransform>().sizeDelta = new Vector3(300, 400);
+                        unitPivot = Instantiate(blankCard, cardListEvolve);
+                        unitPivot.GetComponent<Image>().sprite = evolve2;
+                        unitPivot.GetComponent<CardEvolve>().unit = unit2;
 
                         unitPivot = null;
                     }
@@ -60,9 +59,14 @@ public class Evolve : MonoBehaviour, IEffects
                         }
                     }
                     
-                    RoundManager.instance.StateRound = 7;
+                    RoundManager.instance.StateRound = 8;
                 }
-            }else if (phase == 7)
+                else
+                {
+                    used = true;    
+                }
+                
+            }else if (phase == 8)
             {
                 for (int i = cardListEvolve.childCount-1; i >= 0; i--)
                 {
@@ -70,10 +74,9 @@ public class Evolve : MonoBehaviour, IEffects
                 }
                 
                 PhotonNetwork.Instantiate(EffectManager.instance.TargetUnit.name, transform.position,
-                    PlayerSetup.instance.transform.rotation, 0);
+                    transform.rotation, 0);
                 
                 EffectManager.instance.CancelSelection();
-                
                 used = true;
                 PhotonNetwork.Destroy(gameObject);
             }

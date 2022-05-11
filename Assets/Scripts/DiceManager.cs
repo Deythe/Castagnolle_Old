@@ -18,8 +18,18 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private int[] diceGauge = new int[3];
     
     [SerializeField] private Vector3 spawner;
+    private bool checkDeleteGauge;
     private int random;
-    
+
+    public PhotonView View
+    {
+        get => view;
+    }
+
+    public GameObject[] DiceGaugeObjet
+    {
+        get => diceGaugeObjet;
+    }
     public int[] Gauge
     {
         get => diceGauge;
@@ -104,8 +114,7 @@ public class DiceManager : MonoBehaviour
                     byte[] bytes = tex.GetRawTextureData();
                     
                     view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
-                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceTarget.GetComponent<PhotonView>().ViewID, false, null);
-                    
+                    diceTarget.GetComponent<MeshRenderer>().enabled = false;
                     PutInGauge(i, diceTarget);
                     return true;
                 }
@@ -136,6 +145,16 @@ public class DiceManager : MonoBehaviour
         {
             DeleteResource(resource[i]);
         }
+
+        if (checkDeleteGauge)
+        {
+            for (int i = 0; i < diceGauge.Length; i++)
+            {
+                diceGauge[i] = 0;
+                view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, null);
+            }
+            checkDeleteGauge = false;
+        }
         
         DeckManager.instance.CheckUnitWithRessources();
         UiManager.instance.UpdateListCard();
@@ -158,6 +177,7 @@ public class DiceManager : MonoBehaviour
             {
                 if (i.Equals(diceGauge[j-diceGauge.Length]))
                 {
+                    checkDeleteGauge = true;
                     diceGauge[j-diceGauge.Length] = 0;
                     view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, null);
                     return;
@@ -170,7 +190,7 @@ public class DiceManager : MonoBehaviour
     {
         return diceDeck[random];
     }
-    
+
 
     [PunRPC]
     private void RPC_SynchGaugeDice(int i, bool b, byte[] array)

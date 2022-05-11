@@ -21,6 +21,7 @@ public class PlayerSetup : MonoBehaviour
         startCamPos = cam.transform.position;
         startCamRot = cam.transform.rotation;
         UiManager.instance.CanvasPublic.worldCamera = cam;
+        UiManager.instance.Waiting.SetActive(false);
     }
 
     public Camera GetCam()
@@ -42,7 +43,7 @@ public class PlayerSetup : MonoBehaviour
     {
         if (b)
         {
-            cam.transform.DOMove(new Vector3(0, 17, 1.5f * Math.Sign(startCamPos.z)), 0.3f);
+            cam.transform.DOMove(new Vector3(0, 17, 2f * Math.Sign(startCamPos.z)), 0.3f);
             cam.transform.DORotateQuaternion(Quaternion.Euler(90, startCamRot.eulerAngles.y, startCamRot.eulerAngles.z), 0.3f);
         }
         else

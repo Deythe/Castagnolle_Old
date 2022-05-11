@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 21300000, guid: 3cf9e9a88833c5746be1a3f61f3b47cf, type: 3}
-  bigCard: {fileID: 21300000, guid: 3cf9e9a88833c5746be1a3f61f3b47cf, type: 3}
+  bigCard: {fileID: 21300000, guid: 877472df91a4cfb479e68a6953cae69d, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: 084b635bbe5ad874f8d268c6d6cd026b, type: 3}
   atk: 4
   resources: 0100000001000000

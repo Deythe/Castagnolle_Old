@@ -4,7 +4,7 @@ using UnityEngine;
 public class Stun : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    private GameObject targetUnit;
+    [SerializeField] private GameObject targetUnit;
     private int usingPhase = 0;
     private bool used;
 
@@ -16,32 +16,23 @@ public class Stun : MonoBehaviour, IEffects
             if (phase == usingPhase)
             {
                 RoundManager.instance.StateRound = 6;
-            }
-            else if (phase == 2)
-            {
-                if (targetUnit != null)
-                {
-                    targetUnit.GetComponent<Monster>().Status = 0;
-                    targetUnit.GetComponent<Monster>().Attacked = false;
-                }
+                EffectManager.instance.CurrentUnit = gameObject;
             }
             else if (phase == 6)
             {
-                Debug.Log("Oui2");
-                targetUnit = EffectManager.instance.TargetUnit;
-                view.RPC("RPC_Action", RpcTarget.All, targetUnit.GetComponent<PhotonView>().ViewID);
+                view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
                 used = true;
+                EffectManager.instance.CancelSelection();
             }
         }
-
     }
     
     [PunRPC]
     private void RPC_Action(int idTarget)
     {
-        GameObject unit = PhotonView.Find(idTarget).gameObject; 
-        unit.GetComponent<Monster>().Status = 1;
-        unit.GetComponent<Monster>().Attacked = true;
+        targetUnit = PlacementManager.instance.SearchMobWithID(idTarget).gameObject;
+        targetUnit.GetComponent<Monster>().Status = 1;
+        targetUnit.GetComponent<Monster>().Attacked = true;
     }
 
     public int GetPhaseActivation()
