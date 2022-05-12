@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_wave
+  m_Name: mat_wave 1
   m_Shader: {fileID: -6465566751694194690, guid: c14a31b87cc5e9647a9fa7cdf8632231, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -124,7 +124,7 @@ Material:
     - _mask_1: 0.5
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 5.0991964, g: 3.9779072, b: 0.9077104, a: 1}
+    - _Color: {r: 2.6792455, g: 0.50880605, b: 0.01402749, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
