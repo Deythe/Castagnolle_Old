@@ -14,6 +14,7 @@ public class PlacementManager : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
     private CardData currentCardSelection;
+    private bool specialInvocation;
     [SerializeField] private List<Case> board;
     [SerializeField] private bool haveAChampionOnBoard;
     
@@ -21,6 +22,15 @@ public class PlacementManager : MonoBehaviour
     public class Case{
         public GameObject monster;
         public List<Vector2> emplacement;
+    }
+
+    public bool SpecialInvocation
+    {
+        get => specialInvocation;
+        set
+        {
+            specialInvocation = value;
+        }
     }
 
     public bool HaveAChampionOnBoard
@@ -114,7 +124,12 @@ public class PlacementManager : MonoBehaviour
                                 currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
                                     PlayerSetup.instance.transform.rotation, 0, data);
 
-                                DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+                                if (!specialInvocation)
+                                {
+                                    DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+                                }
+                                
+                                specialInvocation = false;
                                 currentCardSelection = null;
                                 Destroy(currentUnit);
                                 
@@ -267,16 +282,16 @@ public class PlacementManager : MonoBehaviour
 
     public void RemoveMonsterBoard(int id)
     {
-        for (int i = 0; i < GetBoard().Count; i++)
+        for (int i = 0; i < board.Count; i++)
         {
-            if (GetBoard()[i].monster.GetComponent<Monster>().ID == id)
+            if (board[i].monster.GetComponent<Monster>().ID == id)
             {
-                if (GetBoard()[i].monster.GetComponent<Monster>().IsChampion && GetBoard()[i].monster.GetComponent<PhotonView>().AmOwner)
+                if (board[i].monster.GetComponent<Monster>().IsChampion && board[i].monster.GetComponent<PhotonView>().AmOwner)
                 {
                     Debug.Log("Not Have A Champion");
                     haveAChampionOnBoard = false;
                 }
-                GetBoard().Remove(GetBoard()[i]);
+                board.Remove(GetBoard()[i]);
             }
         }
     }

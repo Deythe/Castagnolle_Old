@@ -145,7 +145,7 @@ public class BattlePhaseManager : MonoBehaviour
                     if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisTurn(1))
                     {
                         unitsSelected.GetComponent<Monster>().ActivateEffects(1);
-                        yield return new WaitUntil(()=>unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect(0));
+                        yield return new WaitUntil(()=>unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect(1));
                     }
                     
                     break;

@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class DestroyToInvoke : MonoBehaviour, IEffects
 {
+    [SerializeField] private GameObject prefabs;
     [SerializeField] private PhotonView view;
-    private int usingPhase = 3;
+    [SerializeField] private int usingPhase = 3;
     private bool used;
 
 
@@ -14,16 +15,29 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (phase == 5)
+            if (phase == 3)
             {
                 RoundManager.instance.StateRound = 7;
                 EffectManager.instance.CurrentUnit = gameObject;
             }
             else if (phase == 7)
             {
-                Debug.Log("Prout");
-                used = true;
-                EffectManager.instance.CancelSelection();
+                if (!EffectManager.instance.AllieUnit.Equals(gameObject))
+                {
+                    PhotonNetwork.Destroy(EffectManager.instance.AllieUnit);
+                    PlacementManager.instance.SpecialInvocation = true;
+                    PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
+                    PlacementManager.instance.CurrentCardSelection = prefabs.GetComponent<CardData>();
+                    UiManager.instance.ShowingOffBigCard();
+                    PlacementManager.instance.InstantiateCurrent();
+                    EffectManager.instance.CancelSelection(2);
+                    used = true;
+                }
+                else
+                {
+                    RoundManager.instance.StateRound = 7;
+                    EffectManager.instance.CurrentUnit = gameObject;
+                }
             }
         }
     }

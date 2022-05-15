@@ -5,7 +5,7 @@ public class Stun : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject targetUnit;
-    private int usingPhase = 0;
+    [SerializeField] private int usingPhase = 0;
     private bool used;
 
 
@@ -22,8 +22,14 @@ public class Stun : MonoBehaviour, IEffects
             {
                 view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
                 used = true;
-                EffectManager.instance.CancelSelection();
+                EffectManager.instance.CancelSelection(1);
             }
+        }
+
+        if (phase == 2)
+        {
+            targetUnit.GetComponent<Monster>().Status = 0;
+            targetUnit.GetComponent<Monster>().Attacked = false;
         }
     }
     

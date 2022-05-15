@@ -11,7 +11,7 @@ public class NeedLessRessources : MonoBehaviour, IEffects
     public static int degatMore=0;
     
     [SerializeField] private PhotonView view;
-    private bool used;
+    [SerializeField] private bool used;
     private int numberUnitCurrent;
     private int usingPhase = 0;
     private int[] pivotRessourceList;
@@ -27,7 +27,6 @@ public class NeedLessRessources : MonoBehaviour, IEffects
 
                 if (originalCard == null)
                 {
-                    //Debug.Log("DictionnaireCreated");
                     originalCard = new Dictionary<GameObject, int[]>();
 
                     foreach (var card in DeckManager.instance.CardDeck)
@@ -47,7 +46,6 @@ public class NeedLessRessources : MonoBehaviour, IEffects
 
                 if (unitOnBoard == null)
                 {
-                    //Debug.Log("BoardCreated");
                     unitOnBoard = new List<GameObject>();
                 }
                 
@@ -71,7 +69,7 @@ public class NeedLessRessources : MonoBehaviour, IEffects
                     }
                 }
                 
-                EffectManager.instance.CancelSelection();
+                EffectManager.instance.CancelSelection(1);
             }
         }
     }

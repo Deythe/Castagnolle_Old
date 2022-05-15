@@ -102,6 +102,7 @@ public class LifeManager : MonoBehaviour
      {
           if (ennemiLife <= 0)
           {
+               PhotonNetwork.LeaveRoom();
                PhotonNetwork.Disconnect();
           }
      }
@@ -110,6 +111,7 @@ public class LifeManager : MonoBehaviour
      {
           if (life <= 0)
           {
+               PhotonNetwork.LeaveRoom();
                PhotonNetwork.Disconnect();
           }
      }

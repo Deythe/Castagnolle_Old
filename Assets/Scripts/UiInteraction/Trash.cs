@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
     [SerializeField] private Image image;
-    
+
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
         if (Input.touchCount > 0)
@@ -28,11 +29,9 @@ public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Ended)
             {
-                switch (RoundManager.instance.StateRound)
+                if(RoundManager.instance.StateRound==2)
                 {
-                    case 2:
-                        PlacementManager.instance.CancelSelection();
-                        break;
+                    PlacementManager.instance.CancelSelection();
                 }
             }
         }

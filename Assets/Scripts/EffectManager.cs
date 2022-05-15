@@ -11,6 +11,7 @@ public class EffectManager : MonoBehaviour
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject targetUnitEnnemi;
     private Ray ray;
+    private int numberIdAll = 0;
     private RaycastHit hit;
 
     public GameObject AllieUnit
@@ -47,6 +48,28 @@ public class EffectManager : MonoBehaviour
     void Update()
     {
         SelectTarget();
+        //ActivateAllEffectWhenUnitDie();
+    }
+
+    public void ActivateAllEffectWhenUnitDie()
+    {
+        if (numberIdAll < PlacementManager.instance.GetBoard().Count)
+        {
+            Debug.Log("Unit invoqué");
+            numberIdAll = PlacementManager.instance.GetBoard().Count;
+        }else if (numberIdAll > PlacementManager.instance.GetBoard().Count)
+        {
+            Debug.Log("Unit morte");
+            numberIdAll = PlacementManager.instance.GetBoard().Count;
+            
+            foreach (var cases in PlacementManager.instance.GetBoard())
+            {
+                if (cases.monster.GetComponent<Monster>().HaveAnEffectThisTurn(5))
+                {
+                    cases.monster.GetComponent<Monster>().ActivateEffects(5);
+                }
+            }    
+        }
     }
 
     void SelectTarget()
@@ -97,6 +120,7 @@ public class EffectManager : MonoBehaviour
                                 }
                             }
                         }
+                        
                         break;
                 }
             }
@@ -105,14 +129,14 @@ public class EffectManager : MonoBehaviour
     
     public void Action()
     {
-        currentUnit.GetComponent<Monster>().ActivateEffects(5);
+        currentUnit.GetComponent<Monster>().ActivateEffects(3);
     }
 
-    public void CancelSelection()
+    public void CancelSelection(int state)
     {
         targetUnitAlly = null;
         targetUnitEnnemi = null;
         currentUnit = null;
-        RoundManager.instance.StateRound = 1;
+        RoundManager.instance.StateRound = state;
     }
 }

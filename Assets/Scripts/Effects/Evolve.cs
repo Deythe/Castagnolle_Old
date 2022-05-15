@@ -16,7 +16,7 @@ public class Evolve : MonoBehaviour, IEffects
     
     private RectTransform cardListEvolve;
     private GameObject unitPivot;
-    private int usingPhase = 1;
+    [SerializeField] private int usingPhase = 1;
     private bool used;
     private int kill = 0;
 
@@ -76,7 +76,7 @@ public class Evolve : MonoBehaviour, IEffects
                 PhotonNetwork.Instantiate(EffectManager.instance.TargetUnit.name, transform.position,
                     transform.rotation, 0);
                 
-                EffectManager.instance.CancelSelection();
+                EffectManager.instance.CancelSelection(1);
                 used = true;
                 PhotonNetwork.Destroy(gameObject);
             }

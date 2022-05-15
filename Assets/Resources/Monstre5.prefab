@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 5173444060119363847}
   - component: {fileID: -4557785253544110790}
   - component: {fileID: 3531432135879127181}
-  - component: {fileID: -2961409230490207930}
+  - component: {fileID: 6358063611513024798}
+  - component: {fileID: 4276356564452842131}
   m_Layer: 0
   m_Name: Monstre5
   m_TagString: Monster
@@ -116,6 +117,7 @@ MonoBehaviour:
   attacked: 0
   status: 0
   animator: {fileID: 0}
+  isChampion: 0
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -129,7 +131,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 0.1, z: 2}
   m_Center: {x: 0.5, y: 0, z: 0.5}
---- !u!114 &-2961409230490207930
+--- !u!114 &6358063611513024798
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,10 +140,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1764594795200175919}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca9bf616a3c5dd04c8f15ccce39f7076, type: 3}
+  m_Script: {fileID: 11500000, guid: b5590cd035fce8147a3b678797543702, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171}
+  bones: {fileID: 2800000, guid: 4b2c261f6031ba34590e282801434a5f, type: 3}
+  usingPhase: 1
+--- !u!114 &4276356564452842131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764594795200175919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e6eb4b317302f54f9850a6e7329b90d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 5347874786083823171}
+  targetUnit: {fileID: 0}
+  usingPhase: 3
 --- !u!1 &8309692451771984220
 GameObject:
   m_ObjectHideFlags: 0

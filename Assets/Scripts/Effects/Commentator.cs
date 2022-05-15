@@ -6,7 +6,7 @@ using UnityEngine;
 public class Commentator : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    private int usingPhase = 0;
+    [SerializeField] private int usingPhase = 0;
     private bool used;
     
     public void OnCast(int phase)
@@ -23,7 +23,7 @@ public class Commentator : MonoBehaviour, IEffects
                     }
                 }
                 
-                EffectManager.instance.CancelSelection();
+                EffectManager.instance.CancelSelection(1);
             }
         }
     }

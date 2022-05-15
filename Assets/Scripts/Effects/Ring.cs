@@ -7,7 +7,7 @@ using UnityEngine;
 public class Ring : MonoBehaviour,IEffects
 {
     [SerializeField] private PhotonView view;
-    private int usingPhase = 5;
+    [SerializeField] private int usingPhase = 5;
     private bool used;
 
 

@@ -78,7 +78,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
             case 5:
                 EffectManager.instance.Action();
                 break;
-            
         }
     }
 
@@ -92,7 +91,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             case 5:
             case 6:
             case 7:
-                EffectManager.instance.CancelSelection();
+                EffectManager.instance.CancelSelection(1);
                 break;
           
         }
@@ -119,6 +118,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         base.OnPlayerLeftRoom(otherPlayer);
+        PhotonNetwork.LeaveRoom();
         PhotonNetwork.Disconnect();
     }
 

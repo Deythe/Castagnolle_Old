@@ -4,7 +4,7 @@ using UnityEngine;
 public class Berserk : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    private int usingPhase = 1;
+    [SerializeField] private int usingPhase = 1;
     private bool used;
     
     public void OnCast(int phase)

@@ -5,7 +5,7 @@ public class BonesInGauge : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private Texture2D bones;
-    private int usingPhase = 2;
+    [SerializeField] private int usingPhase = 2;
     private bool used;
     
     public void OnCast(int phase)
@@ -16,14 +16,19 @@ public class BonesInGauge : MonoBehaviour, IEffects
             {
                 for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                 {
-                    if (DiceManager.instance.Gauge[i].Equals(0))
+                    if (DiceManager.instance != null)
                     {
-                        Debug.Log(bones.format);
-                        byte[] bytes = bones.GetRawTextureData();
-                        DiceManager.instance.Gauge[i] = 5;
-                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All, DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
-                        used = true;
-                        return;
+                        if (DiceManager.instance.Gauge[i].Equals(0))
+                        {
+                            byte[] bytes = bones.GetRawTextureData();
+                            DiceManager.instance.Gauge[i] = 5;
+                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
+                            used = true;
+                            DeckManager.instance.CheckUnitWithRessources();
+                            UiManager.instance.UpdateListCard();
+                            return;
+                        }
                     }
                 }
             }
