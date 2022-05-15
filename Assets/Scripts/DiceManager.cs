@@ -19,6 +19,33 @@ public class DiceManager : MonoBehaviour
     
     [SerializeField] private Vector3 spawner;
     private int random;
+
+    public PhotonView View
+    {
+        get => view;
+    }
+
+    public GameObject[] DiceGaugeObjet
+    {
+        get => diceGaugeObjet;
+    }
+    public int[] Gauge
+    {
+        get => diceGauge;
+        set
+        {
+            diceGauge = value;
+        }
+    }
+    
+    public int[] DiceChoosen
+    {
+        get => diceChoosen;
+        set
+        {
+            diceChoosen = value;
+        }
+    }
     
     private void Awake()
     {
@@ -55,7 +82,7 @@ public class DiceManager : MonoBehaviour
         }
         
         DeckManager.instance.CheckUnitWithRessources();
-        RoundManager.instance.SetStateRound(1);
+        RoundManager.instance.StateRound = 1;
         UiManager.instance.UpdateListCard();
     }
 
@@ -86,8 +113,7 @@ public class DiceManager : MonoBehaviour
                     byte[] bytes = tex.GetRawTextureData();
                     
                     view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
-                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceTarget.GetComponent<PhotonView>().ViewID, false, null);
-                    
+                    diceTarget.GetComponent<MeshRenderer>().enabled = false;
                     PutInGauge(i, diceTarget);
                     return true;
                 }
@@ -118,7 +144,7 @@ public class DiceManager : MonoBehaviour
         {
             DeleteResource(resource[i]);
         }
-        
+
         DeckManager.instance.CheckUnitWithRessources();
         UiManager.instance.UpdateListCard();
     }
@@ -153,15 +179,6 @@ public class DiceManager : MonoBehaviour
         return diceDeck[random];
     }
 
-    public int[] GetDiceChoosen()
-    {
-        return diceChoosen;
-    }
-    
-    public int[] GetGauge()
-    {
-        return diceGauge;
-    }
 
     [PunRPC]
     private void RPC_SynchGaugeDice(int i, bool b, byte[] array)

@@ -8,14 +8,15 @@ public class Scroll : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (UiManager.instance.GetCard() != null)
+        if (UiManager.instance.Card != null)
         {
-            GetComponent<ScrollRect>().horizontal = true;
-            PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.GetCard().GetComponent<CardData>().GetStat().prefabs);
+            GetComponentInParent<ScrollRect>().horizontal = true;
+            PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
+            PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
             UiManager.instance.ShowingOffBigCard();
             PlacementManager.instance.InstantiateCurrent();
-            RoundManager.instance.SetStateRound(2);
-            UiManager.instance.SetCard(null);
+            RoundManager.instance.StateRound = 2;
+            UiManager.instance.Card = null;
         }
     }
 

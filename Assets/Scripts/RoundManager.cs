@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -9,17 +10,28 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     [SerializeField] private GameObject playerPref;
     [SerializeField] private PhotonView playerView;
-   
+    
     private int roundState; 
     private GameObject playerInstance;
+    
+    public int StateRound
+    {
+        get => roundState;
+        set
+        {
+            roundState = value;
+            UiManager.instance.ChangeRoundUI();
+        }
+    }
 
     private void Awake()
     {
         instance = this;
     }
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return new WaitForSeconds(1);
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 30;
         roundState = 0;
@@ -46,15 +58,27 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         roundState = 0;
         PlacementManager.instance.ReInitMonster();
-        
-        BattlePhaseManager.instance.AllMonsterAttacked(false);
         BattlePhaseManager.instance.ClearUnits();
+
         playerView.RPC("RPC_EndTurn", RpcTarget.All);
     }
 
     public void BattlePhase()
     {
         roundState = 3;
+    }
+    
+    public void Action()
+    {
+        switch (roundState)
+        {
+            case 4:
+                BattlePhaseManager.instance.Attack();
+                break;
+            case 5:
+                EffectManager.instance.Action();
+                break;
+        }
     }
 
     public void CancelAction()
@@ -64,6 +88,12 @@ public class RoundManager : MonoBehaviourPunCallbacks
             case 4:
                 BattlePhaseManager.instance.CancelSelection();
                 break;
+            case 5:
+            case 6:
+            case 7:
+                EffectManager.instance.CancelSelection(1);
+                break;
+          
         }
     }
     
@@ -88,22 +118,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         base.OnPlayerLeftRoom(otherPlayer);
+        PhotonNetwork.LeaveRoom();
         PhotonNetwork.Disconnect();
     }
 
     public override void OnDisconnected (DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        SceneManager.LoadScene(0);
-    }
-
-    public void SetStateRound(int i)
-    {
-        roundState = i;
-    }
-
-    public int GetStateRound()
-    {
-        return roundState;
+        SceneManager.LoadScene(1);
     }
 }

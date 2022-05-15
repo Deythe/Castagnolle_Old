@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 
 public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
@@ -13,58 +14,157 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     [SerializeField] private PhotonView view;
     
-    [SerializeField] private int owner;
+    [SerializeField] private int owner = 0;
     [SerializeField] private int atk;
     [SerializeField] private int id;
 
     [SerializeField] private List<Transform> centers;
     [SerializeField] private List<MeshRenderer> mrs;
     
-    [SerializeField] private CardData card;
-
-    [SerializeField] private bool attacked; 
+    [SerializeField] private TMP_Text hpView;
+    [SerializeField] private Canvas canvasRenderer;
     
-    private MonsterCardScriptable stats;
-
+    [SerializeField] private bool attacked;
+    [SerializeField] private int status; //0 = normal, 1 = Immobile
+    [SerializeField] private Animator animator;
+    [SerializeField] private bool isChampion;
     private List<IEffects> effects = new List<IEffects>();
-    private List<GameObject> extension;
+    private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
 
-    private void Awake()
+    public int ID
     {
-        stats = card.GetStat();
+        get => id;
+    }
+    public int Status
+    {
+        get => status;
+        set
+        {
+            status = value;
+        }
+    }
+    public int Atk
+    {
+        get => atk;
+        set
+        {
+            atk = value;
+            hpView.text = ""+atk;
+            CheckDeath();
+        }
+    }
+
+    public void CheckDeath()
+    {
+        if (atk <= 0)
+        {
+            if (view.AmOwner)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+        }
+    }
+
+    public Animator Animator
+    {
+        get => animator;
+    }
+    
+    public bool IsChampion
+    {
+        get => isChampion;
+        set
+        {
+            isChampion = value;
+        }
+    }
+    
+    public bool Attacked
+    {
+        get => attacked;
+        set
+        {
+            attacked = value;
+        }
+    }
+
+
+    private void Update()
+    {
+        if (owner!=0)
+        {
+            hpView.enabled = UiManager.instance.ViewTacticsOn;
+        }
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        object[] instantiationData = info.photonView.InstantiationData;
+        
         AddAllEffects();
         owner = view.OwnerActorNr;
-        atk = stats.atk;
+        
+        if (instantiationData!=null)
+        {
+            Atk = (int) instantiationData[0];
+            isChampion = (bool) instantiationData[1];
+        }
+
         id = view.ViewID;
-        extension = new List<GameObject>();
+
         foreach (var ms in mrs)
         {   
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColor.mainTexture;
+                ms.material.color = ownerMonsterColor.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColor.mainTexture;
+                ms.material.color = ennemiMonsterColor.color;
             }
         }
-    
+
+        canvasRenderer.worldCamera = PlayerSetup.instance.GetCam();
+        canvasRenderer.GetComponentInParent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
+        
         PlacementManager.instance.AddMonsterBoard(gameObject);
+        ActivateEffects(0);
+    }
+
+    public bool HaveAnEffectThisTurn(int i)
+    {
+        foreach (var effet in effects)
+        {
+            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool ReturnUsedOfAnEffect(int i)
+    {
+        foreach (var effet in effects)
+        {
+            if (effet.GetPhaseActivation().Equals(i))
+            {
+                return effet.GetUsed();
+            }
+        }
+
+        return false;
     }
 
     public void ActivateEffects(int i)
     {
         foreach (var effet in effects)
         {
-            if (effet.GetPhaseActivation().Equals(i) && !effet.GetUsed())
+            if (!effet.GetUsed())
             {
-                effet.OnCast();
-                effet.SetUsed(true);
+                effet.OnCast(i);
             }
         }
     }
@@ -73,7 +173,10 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         foreach (var effet in effects)
         {
-            effet.SetUsed(true);
+            if (effet.GetPhaseActivation() == 3 || effet.GetPhaseActivation() == 1 && view.AmOwner)
+            {
+                effet.SetUsed(false);
+            }
         }
     }
 
@@ -82,30 +185,38 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
         {
             effects.Add(effet);
-        }    
+        }
+
     }
     
     private void OnDestroy()
     {
-        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        foreach (IEffects effet in effects)
         {
-            if (PlacementManager.instance.GetBoard()[i].monster.GetComponent<Monster>().id == id)
-            {
-                PlacementManager.instance.GetBoard().Remove(PlacementManager.instance.GetBoard()[i]);
-            }
+            effet.OnCast(2);
         }
-    }
-    public void BeChoosen()
-    {
-        foreach (var ms in mrs)
+        
+        for (int i = extension.Count - 1; i >= 0; i--)
         {
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColorChoosen.mainTexture;
+                PhotonNetwork.Destroy(extension[i]);
+            }
+        }
+        
+        PlacementManager.instance.RemoveMonsterBoard(id);
+    }
+    public void BeChoosen()
+    {
+        foreach (MeshRenderer ms in mrs)
+        {
+            if (view.AmOwner)
+            {
+                ms.material.color = ownerMonsterColorChoosen.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColorChoosen.mainTexture;
+                ms.material.color = ennemiMonsterColorChoosen.color;
             }
         }
     }
@@ -116,20 +227,15 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {
             if (view.AmOwner)
             {
-                ms.material.mainTexture = ownerMonsterColor.mainTexture;
+                ms.material.color = ownerMonsterColor.color;
             }
             else
             {
-                ms.material.mainTexture = ennemiMonsterColor.mainTexture;
+                ms.material.color = ennemiMonsterColor.color;
             }
         }
     }
 
-    public MonsterCardScriptable GetStat()
-    {
-        return stats;
-    }
-    
     public List<Transform> GetCenters()
     {
         return centers;
@@ -139,20 +245,9 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         return mrs;
     }
-
-    public void SetAtk(int i)
-    {
-        atk = i;
-    }
-    
     public int GetOwner()
     {
         return owner;
-    }
-
-    public int GetAtk()
-    {
-        return atk;
     }
 
     public PhotonView GetView()
@@ -163,15 +258,5 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public List<GameObject> GetExtention()
     {
         return extension;
-    }
-    
-    public bool GetAttacked()
-    {
-        return attacked;
-    }
-    
-    public void SetAttacked(bool b)
-    {
-        attacked = b;
     }
 }

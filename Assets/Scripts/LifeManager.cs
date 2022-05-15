@@ -12,20 +12,43 @@ public class LifeManager : MonoBehaviour
      [SerializeField] private int ennemiLife;
      [SerializeField] private PhotonView lifeManagerView;
 
+     public PhotonView View
+     {
+          get => lifeManagerView;
+     }
+
+     public int EnnemiLife
+     {
+          get => ennemiLife;
+          set
+          {
+               ennemiLife = value;
+               UiManager.instance.UpdateHpEnnemi();
+               CheckWinGame();
+          }
+     }
+     
+     public int OwnLife
+     {
+          get => life;
+          set
+          {
+               life = value;
+               UiManager.instance.UpdateHp();
+               CheckLoseGame();
+          }
+     }
+     
      private void Awake()
      {
           instance = this;
+          OwnLife = 20;
+          EnnemiLife = 20;
      }
 
-     private void Start()
+     public void TakeDamageHimself()
      {
-          life = 20;
-          ennemiLife = 20;
-     }
-
-     public void TakeDamageHimself(int degats)
-     {
-          life -= 1;
+          OwnLife -= 1;
           lifeManagerView.RPC("RPC_TakeDamageHimself", RpcTarget.Others, 1);
      }
 
@@ -36,68 +59,59 @@ public class LifeManager : MonoBehaviour
           
           if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
           {
-               if (i < -0.5)
+               if (i <= -0.5)
                {
-                    Debug.Log("test1");
                     result = 1;
                }
                else if (i.Equals(0.5f) || i.Equals(1.5f))
                {
-                    Debug.Log("test2");
                     result = 2;
                }
                else if(i.Equals(2.5f) || i.Equals(3.5f))
                {
-                    Debug.Log("test3");
                     result = 4;
                }else if (i.Equals(4.5f))
                {
-                    Debug.Log("test4");
                     result = 6;
                }
           }
           else
           {
-               if (i > 0.5)
+               if (i >= 0.5)
                {
-                    Debug.Log("test1");
                     result = 1;
                }
                else if (i.Equals(-0.5f) || i.Equals(-1.5f))
                {
-                    Debug.Log("test2");
                     result = 2;
                }
                else if(i.Equals(-2.5f) || i.Equals(-3.5f))
                {
-                    Debug.Log("test3");
                     result = 4;
                }else if (i.Equals(-4.5f))
                {
-                    Debug.Log("test4");
                     result = 6;
                }
           }
-          Debug.Log(result);
           
-          ennemiLife -= result;
+          EnnemiLife -= result;
           lifeManagerView.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, result);
      }
 
-     public int GetOwnLife()
+     public void CheckWinGame()
      {
-          return life;
+          if (ennemiLife <= 0)
+          {
+               PhotonNetwork.LeaveRoom();
+               PhotonNetwork.Disconnect();
+          }
      }
      
-     public int GetEnnemiLife()
+     public void CheckLoseGame()
      {
-          return ennemiLife;
-     }
-
-     public void CheckEndGame()
-     {
-          if (ennemiLife <= 0 ||life <= 0 )
+          if (life <= 0)
           {
+               PhotonNetwork.LeaveRoom();
                PhotonNetwork.Disconnect();
           }
      }
@@ -105,13 +119,13 @@ public class LifeManager : MonoBehaviour
      [PunRPC]
      private void RPC_TakeDamageEnnemi(int i)
      {
-          life -= i;
+          OwnLife -= i;
      }
      
      [PunRPC]
      private void RPC_TakeDamageHimself(int i)
      {
-          ennemiLife -= i;
+          EnnemiLife -= i;
      }
      
      

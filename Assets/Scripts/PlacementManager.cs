@@ -9,19 +9,42 @@ public class PlacementManager : MonoBehaviour
 
     private GameObject goPrefabMonster;
     private GameObject currentUnit;
-
+    private GameObject currentUnitPhoton;
     private bool isPlacing;
     private Ray ray;
     private RaycastHit hit;
-
+    private CardData currentCardSelection;
+    private bool specialInvocation;
     [SerializeField] private List<Case> board;
-
+    [SerializeField] private bool haveAChampionOnBoard;
+    
     [Serializable]
     public class Case{
         public GameObject monster;
         public List<Vector2> emplacement;
     }
 
+    public bool SpecialInvocation
+    {
+        get => specialInvocation;
+        set
+        {
+            specialInvocation = value;
+        }
+    }
+
+    public bool HaveAChampionOnBoard
+    {
+        get => haveAChampionOnBoard;
+    }
+    public CardData CurrentCardSelection
+    {
+        get => currentCardSelection;
+        set 
+        {
+            currentCardSelection = value;
+        }
+    }
     private void Awake()
     {
         instance = this;
@@ -35,7 +58,7 @@ public class PlacementManager : MonoBehaviour
 
     void CheckRaycast()
     {
-        if (RoundManager.instance.GetStateRound()==2)
+        if (RoundManager.instance.StateRound==2)
         {
             if (Input.touchCount>0)
             {
@@ -60,7 +83,11 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                card.monster.GetComponent<Monster>().SetAttacked(false);
+                if (card.monster.GetComponent<Monster>().Status.Equals(0))
+                {
+                    card.monster.GetComponent<Monster>().Attacked = false;
+                }
+                
                 card.monster.GetComponent<Monster>().ReActivadeAllEffect();
             }
         }
@@ -68,7 +95,7 @@ public class PlacementManager : MonoBehaviour
 
     void ShowMonsterEmplacement()
     {
-        if (RoundManager.instance.GetStateRound() == 2)
+        if (RoundManager.instance.StateRound == 2)
         {
             if (Input.touchCount > 0)
             {
@@ -92,17 +119,29 @@ public class PlacementManager : MonoBehaviour
 
                             if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                             {
-                                PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
-                                    PlayerSetup.instance.transform.rotation, 0);
+                                object[] data = new object[] {currentCardSelection.Atk, currentCardSelection.IsChampion};
                                 
-                                RoundManager.instance.SetStateRound(1);
-                                DiceManager.instance.DeleteAllResources(currentUnit.GetComponent<Monster>()
-                                    .GetStat().resources);
+                                currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
+                                    PlayerSetup.instance.transform.rotation, 0, data);
+
+                                if (!specialInvocation)
+                                {
+                                    DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+                                }
                                 
+                                specialInvocation = false;
+                                currentCardSelection = null;
                                 Destroy(currentUnit);
+                                
                                 goPrefabMonster = null;
                                 currentUnit = null;
                                 isPlacing = false;
+                                
+                                if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
+                                {
+                                    RoundManager.instance.StateRound = 1;
+                                }
+                                currentUnitPhoton = null;
                             }
                             else
                             {
@@ -117,10 +156,23 @@ public class PlacementManager : MonoBehaviour
         }
     }
 
+    public Monster SearchMobWithID(int unitID)
+    {
+        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        {
+            if (GetBoard()[i].monster.GetComponent<Monster>().ID.Equals(unitID))
+            {
+                return GetBoard()[i].monster.GetComponent<Monster>();
+            }
+        }
+
+        return null;
+    }
+
     public void CancelSelection()
     {
         Destroy(currentUnit);
-        RoundManager.instance.SetStateRound(1);
+        RoundManager.instance.StateRound =1 ;
         goPrefabMonster = null;
         currentUnit = null;
         isPlacing = false;
@@ -164,7 +216,7 @@ public class PlacementManager : MonoBehaviour
 
     public bool CheckPositionBoard(Vector2 positionUnit)
     {
-        foreach (var data in board)
+        foreach (Case data in board)
         {
             if (data.monster.GetComponent<Monster>().GetOwner() ==
                 (int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"])
@@ -221,6 +273,27 @@ public class PlacementManager : MonoBehaviour
             data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
         }
         board.Add(data);
+        if (obj.GetComponent<Monster>().IsChampion && obj.GetComponent<PhotonView>().AmOwner)
+        {
+            Debug.Log("HAve a Champion");
+            haveAChampionOnBoard = true;
+        }
+    }
+
+    public void RemoveMonsterBoard(int id)
+    {
+        for (int i = 0; i < board.Count; i++)
+        {
+            if (board[i].monster.GetComponent<Monster>().ID == id)
+            {
+                if (board[i].monster.GetComponent<Monster>().IsChampion && board[i].monster.GetComponent<PhotonView>().AmOwner)
+                {
+                    Debug.Log("Not Have A Champion");
+                    haveAChampionOnBoard = false;
+                }
+                board.Remove(GetBoard()[i]);
+            }
+        }
     }
     
     public void AddExtentionMonsterBoard(GameObject exten, GameObject mother)
@@ -237,12 +310,28 @@ public class PlacementManager : MonoBehaviour
     
     public float CenterMoreFar(GameObject obj)
     {
-        float zcenter=-10;
-        foreach (var center in obj.GetComponent<Monster>().GetCenters())
+        float zcenter;
+        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
         {
-            if (center.position.z > zcenter)
+            zcenter = -10;
+            foreach (var center in obj.GetComponent<Monster>().GetCenters())
             {
-                zcenter = center.position.z;
+                if (center.position.z > zcenter)
+                {
+                    zcenter = center.position.z;
+                }
+
+            }
+        }
+        else
+        {
+            zcenter = 10;
+            foreach (var center in obj.GetComponent<Monster>().GetCenters())
+            {
+                if (center.position.z < zcenter)
+                {
+                    zcenter = center.position.z;
+                }
             }
         }
 
@@ -253,7 +342,9 @@ public class PlacementManager : MonoBehaviour
     {
         return board;
     }
-    
-    
 
+    public GameObject GetPrefabUnit()
+    {
+        return goPrefabMonster;
+    }
 }

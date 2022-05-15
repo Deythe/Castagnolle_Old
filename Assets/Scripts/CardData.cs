@@ -1,15 +1,58 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
-    [SerializeField] private MonsterCardScriptable stats;
-    [SerializeField] private Image card;
+    [SerializeField] private Sprite card;
+    [SerializeField] private Sprite bigCard;
+    [SerializeField] private GameObject prefabs;
+    [SerializeField] private int atk;
+    [SerializeField] private List<int> resources;
+    [SerializeField] private bool isChampion;
+    
     private RectTransform rec;
     private float initalYPosition;
     private bool waiting;
+    
+    public int Atk
+    {
+        get => atk;
+        set
+        {
+            atk = value;
+        }
+    }
+    
+    public GameObject Prefabs
+    {
+        get => prefabs;
+        set
+        {
+            prefabs = value;
+        }
+    }
+    
+    public bool IsChampion
+    {
+        get => isChampion;
+        set
+        {
+            isChampion = value;
+        }
+    }
+    
+    public List<int> Ressources
+    {
+        get => resources;
+        set
+        {
+            resources = value;
+        }
+    }
+    
     private void Start()
     {
         rec = GetComponent<RectTransform>();
@@ -24,11 +67,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
                 ReInit();
             }
         }
-    }
-
-    public MonsterCardScriptable GetStat()
-    {
-        return stats;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -48,8 +86,8 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                initalYPosition = transform.position.y;
-                UiManager.instance.AbleUpdateCard(card);
+                initalYPosition = transform.localPosition.y;
+                UiManager.instance.AbleUpdateCard(bigCard);
                 waiting = true;
                 StopAllCoroutines();
                 StartCoroutine(CoroutineShow());
@@ -63,22 +101,17 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         UiManager.instance.ShowingOffBigCard();
         rec.localPosition = new Vector3(rec.localPosition.x, 0, rec.localPosition.z);
         GetComponentInParent<ScrollRect>().horizontal = true;
-        UiManager.instance.SetCard(null);
+        UiManager.instance.Card = null;
     }
 
     IEnumerator CoroutineShow()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
         if (waiting)
         {
             waiting = false;
             GetComponentInParent<ScrollRect>().horizontal = false;
-            UiManager.instance.SetCard(gameObject);
+            UiManager.instance.Card = gameObject;
         }
-    }
-
-    public float GetInitialPositionY()
-    {
-        return initalYPosition;
     }
 }
