@@ -148,6 +148,7 @@ MonoBehaviour:
   evolve2: {fileID: 21300000, guid: 876fe303280216e4ca30e7f3d9f6da92, type: 3}
   unit1: {fileID: 1764594795200175919, guid: db3fcf6e0eeac414c8f93e60983d146e, type: 3}
   unit2: {fileID: 1764594795200175919, guid: 7978e5a20678b454190016238a2ce134, type: 3}
+  usingPhase: 1
 --- !u!1 &3125104385478200825
 GameObject:
   m_ObjectHideFlags: 0

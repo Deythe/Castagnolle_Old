@@ -56,7 +56,6 @@ public class LifeManager : MonoBehaviour
      public void TakeDamageEnnemi(float i)
      {
           int result=0;
-          
           if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
           {
                if (i <= -0.5)
