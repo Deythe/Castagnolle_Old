@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Photon.Pun;
 using TMPro;
@@ -8,6 +9,9 @@ using Image = UnityEngine.UI.Image;
 public class UiManager : MonoBehaviour
 {
     public static UiManager instance;
+
+    [SerializeField] private GameObject waiting;
+    [SerializeField] private Canvas canvas;
     [SerializeField] private TMP_Text numberRound;
    
     [SerializeField] private TMP_Text fps;
@@ -27,6 +31,48 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject bigCart;
 
     [SerializeField] private GameObject card;
+    [SerializeField] private RectTransform cardListChose;
+    [SerializeField] private GameObject settingsMenu;
+    [SerializeField] private GameObject settingsButtonMenu;
+    [SerializeField] private GameObject viewButton;
+    [SerializeField] private GameObject shader;
+    
+    private bool settingsOnOff;
+    private bool viewTacticsOn;
+    private float originalScrolPositionY;
+    private float framerate;
+    private float deltaTime;
+
+    public GameObject Waiting
+    {
+        get => waiting;
+    }
+    public bool ViewTacticsOn
+    {
+        get => viewTacticsOn;
+    }
+
+    public Canvas CanvasPublic
+    {
+        get => canvas;
+        set
+        {
+            canvas = value;
+        }
+    }
+
+    public RectTransform CarListChose
+    {
+        get => cardListChose;
+    }
+    public GameObject Card
+    {
+        get => card;
+        set
+        {
+            card = value;
+        }
+    }
     
     private void Awake()
     {
@@ -36,43 +82,42 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        originalScrolPositionY = scrollView.transform.localPosition.y;
     }
 
     void Update()
     {
-        ChangeRoundUI();
         ChangePosition();
-        
         EnableDisableThrowDiceButton();
         EnableDisableScrollView();
         EnableDisableEndTurn();
         EnableDisableBattleButton();
         EnableDisableMenuYesChoice();
         EnableDisableMenuNoChoice();
-        
-        UpdateHpEnnemi();
+        EnableDisableShader();
         UpdateFPS();
-        UpdateHp();
     }
 
-    void UpdateHp()
+    public void UpdateHp()
     {
-        hp.text = "PV : " + LifeManager.instance.GetOwnLife();
+        hp.text = "PV : " + LifeManager.instance.OwnLife;
     }
     
-    void UpdateHpEnnemi()
+    public void UpdateHpEnnemi()
     {
-        hpEnnemi.text = "PV : " + LifeManager.instance.GetEnnemiLife();
+        hpEnnemi.text = "PV : " + LifeManager.instance.EnnemiLife;
     }
     
     void UpdateFPS()
     {
-        fps.text = "" + 1 / Time.deltaTime;
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        framerate = 1.0f / deltaTime;
+        fps.text = Mathf.Ceil (framerate).ToString ();
     }
 
-    public void AbleUpdateCard(Image card)
+    public void AbleUpdateCard(Sprite card)
     {
-        bigCart.GetComponent<Image>().sprite = card.sprite;
+        bigCart.GetComponent<Image>().sprite = card;
         bigCart.SetActive(true);
     }
 
@@ -82,7 +127,7 @@ public class UiManager : MonoBehaviour
         {
             if(Input.touchCount > 0)
             {
-                card.GetComponent<RectTransform>().position = new Vector3(card.GetComponent<RectTransform>().position.x,Input.touches[0].position.y,card.GetComponent<RectTransform>().position.z);
+                card.GetComponent<RectTransform>().localPosition = new Vector3(card.GetComponent<RectTransform>().localPosition.x,Input.touches[0].position.y-150,card.GetComponent<RectTransform>().localPosition.z);
             }
         }
     }
@@ -96,19 +141,30 @@ public class UiManager : MonoBehaviour
     {
         for (int i = 0; i < content.childCount; i++)
         {
-            Destroy(content.GetChild(i).gameObject);
+            content.GetChild(i).gameObject.SetActive(false);
         }
 
-        foreach (var unit in DeckManager.instance.GetMonsters())
+        foreach (var unit in DeckManager.instance.MonsterPossible)
         {
-            Instantiate(unit,content);
+            for (int i = 0; i < content.childCount; i++)
+            {
+                if (content.GetChild(i).gameObject == unit.gameObject)
+                {
+                    content.GetChild(i).gameObject.SetActive(true);    
+                }
+            }
         }
+    }
+
+    public GameObject InitCard(GameObject go)
+    {
+        return Instantiate(go,content);
     }
 
     void EnableDisableThrowDiceButton()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==0)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==0)
         {
             uiPlayerTurn.SetActive(true);
         }
@@ -121,45 +177,46 @@ public class UiManager : MonoBehaviour
     void EnableDisableScrollView()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==1 && !DiceManager.instance.DeckEmpy())
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
         {
-            scrollView.GetComponent<RectTransform>().DOMoveY(200, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY+300, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            scrollView.GetComponent<RectTransform>().DOMoveY(-50, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY, 0.5f).SetEase(Ease.Linear);
         }
     }
     
     void EnableDisableMenuYesChoice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4 && BattlePhaseManager.instance.GetIsAttacking())
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
         {
-            menuYesChoice.SetActive(true);
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(230, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            menuYesChoice.SetActive(false);
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(550, 0.5f).SetEase(Ease.Linear);
         }
     }
     
     void EnableDisableMenuNoChoice()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==4)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
         {
-            menuNoChoice.SetActive(true);
+            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(-230, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            menuNoChoice.SetActive(false);
+            
+            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-550, 0.5f).SetEase(Ease.Linear);
         }
     }
     void EnableDisableBattleButton()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==1)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1)
         {
             menuBattlePhase.SetActive(true);
         }
@@ -171,7 +228,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableEndTurn()
     {
         if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.GetStateRound()==3)
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==3)
         {
             endTurn.SetActive(true);
         }
@@ -180,20 +237,40 @@ public class UiManager : MonoBehaviour
             endTurn.SetActive(false);
         }
     }
-    void ChangeRoundUI()
+    public void ChangeRoundUI()
     {
         numberRound.text = "" + (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"];
     }
 
-    public void SetCard(GameObject obj)
+    public void ChangeViewPlayer()
     {
-        card = obj;
+        viewTacticsOn = !viewTacticsOn;
+        PlayerSetup.instance.ChangeView(viewTacticsOn);
     }
 
-    public GameObject GetCard()
+    public void ChangeSettingStatus()
     {
-        return card;
+        settingsOnOff = !settingsOnOff;
+        settingsButtonMenu.SetActive(!settingsOnOff);
+        settingsMenu.SetActive(settingsOnOff);
+        viewButton.SetActive(!settingsOnOff);
+        scrollView.SetActive(!settingsOnOff);
     }
+    
+    void EnableDisableShader()
+    {
+        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
+            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound!=2)
+        {
+            shader.SetActive(true);
+        }
+        else
+        {
+            shader.SetActive(false);
+        }
+    }
+    
+    
     
     
 }

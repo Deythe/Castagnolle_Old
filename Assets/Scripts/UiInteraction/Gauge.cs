@@ -26,9 +26,9 @@ public class Gauge : MonoBehaviour
                         target = hit.collider.gameObject;
                         originalPosition = target.transform.position;
                         
-                        waiting = true;
-                        StopAllCoroutines();
-                        StartCoroutine(CoroutineTake());
+                        mooving = true;
+                        //StopAllCoroutines();
+                        //StartCoroutine(CoroutineTake());
                     }
                     break;
                 

@@ -28,23 +28,23 @@ public class MenuLoginManager : MonoBehaviour
             text.text = bugExplain;
         }
 
-        if (FireBaseManager.instance.GetCreate() && !menuTime)
+        if (FireBaseManager.instance.Create && !menuTime)
         {
             menuTime = true;
             LoginMenu.SetActive(false);
             CreateMenu.SetActive(true);
         }
 
-        if (!FireBaseManager.instance.GetCreate() && FireBaseManager.instance.GetUserFireBase() != null)
+        if (!FireBaseManager.instance.Create && FireBaseManager.instance.UserFireBase != null)
         {
-            if (FireBaseManager.instance.GetUser() != null)
+            if (FireBaseManager.instance.User != null)
             {
-                FireBaseManager.instance.GetUser().isConnected = true;
+                FireBaseManager.instance.User.isConnected = true;
                 SceneManager.LoadScene(1);
             }
             else
             {
-                FireBaseManager.instance.SetUser(JsonUtility.FromJson<User>(FireBaseManager.instance.GetStringRequest()));
+                FireBaseManager.instance.User = JsonUtility.FromJson<User>(FireBaseManager.instance.GetStringRequest());
                 FireBaseManager.instance.OnConnected();
             }
         }
