@@ -158,7 +158,7 @@ public class PlacementManager : MonoBehaviour
 
     public Monster SearchMobWithID(int unitID)
     {
-        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        for (int i = 0; i < board.Count; i++)
         {
             if (GetBoard()[i].monster.GetComponent<Monster>().ID.Equals(unitID))
             {
@@ -200,13 +200,13 @@ public class PlacementManager : MonoBehaviour
     public bool CheckLinkWithOthers(Vector3 v)
     {
         if (Mathf.FloorToInt(v.z) == -5 &&
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 1)
+            RoundManager.instance.LocalPlayerTurn==1)
         {
             return true;
         }
 
         if ((int)v.z + 1 == 5 &&
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 2)
+            RoundManager.instance.LocalPlayerTurn==2)
         {
             return true;
         }
@@ -218,8 +218,7 @@ public class PlacementManager : MonoBehaviour
     {
         foreach (Case data in board)
         {
-            if (data.monster.GetComponent<Monster>().GetOwner() ==
-                (int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"])
+            if (data.monster.GetComponent<PhotonView>().AmOwner)
             {
                 foreach (var vector in data.emplacement)
                 {
@@ -311,7 +310,7 @@ public class PlacementManager : MonoBehaviour
     public float CenterMoreFar(GameObject obj)
     {
         float zcenter;
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
+        if (RoundManager.instance.LocalPlayerTurn == 1)
         {
             zcenter = -10;
             foreach (var center in obj.GetComponent<Monster>().GetCenters())

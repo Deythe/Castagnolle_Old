@@ -128,7 +128,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 0.1, z: 2}
+  m_Size: {x: 2, y: 0.3, z: 2}
   m_Center: {x: 0.5, y: 0, z: 0.5}
 --- !u!114 &4873680570853999431
 MonoBehaviour:
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs: {fileID: 7236249880086410052, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
   view: {fileID: 5347874786083823171}
+  usingPhase: 3
 --- !u!1 &7230849743625029377
 GameObject:
   m_ObjectHideFlags: 0

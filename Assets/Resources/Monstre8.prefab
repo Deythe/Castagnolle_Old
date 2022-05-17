@@ -62,6 +62,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5173444060119363847}
+  - {fileID: 4545925001996207718}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -128,7 +129,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.1, z: 3}
+  m_Size: {x: 1, y: 0.3, z: 3}
   m_Center: {x: 0, y: 0, z: 1}
 --- !u!65 &4270691505904609697
 BoxCollider:
@@ -141,7 +142,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.1, z: 1}
+  m_Size: {x: 1, y: 0.3, z: 1}
   m_Center: {x: -1, y: 0, z: 1}
 --- !u!1 &3189231155519387463
 GameObject:

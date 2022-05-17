@@ -12,8 +12,7 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private GameObject waiting;
     [SerializeField] private Canvas canvas;
-    [SerializeField] private TMP_Text numberRound;
-   
+
     [SerializeField] private TMP_Text fps;
     [SerializeField] private TMP_Text hp;
     [SerializeField] private TMP_Text hpEnnemi;
@@ -163,8 +162,8 @@ public class UiManager : MonoBehaviour
 
     void EnableDisableThrowDiceButton()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==0)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==0)
         {
             uiPlayerTurn.SetActive(true);
         }
@@ -176,8 +175,8 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableScrollView()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
         {
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY+300, 0.5f).SetEase(Ease.Linear);
         }
@@ -189,8 +188,8 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableMenuYesChoice()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
         {
             menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(230, 0.5f).SetEase(Ease.Linear);
         }
@@ -202,8 +201,8 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableMenuNoChoice()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
         {
             menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(-230, 0.5f).SetEase(Ease.Linear);
         }
@@ -215,8 +214,8 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableBattleButton()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1)
         {
             menuBattlePhase.SetActive(true);
         }
@@ -227,8 +226,8 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableEndTurn()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==3)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==3)
         {
             endTurn.SetActive(true);
         }
@@ -236,10 +235,6 @@ public class UiManager : MonoBehaviour
         {
             endTurn.SetActive(false);
         }
-    }
-    public void ChangeRoundUI()
-    {
-        numberRound.text = "" + (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"];
     }
 
     public void ChangeViewPlayer()
@@ -259,8 +254,8 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableShader()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound!=2)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound!=2)
         {
             shader.SetActive(true);
         }

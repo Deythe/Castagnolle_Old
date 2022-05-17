@@ -16,7 +16,7 @@ public class BonesInGauge : MonoBehaviour, IEffects
             {
                 for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                 {
-                    if (DiceManager.instance != null)
+                    if (DiceManager.instance.Gauge != null)
                     {
                         if (DiceManager.instance.Gauge[i].Equals(0))
                         {

@@ -27,8 +27,6 @@ public class Gauge : MonoBehaviour
                         originalPosition = target.transform.position;
                         
                         mooving = true;
-                        //StopAllCoroutines();
-                        //StartCoroutine(CoroutineTake());
                     }
                     break;
                 
@@ -53,20 +51,8 @@ public class Gauge : MonoBehaviour
                     target = null;
                     waiting = false;
                     break;
-                 
             }
         }
     }
-    
-    IEnumerator CoroutineTake()
-    {
-        yield return new WaitForSeconds(0.5f);
-        if (waiting)
-        {
-            waiting = false;
-            mooving = true;
-        }
-    }
-    
 }
 

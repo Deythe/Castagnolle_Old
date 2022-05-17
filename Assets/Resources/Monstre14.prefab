@@ -128,7 +128,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 0.1, z: 2}
+  m_Size: {x: 2, y: 0.3, z: 2}
   m_Center: {x: 0.5, y: 0, z: 0.5}
 --- !u!114 &7616565447229796995
 MonoBehaviour:
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171}
   cardUnit: {fileID: 1764594795200175919, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
+  usingPhase: 3
   boardPosition: []
 --- !u!1 &4786434997981504987
 GameObject:

@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class RoundManager : MonoBehaviourPunCallbacks
 {
@@ -10,9 +11,22 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     [SerializeField] private GameObject playerPref;
     [SerializeField] private PhotonView playerView;
+    [SerializeField] private int localPlayerTurn;
+    [SerializeField] private int currentPlayerNumberTurnNumberTurn;
+    
     
     private int roundState; 
     private GameObject playerInstance;
+
+    public int LocalPlayerTurn
+    {
+        get => localPlayerTurn;
+    }
+
+    public int CurrentPlayerNumberTurn
+    {
+        get => currentPlayerNumberTurnNumberTurn;
+    }
     
     public int StateRound
     {
@@ -20,13 +34,24 @@ public class RoundManager : MonoBehaviourPunCallbacks
         set
         {
             roundState = value;
-            UiManager.instance.ChangeRoundUI();
         }
     }
 
     private void Awake()
     {
         instance = this;
+        currentPlayerNumberTurnNumberTurn = 1;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("Player1");
+            localPlayerTurn = 1;
+        }
+        else
+        {
+            Debug.Log("Player2");
+            localPlayerTurn = 2;
+        }
+        
     }
 
     IEnumerator Start()
@@ -40,7 +65,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     public void SpawnNewPlayer()
     {
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
+        if (localPlayerTurn==1)
         {
             playerInstance =
                 PhotonNetwork.Instantiate(playerPref.name, Vector3.zero, Quaternion.identity, 0);
@@ -52,6 +77,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
         }
         
         playerInstance.GetComponent<PlayerSetup>().enabled = true;
+        
     }
     
     public void EndRound()
@@ -60,7 +86,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
         PlacementManager.instance.ReInitMonster();
         BattlePhaseManager.instance.ClearUnits();
 
-        playerView.RPC("RPC_EndTurn", RpcTarget.All);
+        playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
     }
 
     public void BattlePhase()
@@ -100,13 +126,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_EndTurn()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 1)
+        if (currentPlayerNumberTurnNumberTurn==1)
         {
-            PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] = 2;
+            currentPlayerNumberTurnNumberTurn = 2;
         }
         else
         {
-            PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] = 1;
+            currentPlayerNumberTurnNumberTurn = 1;
         }
     }
 

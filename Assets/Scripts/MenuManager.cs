@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -9,20 +10,33 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviourPunCallbacks
 {
+    public static MenuManager instance;
+    
     [SerializeField] private TMP_Text nickname;
     [SerializeField] private TMP_Text searching;
-    [SerializeField] private GameObject queueMenu;
     [SerializeField] private Button playButton;
+    [SerializeField] private Transform allMenu;
+    [SerializeField] private Transform content;
     private bool find;
     private Hashtable hash = new Hashtable();
 
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
-        playButton.interactable = true;
+        playButton.interactable = false;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         nickname.text = FireBaseManager.instance.User.userName;
     }
-
+    
+    public Button PlayButton
+    {
+        get => playButton;
+    }
+    
     private void FixedUpdate()
     {
         EnableDisableInQueue();
@@ -39,11 +53,31 @@ public class MenuManager : MonoBehaviourPunCallbacks
         
     }
 
+    public void DisableEnableAllDeckButton(bool b)
+    {
+        for (int i = 0; i < content.childCount; i++)
+        {
+            content.GetChild(i).GetComponent<Button>().interactable = b;
+        }
+    }
+
     void EnableDisableInQueue()
     {
         searching.enabled = find;
     }
 
+    public void EnableDisableChoseDeck(bool b)
+    {
+        if (b)
+        {
+            allMenu.DOLocalMoveX(-720, 0.2f).SetEase(Ease.Linear);
+        }
+        else
+        {
+            allMenu.DOLocalMoveX(0, 0.2f).SetEase(Ease.Linear);
+        }
+    }
+    
     public void QuitQueue()
     {
         PhotonNetwork.Disconnect();
@@ -51,6 +85,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     
     public void SearchGame()
     {
+        EnableDisableChoseDeck(false);
+        DisableEnableAllDeckButton(false);
         playButton.interactable = false;
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -97,7 +133,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("On joined Room");
         base.OnJoinedRoom();
-
+        /*
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
             hash["PlayerNumber"] = 1;
@@ -113,7 +149,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         
         hash["RoundNumber"] = 1;
         PhotonNetwork.LocalPlayer.CustomProperties = hash;
-
+        */
+        
         find = true;
 
         searching.text = "Recherche de joueurs";

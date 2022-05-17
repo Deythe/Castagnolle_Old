@@ -41,7 +41,7 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int checks)
     {
-        GetComponent<Monster>().Atk+=(2*check);
+        GetComponent<Monster>().Atk+=(2*checks);
     }
 
     public int GetPhaseActivation()

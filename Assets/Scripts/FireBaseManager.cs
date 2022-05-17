@@ -99,12 +99,7 @@ public class FireBaseManager : MonoBehaviour
 
     public void WriteNewUser()
     {
-        int[] tab = new int[8];
-        for (int i = 0; i < 8; i++)
-        {
-            tab[i] = i;
-        }
-        user = new User(MenuLoginManager.instance.GetNickname(), true, tab);
+        user = new User(MenuLoginManager.instance.GetNickname(), true);
         string json = JsonUtility.ToJson(user);
         root.Child("users").Child(userFirebase.UserId).SetRawJsonValueAsync(json);
         create = false;
