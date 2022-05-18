@@ -4,6 +4,7 @@ using UnityEngine;
 using Firebase.Database;
 using Firebase.Auth;
 using Firebase.Extensions;
+using Photon.Pun;
 
 public class FireBaseManager : MonoBehaviour
 {

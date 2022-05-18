@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5173444060119363847}
   - component: {fileID: -4557785253544110790}
   - component: {fileID: 3531432135879127181}
-  - component: {fileID: 5607092138761807685}
+  - component: {fileID: 6494579627884002232}
   m_Layer: 0
   m_Name: Monstre18
   m_TagString: Monster
@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  card: {fileID: 5933185828017948179, guid: 15384863e1caa5642a606b6c4e177261, type: 3}
+  bigCard: {fileID: 0}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -113,8 +115,8 @@ MonoBehaviour:
   - {fileID: 2475280506440266559}
   hpView: {fileID: 4770748151115564331}
   canvasRenderer: {fileID: 7864837972461647193}
-  attacked: 0
-  status: 0
+  attacked: 1
+  status: 1
   animator: {fileID: 0}
   isChampion: 0
 --- !u!65 &3531432135879127181
@@ -130,7 +132,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 0.3, z: 2}
   m_Center: {x: 0.5, y: 0, z: 0.5}
---- !u!114 &5607092138761807685
+--- !u!114 &6494579627884002232
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,16 +141,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1764594795200175919}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aba085e7ed0a58499f92c3eb2025b54, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a7a782b7c91f804f960d1da76994596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171}
-  blankCard: {fileID: 7236249880086410052, guid: 624e92022c88f534391d651681a21cba, type: 3}
-  evolve1: {fileID: 21300000, guid: 5ca0bd4c289d8e742bbcd6b1f296311e, type: 3}
-  evolve2: {fileID: 21300000, guid: 876fe303280216e4ca30e7f3d9f6da92, type: 3}
-  unit1: {fileID: 1764594795200175919, guid: db3fcf6e0eeac414c8f93e60983d146e, type: 3}
-  unit2: {fileID: 1764594795200175919, guid: 7978e5a20678b454190016238a2ce134, type: 3}
-  usingPhase: 1
+  targetUnit: {fileID: 0}
+  usingPhase: 3
+  mobNextTo: []
+  heroism: 2
 --- !u!1 &3125104385478200825
 GameObject:
   m_ObjectHideFlags: 0

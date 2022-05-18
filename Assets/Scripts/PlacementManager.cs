@@ -52,8 +52,11 @@ public class PlacementManager : MonoBehaviour
 
     void Update()
     {
-        CheckRaycast();
-        ShowMonsterEmplacement();
+        if (RoundManager.instance != null)
+        {
+            CheckRaycast();
+            ShowMonsterEmplacement();
+        }
     }
 
     void CheckRaycast()
@@ -73,8 +76,7 @@ public class PlacementManager : MonoBehaviour
         currentUnit = Instantiate(goPrefabMonster,
                 new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
                 PlayerSetup.instance.transform.rotation);
-
-            isPlacing = true;
+        isPlacing = true;
     }
     
     public void ReInitMonster()
@@ -119,21 +121,19 @@ public class PlacementManager : MonoBehaviour
 
                             if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                             {
-                                object[] data = new object[] {currentCardSelection.Atk, currentCardSelection.IsChampion};
-                                
-                                currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
-                                    PlayerSetup.instance.transform.rotation, 0, data);
 
+                                currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
+                                    PlayerSetup.instance.transform.rotation, 0);
+                                
                                 if (!specialInvocation)
                                 {
                                     DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
                                 }
                                 
-                                specialInvocation = false;
                                 currentCardSelection = null;
-                                Destroy(currentUnit);
-                                
+                                specialInvocation = false;
                                 goPrefabMonster = null;
+                                Destroy(currentUnit);
                                 currentUnit = null;
                                 isPlacing = false;
                                 
@@ -141,6 +141,11 @@ public class PlacementManager : MonoBehaviour
                                 {
                                     RoundManager.instance.StateRound = 1;
                                 }
+                                else
+                                {
+                                   currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0); 
+                                }
+                                
                                 currentUnitPhoton = null;
                             }
                             else
@@ -285,12 +290,15 @@ public class PlacementManager : MonoBehaviour
         {
             if (board[i].monster.GetComponent<Monster>().ID == id)
             {
-                if (board[i].monster.GetComponent<Monster>().IsChampion && board[i].monster.GetComponent<PhotonView>().AmOwner)
+                if (board[i].monster.GetComponent<Monster>().IsChampion &&
+                    board[i].monster.GetComponent<PhotonView>().AmOwner)
                 {
                     Debug.Log("Not Have A Champion");
                     haveAChampionOnBoard = false;
                 }
+                
                 board.Remove(GetBoard()[i]);
+                return;
             }
         }
     }

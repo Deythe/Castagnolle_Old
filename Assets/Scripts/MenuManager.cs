@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     
     [SerializeField] private TMP_Text nickname;
     [SerializeField] private TMP_Text searching;
+    [SerializeField] private Button chooseDeckButton;
     [SerializeField] private Button playButton;
     [SerializeField] private Transform allMenu;
     [SerializeField] private Transform content;
@@ -27,6 +28,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        searching.text = "Connexion au serveur";
+        chooseDeckButton.interactable = false;
+        PhotonNetwork.ConnectUsingSettings();
         playButton.interactable = false;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         nickname.text = FireBaseManager.instance.User.userName;
@@ -39,8 +43,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     
     private void FixedUpdate()
     {
-        EnableDisableInQueue();
-        
         if (find)
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
@@ -50,7 +52,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
                 SceneManager.LoadScene(2);
             }
         }
-        
     }
 
     public void DisableEnableAllDeckButton(bool b)
@@ -59,11 +60,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             content.GetChild(i).GetComponent<Button>().interactable = b;
         }
-    }
-
-    void EnableDisableInQueue()
-    {
-        searching.enabled = find;
     }
 
     public void EnableDisableChoseDeck(bool b)
@@ -85,31 +81,30 @@ public class MenuManager : MonoBehaviourPunCallbacks
     
     public void SearchGame()
     {
+        PhotonNetwork.JoinRandomRoom();
         EnableDisableChoseDeck(false);
         DisableEnableAllDeckButton(false);
         playButton.interactable = false;
-        PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
-        searching.text = "Connexion au serveur";
-        PhotonNetwork.AuthValues.UserId = FireBaseManager.instance.UserFireBase.UserId;
+        chooseDeckButton.interactable = true;
         PhotonNetwork.JoinLobby();
     }
+    
 
     public void Disconnect()
     {
+        PhotonNetwork.Disconnect();
         FireBaseManager.instance.User = null;
         SceneManager.LoadScene(0);
     }
     
-    public override void OnJoinedLobby()
-    {
+    public override void OnJoinedLobby(){
         base.OnJoinedLobby();
-        searching.text = "Connecté au serveur";
-        Debug.Log(PhotonNetwork.CountOfRooms);
-        PhotonNetwork.JoinRandomRoom();
+        chooseDeckButton.interactable = true;
+        searching.text = "Connecté";
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -120,7 +115,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
         room.MaxPlayers = 2;
         room.IsVisible = true;
         PhotonNetwork.CreateRoom(null, room, null);
-        Debug.Log("testPROUT");
     }
     
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -133,24 +127,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("On joined Room");
         base.OnJoinedRoom();
-        /*
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-        {
-            hash["PlayerNumber"] = 1;
-        }
-        else if(PhotonNetwork.CurrentRoom.PlayerCount == 2)
-        {
-            hash["PlayerNumber"] = 2;
-        }
-        else
-        {
-            PhotonNetwork.Disconnect();
-        }
-        
-        hash["RoundNumber"] = 1;
-        PhotonNetwork.LocalPlayer.CustomProperties = hash;
-        */
-        
         find = true;
 
         searching.text = "Recherche de joueurs";

@@ -82,7 +82,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     public void EndRound()
     {
-        roundState = 0;
         PlacementManager.instance.ReInitMonster();
         BattlePhaseManager.instance.ClearUnits();
 
@@ -126,6 +125,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_EndTurn()
     {
+        roundState = 0;
         if (currentPlayerNumberTurnNumberTurn==1)
         {
             currentPlayerNumberTurnNumberTurn = 2;
@@ -152,5 +152,10 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         base.OnDisconnected(cause);
         SceneManager.LoadScene(1);
+        DiceManager.instance = null;
+        DeckManager.instance = null;
+        UiManager.instance = null;
+        EffectManager.instance = null;
+        instance = null;
     }
 }

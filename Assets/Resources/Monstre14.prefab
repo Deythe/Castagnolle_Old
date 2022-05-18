@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  card: {fileID: 5933185828017948179, guid: 1f76c86e05c708442b610332a29c0a4b, type: 3}
+  bigCard: {fileID: 0}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -146,6 +148,7 @@ MonoBehaviour:
   cardUnit: {fileID: 1764594795200175919, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
   usingPhase: 3
   boardPosition: []
+  numberPoupoul: 1
 --- !u!1 &4786434997981504987
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,7 +161,7 @@ GameObject:
   - component: {fileID: 2181384773189629170}
   - component: {fileID: 1861264255899719493}
   - component: {fileID: 764509148856083307}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Enclos
   m_TagString: Untagged
   m_Icon: {fileID: 0}

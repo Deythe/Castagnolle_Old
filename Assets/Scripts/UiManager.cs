@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using Photon.Pun;
 using TMPro;
@@ -41,6 +42,10 @@ public class UiManager : MonoBehaviour
     private float originalScrolPositionY;
     private float framerate;
     private float deltaTime;
+    private bool waitingCoroutine;
+    
+    private Ray ray;
+    private RaycastHit hit;
 
     public GameObject Waiting
     {
@@ -86,25 +91,64 @@ public class UiManager : MonoBehaviour
 
     void Update()
     {
-        ChangePosition();
-        EnableDisableThrowDiceButton();
-        EnableDisableScrollView();
-        EnableDisableEndTurn();
-        EnableDisableBattleButton();
-        EnableDisableMenuYesChoice();
-        EnableDisableMenuNoChoice();
-        EnableDisableShader();
-        UpdateFPS();
+        if (RoundManager.instance != null)
+        {
+            CheckRaycast();
+            ChangePosition();
+            EnableDisableThrowDiceButton();
+            EnableDisableScrollView();
+            EnableDisableEndTurn();
+            EnableDisableBattleButton();
+            EnableDisableMenuYesChoice();
+            EnableDisableMenuNoChoice();
+            EnableDisableShader();
+            UpdateFPS();
+        }
     }
+    
+    void CheckRaycast()
+        {
+            if (RoundManager.instance.StateRound!=2)
+            {
+                if (Input.touchCount > 0)
+                {
+                    ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
+                    Physics.Raycast(ray, out hit);
+
+                    switch (Input.GetTouch(0).phase)
+                    {
+                        case TouchPhase.Began:
+                            case TouchPhase.Moved:
+                            if(hit.collider != null && hit.collider.GetComponent<Monster>() != null)
+                            {
+                                StopAllCoroutines();
+                                StartCoroutine(CoroutineShowingcard(hit.collider));
+                            }
+                            break;
+                        case TouchPhase.Ended:
+                            StopAllCoroutines();
+                            ShowingOffBigCard();
+                            break;
+                    }
+                }
+            }
+        }
+
+    private IEnumerator CoroutineShowingcard(Collider go)
+    {
+        yield return new WaitForSeconds(0.5f);
+        AbleUpdateCard(go.GetComponent<Monster>().BigCard);
+    }
+    
 
     public void UpdateHp()
     {
-        hp.text = "PV : " + LifeManager.instance.OwnLife;
+        hp.text = ""+LifeManager.instance.OwnLife;
     }
     
     public void UpdateHpEnnemi()
     {
-        hpEnnemi.text = "PV : " + LifeManager.instance.EnnemiLife;
+        hpEnnemi.text = ""+LifeManager.instance.EnnemiLife;
     }
     
     void UpdateFPS()

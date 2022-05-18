@@ -13,6 +13,7 @@ public class EffectManager : MonoBehaviour
     private Ray ray;
     private int numberIdAll = 0;
     private RaycastHit hit;
+    private int i, j;
 
     public GameObject AllieUnit
     {
@@ -47,28 +48,9 @@ public class EffectManager : MonoBehaviour
 
     void Update()
     {
-        SelectTarget();
-        //ActivateAllEffectWhenUnitDie();
-    }
-
-    public void ActivateAllEffectWhenUnitDie()
-    {
-        if (numberIdAll < PlacementManager.instance.GetBoard().Count)
+        if (RoundManager.instance != null)
         {
-            Debug.Log("Unit invoqué");
-            numberIdAll = PlacementManager.instance.GetBoard().Count;
-        }else if (numberIdAll > PlacementManager.instance.GetBoard().Count)
-        {
-            Debug.Log("Unit morte");
-            numberIdAll = PlacementManager.instance.GetBoard().Count;
-            
-            foreach (var cases in PlacementManager.instance.GetBoard())
-            {
-                if (cases.monster.GetComponent<Monster>().HaveAnEffectThisTurn(5))
-                {
-                    cases.monster.GetComponent<Monster>().ActivateEffects(5);
-                }
-            }    
+            SelectTarget();
         }
     }
 
@@ -138,5 +120,42 @@ public class EffectManager : MonoBehaviour
         targetUnitEnnemi = null;
         currentUnit = null;
         RoundManager.instance.StateRound = state;
+    }
+    
+    public bool CheckHeroism(Transform go, List<GameObject> mobNextTo, int numberCheck)
+    {
+        for (i = 0; i < numberCheck; i++)
+        {
+            for (j = 0; j < PlacementManager.instance.GetBoard().Count; j++)
+            {
+                foreach (var unitAlly in go.GetComponent<Monster>().GetCenters())
+                {
+                    if (!PlacementManager.instance.GetBoard()[j].monster.GetComponent<PhotonView>().AmOwner)
+                    {
+                        Debug.Log(PlacementManager.instance.GetBoard()[j].emplacement);
+                        foreach (var center in PlacementManager.instance.GetBoard()[j].emplacement)
+                        {
+                            if (Vector2.Distance(center, new Vector2(unitAlly.position.x, unitAlly.position.z))
+                                .Equals(1))
+                            {
+                                if (!mobNextTo.Contains(PlacementManager.instance.GetBoard()[j].monster))
+                                {
+                                    mobNextTo.Add(PlacementManager.instance.GetBoard()[j].monster);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (mobNextTo.Count.Equals(numberCheck))
+        {
+            mobNextTo.Clear();
+            return true;
+        }
+        
+        return false;   
+        
     }
 }

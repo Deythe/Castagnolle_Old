@@ -6,23 +6,23 @@ using UnityEngine.UI;
 
 public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
-    [SerializeField] private Sprite card;
     [SerializeField] private Sprite bigCard;
     [SerializeField] private GameObject prefabs;
     [SerializeField] private int atk;
     [SerializeField] private List<int> resources;
     [SerializeField] private bool isChampion;
-
-
-
-
+    
     [SerializeField] private bool isTouching;
     private RectTransform rec;
     
     private float initalYPosition;
     
     private bool waiting;
-    
+
+    public Sprite BigCard
+    {
+        get => bigCard;
+    }
     public int Atk
     {
         get => atk;
@@ -102,6 +102,7 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
+                Debug.Log("Oui");
                 isTouching = true;
                 initalYPosition = transform.localPosition.y;
                 UiManager.instance.AbleUpdateCard(bigCard);

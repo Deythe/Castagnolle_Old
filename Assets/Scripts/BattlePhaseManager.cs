@@ -27,7 +27,16 @@ public class BattlePhaseManager : MonoBehaviour
         private int numberView;
         private float sizeListCentersEnnemi;
         private int targetUnitAttack;
+        private bool isWaiting;
 
+        public bool IsWaiting
+        {
+            get => isWaiting;
+            set
+            {
+                isWaiting = value;
+            }
+        }
         public int TargetUnitAttack
         {
             get => targetUnitAttack;
@@ -63,7 +72,10 @@ public class BattlePhaseManager : MonoBehaviour
 
         void Update()
         {
-            CheckRaycast();
+            if (RoundManager.instance != null)
+            {
+                CheckRaycast();
+            }
         }
 
         void CheckRaycast()
@@ -124,23 +136,48 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator ResultAttack(int result)
         {
+            if (unitTarget.GetComponent<Monster>().Status == 0)
+            {
+                playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
+                    unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk,
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk);
+            }
+            else
+            {
+                playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
+                    unitsSelected.GetComponent<PhotonView>().ViewID, 0,
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk);
+            }
+
             switch (result)
             {
                 case 0:
-                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.All, unitsSelected.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk,unitTarget.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk);
+                    if (unitTarget.GetComponent<Monster>().Status == 0)
+                    {
+                        LifeManager.instance.View.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, 1);
+                        LifeManager.instance.EnnemiLife--;
+                        LifeManager.instance.TakeDamageHimself();
+                    }
+                    else
+                    {
+                        deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
+                        LifeManager.instance.TakeDamageEnnemi( PlacementManager.instance.CenterMoreFar(unitsSelected));
                     
-                    LifeManager.instance.View.RPC("RPC_TakeDamageEnnemi", RpcTarget.Others, 1);
-                    LifeManager.instance.EnnemiLife--;
-                    LifeManager.instance.TakeDamageHimself();
-
+                        StartCoroutine(AddAllExtension(unitsSelected, true));
+                    
+                        if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisTurn(1))
+                        {
+                            unitsSelected.GetComponent<Monster>().ActivateEffects(1);
+                            yield return new WaitUntil(()=>unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect(1));
+                        }
+                    }
                     break;
 
                 case >0:
                     deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
-                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer, unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk, unitTarget.GetComponent<PhotonView>().ViewID,unitsSelected.GetComponent<Monster>().Atk);
-                    
                     LifeManager.instance.TakeDamageEnnemi( PlacementManager.instance.CenterMoreFar(unitsSelected));
-                    AddAllExtension(unitsSelected, true);
+                    
+                    StartCoroutine(AddAllExtension(unitsSelected, true));
                     
                     if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisTurn(1))
                     {
@@ -151,14 +188,15 @@ public class BattlePhaseManager : MonoBehaviour
                     break;
 
                 case <0:
-                    LifeManager.instance.TakeDamageHimself();
-                    playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer, unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk, unitTarget.GetComponent<PhotonView>().ViewID,unitsSelected.GetComponent<Monster>().Atk);
+                    if (unitTarget.GetComponent<Monster>().Status == 0)
+                    {
+                        LifeManager.instance.TakeDamageHimself();
+                        deadUnitCenters = unitsSelected.GetComponent<Monster>()
+                            .GetCenters();
 
-                    deadUnitCenters = unitsSelected.GetComponent<Monster>()
-                        .GetCenters();
+                        StartCoroutine(AddAllExtension(unitTarget, false));
+                    }
 
-                    AddAllExtension(unitTarget, false);
-                    
                     break;
             }
             
@@ -172,7 +210,6 @@ public class BattlePhaseManager : MonoBehaviour
             
             RoundManager.instance.StateRound = 3;
             isAttacking = false;
-            
             ClearUnits();
         }
 
@@ -204,8 +241,6 @@ public class BattlePhaseManager : MonoBehaviour
         
         void AddExtension(GameObject unitMore, bool owner)
         {
-            numberView = PhotonNetwork.ViewCount;
-            
             for (int j = 0; j < unitMore.GetComponent<Monster>().GetCenters().Count; j++)
             {
                 for (int x = 0; x < deadUnitCenters.Count; x++)
@@ -217,7 +252,6 @@ public class BattlePhaseManager : MonoBehaviour
 
                         if (owner)
                         {
-                            Debug.Log("Loop");
 
                             object[] data = new object[] {unitMore.GetComponent<Monster>().GetView().ViewID};
 
@@ -239,12 +273,15 @@ public class BattlePhaseManager : MonoBehaviour
             }
         }
 
-        private void AddAllExtension(GameObject unitMore, bool owner)
+        IEnumerator AddAllExtension(GameObject unitMore, bool owner)
         {
+            numberView = PhotonNetwork.ViewCount;
             sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
             for (int i = 0; i < sizeListCentersEnnemi; i++)
             {
                 AddExtension(unitMore, owner);
+                yield return new WaitUntil((() => PhotonNetwork.ViewCount == numberView + 1));
+                numberView = PhotonNetwork.ViewCount;
             }
 
             deadUnitCenters.Clear();
@@ -315,10 +352,10 @@ public class BattlePhaseManager : MonoBehaviour
         }
 
         [PunRPC]
-        private void RPC_TakeDamageUnit(int unit1, int damage, int unit2, int damage2)
+        private void RPC_TakeDamageUnit(int unitSelected, int damage, int unitTarget, int damage2)
         {
-            PlacementManager.instance.SearchMobWithID(unit1).Atk -= Mathf.Abs(damage);
-            PlacementManager.instance.SearchMobWithID(unit2).Atk -= Mathf.Abs(damage2);
+            PlacementManager.instance.SearchMobWithID(unitSelected).Atk -= Mathf.Abs(damage);
+            PlacementManager.instance.SearchMobWithID(unitTarget).Atk -= Mathf.Abs(damage2);
         }
 
     }

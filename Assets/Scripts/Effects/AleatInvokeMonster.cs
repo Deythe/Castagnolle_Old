@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -11,10 +9,11 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
     [SerializeField] private GameObject cardUnit;
     [SerializeField] private int usingPhase = 3;
     [SerializeField] private List<Vector2> boardPosition = new List<Vector2>();
+    [SerializeField] private int numberPoupoul=1;
     private int random;
     private bool used;
     private bool here;
-    private int i;
+    private int i,j;
     
 
     public void OnCast(int phase)
@@ -23,36 +22,14 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
         {
             if (phase == usingPhase)
             {
-                InitArrayOfPosition();
-                random = Random.Range(0, boardPosition.Count);
-                
-                for (int i = boardPosition.Count; i >= 0; i--)
+                for (j = 0; j < numberPoupoul; j++)
                 {
-                    foreach (var unit in PlacementManager.instance.GetBoard())
-                    {
-                        foreach (var center in unit.emplacement)
-                        {
-                            if (center.Equals(boardPosition[random]))
-                            {
-                                here = true;
-                            }
-                        }
-                    }
-
-                    if (!here)
-                    {
-                        view.RPC("RPC_Action", RpcTarget.Others, boardPosition[random].x, boardPosition[random].y);
-                        used = true;
-                        EffectManager.instance.CancelSelection(1);
-                        boardPosition.Clear();
-                        return;    
-                    }
-
-                    boardPosition.RemoveAt(random);
-                    random = Random.Range(0, boardPosition.Count);
+                    InitArrayOfPosition();
+                    Action();
+                    boardPosition.Clear();
                 }
                 
-                boardPosition.Clear();
+                used = true;
                 EffectManager.instance.CancelSelection(1);
             }
         }
@@ -61,9 +38,33 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(float x, float z)
     {
-        PhotonNetwork.Instantiate(cardUnit.name, new Vector3(x,0.55f,z), PlayerSetup.instance.transform.rotation);
+        PhotonNetwork.Instantiate(cardUnit.name, new Vector3(x,0.55f,z), PlayerSetup.instance.transform.rotation, 0);
     }
 
+    private void Action()
+    {
+        for (i = boardPosition.Count; i > 0; i--)
+        {
+            here = false;
+            random = Random.Range(0, boardPosition.Count);
+
+            foreach (var place in PlacementManager.instance.GetBoard())
+            {
+                if (place.emplacement.Contains(boardPosition[random]))
+                {
+                    here = true;
+                }
+            }
+
+            if (!here)
+            {
+                view.RPC("RPC_Action", RpcTarget.Others, boardPosition[random].x, boardPosition[random].y);
+                return;
+            }
+            
+            boardPosition.RemoveAt(random);
+        }
+    }
     void InitArrayOfPosition()
     {
         for (float x = -3.5f ; x <= 3.5f; x++)
