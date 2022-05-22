@@ -43,22 +43,17 @@ public class RoundManager : MonoBehaviourPunCallbacks
         currentPlayerNumberTurnNumberTurn = 1;
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("Player1");
             localPlayerTurn = 1;
         }
         else
         {
-            Debug.Log("Player2");
             localPlayerTurn = 2;
         }
         
     }
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return new WaitForSeconds(1);
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 30;
         roundState = 0;
         SpawnNewPlayer();
     }
@@ -90,6 +85,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public void BattlePhase()
     {
+        DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
         roundState = 3;
     }
     
@@ -128,10 +124,26 @@ public class RoundManager : MonoBehaviourPunCallbacks
         roundState = 0;
         if (currentPlayerNumberTurnNumberTurn==1)
         {
+            if (localPlayerTurn==1)
+            {
+                UiManager.instance.EnableDisableShader(false);
+            }
+            else
+            {
+                UiManager.instance.EnableDisableShader(true);
+            }
             currentPlayerNumberTurnNumberTurn = 2;
         }
         else
         {
+            if (localPlayerTurn==1)
+            {
+                UiManager.instance.EnableDisableShader(true);
+            }
+            else
+            {
+                UiManager.instance.EnableDisableShader(false);
+            }
             currentPlayerNumberTurnNumberTurn = 1;
         }
     }

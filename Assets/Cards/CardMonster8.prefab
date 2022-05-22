@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -352, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 225, y: 225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7236249880086410057
 CanvasRenderer:
@@ -89,9 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd805ddab4130c548b81946f3b1453ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 21300000, guid: 57a2d0772dba65e4ea90d5e67457698f, type: 3}
   bigCard: {fileID: 21300000, guid: 57a2d0772dba65e4ea90d5e67457698f, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: a48a22bf1bd8a834297c85a178194bda, type: 3}
   atk: 6
   resources: 010000000100000001000000
   isChampion: 0
+  isTouching: 0

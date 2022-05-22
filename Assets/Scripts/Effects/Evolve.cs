@@ -34,7 +34,7 @@ public class Evolve : MonoBehaviour, IEffects
             {
                 kill++;
                 Debug.Log("Kill++");
-                if (kill == 3)
+                if (kill == 2)
                 {
                     if (cardListEvolve.childCount==0)
                     {
@@ -68,6 +68,7 @@ public class Evolve : MonoBehaviour, IEffects
                 
             }else if (phase == 8)
             {
+                used = true;
                 for (int i = cardListEvolve.childCount-1; i >= 0; i--)
                 {
                     cardListEvolve.GetChild(i).gameObject.SetActive(false);
@@ -77,7 +78,6 @@ public class Evolve : MonoBehaviour, IEffects
                     transform.rotation, 0);
                 
                 EffectManager.instance.CancelSelection(1);
-                used = true;
                 PhotonNetwork.Destroy(gameObject);
             }
         }

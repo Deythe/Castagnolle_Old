@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using Photon.Pun;
 using TMPro;
@@ -18,7 +19,6 @@ public class UiManager : MonoBehaviour
     [SerializeField] private TMP_Text hp;
     [SerializeField] private TMP_Text hpEnnemi;
     
-    
     [SerializeField] private GameObject uiPlayerTurn;
     [SerializeField] private GameObject endTurn;
     [SerializeField] private GameObject scrollView;
@@ -28,25 +28,28 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject menuNoChoice;
     
     [SerializeField] private RectTransform content;
+    
+    private GameObject card;
+    
     [SerializeField] private GameObject bigCart;
-
-    [SerializeField] private GameObject card;
+    [SerializeField] private TMP_Text lifeCard;
+    [SerializeField] private RectTransform ressourceCard;
+    
     [SerializeField] private RectTransform cardListChose;
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject settingsButtonMenu;
     [SerializeField] private GameObject viewButton;
     [SerializeField] private GameObject shader;
-    
+
+
+    private List<int> pivotResources;
     private bool settingsOnOff;
     private bool viewTacticsOn;
-    private float originalScrolPositionY;
+    private float originalScrollPositionY;
     private float framerate;
     private float deltaTime;
     private bool waitingCoroutine;
-    
-    private Ray ray;
     private RaycastHit hit;
-
     public GameObject Waiting
     {
         get => waiting;
@@ -86,7 +89,16 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        originalScrolPositionY = scrollView.transform.localPosition.y;
+        originalScrollPositionY = scrollView.transform.localPosition.y;
+        
+        if (RoundManager.instance.LocalPlayerTurn.Equals(1))
+        {
+            shader.SetActive(true);
+        }
+        else
+        {
+            shader.SetActive(false);
+        }
     }
 
     void Update()
@@ -101,7 +113,6 @@ public class UiManager : MonoBehaviour
             EnableDisableBattleButton();
             EnableDisableMenuYesChoice();
             EnableDisableMenuNoChoice();
-            EnableDisableShader();
             UpdateFPS();
         }
     }
@@ -112,13 +123,10 @@ public class UiManager : MonoBehaviour
             {
                 if (Input.touchCount > 0)
                 {
-                    ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
-                    Physics.Raycast(ray, out hit);
-
                     switch (Input.GetTouch(0).phase)
                     {
                         case TouchPhase.Began:
-                            case TouchPhase.Moved:
+                            Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                             if(hit.collider != null && hit.collider.GetComponent<Monster>() != null)
                             {
                                 StopAllCoroutines();
@@ -136,8 +144,11 @@ public class UiManager : MonoBehaviour
 
     private IEnumerator CoroutineShowingcard(Collider go)
     {
-        yield return new WaitForSeconds(0.5f);
-        AbleUpdateCard(go.GetComponent<Monster>().BigCard);
+        yield return new WaitForSeconds(0.3f);
+        if (go != null)
+        {
+            AbleBoardMonsterCard(go);
+        }
     }
     
 
@@ -157,16 +168,41 @@ public class UiManager : MonoBehaviour
         framerate = 1.0f / deltaTime;
         fps.text = Mathf.Ceil (framerate).ToString ();
     }
-
-    public void AbleUpdateCard(Sprite card)
+    
+    public void AbleBoardMonsterCard(Collider go)
     {
-        bigCart.GetComponent<Image>().sprite = card;
+        bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().BigCard;
+        lifeCard.text = ""+ go.GetComponent<Monster>().Atk;
+        pivotResources = go.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+        
+        for (int i = 0; i <  pivotResources.Count; i++)
+        {
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
+                DiceManager.instance.DiceListScriptable.symbolsList[pivotResources[i]];
+            ressourceCard.GetChild(i).gameObject.SetActive(true);
+        }
+        
+        bigCart.SetActive(true);
+    }
+
+    public void AbleDeckCardTouch()
+    {
+        bigCart.GetComponent<Image>().sprite = card.GetComponent<CardData>().BigCard;
+        lifeCard.text = ""+card.GetComponent<CardData>().Atk;
+
+        for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
+        {
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
+                DiceManager.instance.DiceListScriptable.symbolsList[card.GetComponent<CardData>().Ressources[i]];
+            ressourceCard.GetChild(i).gameObject.SetActive(true);
+        }
+        
         bigCart.SetActive(true);
     }
 
     public void ChangePosition()
     {
-        if (card != null)
+        if (card != null && !card.GetComponent<CardData>().IsTouching)
         {
             if(Input.touchCount > 0)
             {
@@ -177,6 +213,11 @@ public class UiManager : MonoBehaviour
 
     public void ShowingOffBigCard()
     {
+        for (int i = 0; i < ressourceCard.childCount; i++)
+        {
+            ressourceCard.GetChild(i).gameObject.SetActive(false);
+        }
+        
         bigCart.SetActive(false);
     }
 
@@ -222,11 +263,11 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY+300, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+250, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.5f).SetEase(Ease.Linear);
         }
     }
     
@@ -296,20 +337,8 @@ public class UiManager : MonoBehaviour
         scrollView.SetActive(!settingsOnOff);
     }
     
-    void EnableDisableShader()
+    public void EnableDisableShader(bool b)
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound!=2)
-        {
-            shader.SetActive(true);
-        }
-        else
-        {
-            shader.SetActive(false);
-        }
+        shader.SetActive(b);
     }
-    
-    
-    
-    
 }

@@ -2501,6 +2501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 0}
   deck: {fileID: 11400000, guid: f9e06a1b2bf64f74096cb8d945239be0, type: 2}
+  diceDeck: {fileID: 11400000, guid: 6f2d0274df8602846824f3988a0e71e2, type: 2}
 --- !u!114 &1360575350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2897,6 +2898,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 0}
   deck: {fileID: 11400000, guid: 40e713f73510dd54cb24d752aa81b139, type: 2}
+  diceDeck: {fileID: 11400000, guid: 7f94240c87531c34f84c318b6802b045, type: 2}
 --- !u!1 &1770394964
 GameObject:
   m_ObjectHideFlags: 0
@@ -3146,6 +3148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 1873971924}
   deck: {fileID: 11400000, guid: 89938aec27340c543aab747dffba8eb5, type: 2}
+  diceDeck: {fileID: 11400000, guid: fbbe57f3b3118e249a7a48078752e0f4, type: 2}
 --- !u!114 &1873971924
 MonoBehaviour:
   m_ObjectHideFlags: 0

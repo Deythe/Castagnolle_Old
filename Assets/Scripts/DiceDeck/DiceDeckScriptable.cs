@@ -4,5 +4,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Create New DiceDeck", fileName = "Dice")]
 public class DiceDeckScriptable : ScriptableObject
 {
-    public List<DiceScriptable> diceDeck;
+    public int[] diceDeck;
 }

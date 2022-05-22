@@ -10,9 +10,8 @@ public class EffectManager : MonoBehaviour
     [SerializeField] private GameObject targetUnitAlly;
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject targetUnitEnnemi;
-    private Ray ray;
-    private int numberIdAll = 0;
     private RaycastHit hit;
+    private int numberIdAll = 0;
     private int i, j;
 
     public GameObject AllieUnit
@@ -60,12 +59,10 @@ public class EffectManager : MonoBehaviour
         {
             if (Input.touchCount > 0)
             {
-                ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
-                Physics.Raycast(ray, out hit);
-                
                 switch (Input.GetTouch(0).phase)
                 {
                     case TouchPhase.Began:
+                        Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                         if (hit.collider != null)
                         {
                             if (hit.collider.GetComponent<Monster>() != null)

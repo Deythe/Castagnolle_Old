@@ -53,11 +53,12 @@ public class BonesForDamage : MonoBehaviour, IEffects
             }
         }
     }
-    
+
+
     [PunRPC]
     private void RPC_Action(int unitID, int degat)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*2);
+        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*3);
     }
 
     

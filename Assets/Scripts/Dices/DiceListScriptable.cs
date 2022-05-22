@@ -1,18 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class DiceListScriptable : MonoBehaviour
+[CreateAssetMenu(menuName = "Create Dice List", fileName = "DiceList")]
+public class DiceListScriptable : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public List<DiceScriptable> diceDeck;
+    public List<Texture2D> textureList;
+    public List<Sprite> symbolsList;
 }

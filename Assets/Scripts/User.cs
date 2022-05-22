@@ -8,6 +8,7 @@ public class User {
     public string userName;
     public bool isConnected;
     public int[] currentDeck;
+    public int[] currentDiceDeck;
 
     public User() {
     }
@@ -16,5 +17,6 @@ public class User {
         userName = usernameEnv;
         isConnected = b;
         currentDeck = new int[8];
+        currentDiceDeck = new int[12];
     }
 }

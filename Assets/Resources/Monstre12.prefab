@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1764594795200175919}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.22848697, y: 0, z: 0.0034122467}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 5933185828017948179, guid: f6cc75c875be09d4691ac303dabfebe0, type: 3}
+  card: {fileID: 7236249880086410052, guid: f6cc75c875be09d4691ac303dabfebe0, type: 3}
   bigCard: {fileID: 0}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
@@ -321,7 +321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2d92bd3ae35d69449ff4f8922516139, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.0139236
+      value: 0.783
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2d92bd3ae35d69449ff4f8922516139, type: 3}
       propertyPath: m_LocalRotation.w
@@ -386,6 +386,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d2d92bd3ae35d69449ff4f8922516139, type: 3}
       propertyPath: m_Name
       value: Anubis_Morpher
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d2d92bd3ae35d69449ff4f8922516139, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2d92bd3ae35d69449ff4f8922516139, type: 3}

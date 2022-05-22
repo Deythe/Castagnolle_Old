@@ -4,5 +4,5 @@ using UnityEngine;
 public class DeckScriptable : ScriptableObject
 {
     public int[] indexCrea;
-    public DiceScriptable dice;
+    public DiceDeckScriptable diceDeck;
 }

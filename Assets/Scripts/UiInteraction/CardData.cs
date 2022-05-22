@@ -15,9 +15,12 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     [SerializeField] private bool isTouching;
     private RectTransform rec;
     
-    private float initalYPosition;
-    
-    private bool waiting;
+    private float initialYPosition;
+
+    public bool IsTouching
+    {
+        get => isTouching;
+    }
 
     public Sprite BigCard
     {
@@ -70,10 +73,9 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Moved && isTouching)
             {
-                if (Input.GetTouch(0).deltaPosition.y > 18)
+                if (Input.GetTouch(0).deltaPosition.y > 17)
                 {
                     isTouching = false;
-                    waiting = false;
                     GetComponentInParent<ScrollRect>().horizontal = false;
                     UiManager.instance.Card = gameObject;
                 }
@@ -89,8 +91,9 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     {
         if (Input.touchCount > 0)
         {
-            if (waiting)
+            if (Input.GetTouch(0).deltaPosition.y < 5)
             {
+                Debug.Log(Input.GetTouch(0).deltaPosition.y);
                 ReInit();
             }
         }
@@ -102,11 +105,10 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                Debug.Log("Oui");
                 isTouching = true;
-                initalYPosition = transform.localPosition.y;
-                UiManager.instance.AbleUpdateCard(bigCard);
-                waiting = true;
+                initialYPosition = transform.localPosition.y;
+                UiManager.instance.Card = gameObject;
+                UiManager.instance.AbleDeckCardTouch();
             }
         }
     }
@@ -114,7 +116,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     private void ReInit()
     {
         isTouching = false;
-        waiting = false;
         UiManager.instance.ShowingOffBigCard();
         rec.localPosition = new Vector3(rec.localPosition.x, 0, rec.localPosition.z);
         GetComponentInParent<ScrollRect>().horizontal = true;

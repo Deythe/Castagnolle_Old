@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class NeedLessRessources : MonoBehaviour, IEffects
+public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 {
     public static Dictionary<GameObject, int[]> originalCard;
     public static List<GameObject> unitOnBoard;
@@ -54,7 +54,6 @@ public class NeedLessRessources : MonoBehaviour, IEffects
                 if (motherUnit == null)
                 {
                     motherUnit = gameObject;
-                    //Debug.Log("MOtherUnit");
                 }
                 
                 degatMore++;
@@ -63,7 +62,6 @@ public class NeedLessRessources : MonoBehaviour, IEffects
                 {
                     if (card.GetComponent<CardData>().IsChampion && card.GetComponent<CardData>().Ressources.Count > 0)
                     {
-                        //Debug.Log("EffetGoblin");
                         card.GetComponent<CardData>().Ressources
                             .RemoveAt(card.GetComponent<CardData>().Ressources.Count - 1);
                     }
@@ -80,7 +78,6 @@ public class NeedLessRessources : MonoBehaviour, IEffects
         {
             if (numberUnitCurrent > PlacementManager.instance.GetBoard().Count)
             {
-                //Debug.Log("unitMort");
                 numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
             } else if (numberUnitCurrent < PlacementManager.instance.GetBoard().Count)
             {
@@ -94,17 +91,16 @@ public class NeedLessRessources : MonoBehaviour, IEffects
                         if (PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster.GetComponent<Monster>()
                             .IsChampion)
                         {
-                            //Debug.Log("NeedLessRessource");
                             view.RPC("RPC_Action", RpcTarget.AllViaServer,
                                 PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster
                                     .GetComponent<PhotonView>().ViewID, degatMore);
                             
-                            degatMore = 0;
-                            ResetUnit();
+                            //degatMore = 0;
+                            //ResetUnit();
                             DeckManager.instance.CheckUnitWithRessources();
                             UiManager.instance.UpdateListCard();
-                            motherUnit = null;
-                            unitOnBoard.Clear();
+                            //motherUnit = null;
+                            //unitOnBoard.Clear();
                         }
                     }
                 }
@@ -119,13 +115,8 @@ public class NeedLessRessources : MonoBehaviour, IEffects
             if (card.GetComponent<CardData>().IsChampion)
             {
                 card.GetComponent<CardData>().Ressources.Clear();
-
-                for (int i = 0; i < card.GetComponent<CardData>().Ressources.Capacity; i++)
-                {
-                    //Debug.Log("Reset");
-                    pivot = originalCard[card.GetComponent<CardData>().Prefabs][i];
-                    card.GetComponent<CardData>().Ressources.Add(pivot);
-                }
+                card.GetComponent<CardData>().Ressources =
+                    new List<int>(originalCard[card.GetComponent<CardData>().Prefabs]);
             }
         }
     }

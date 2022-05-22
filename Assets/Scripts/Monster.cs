@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
-    [SerializeField] private CardData card;
+    [SerializeField] private GameObject card;
     [SerializeField] private Sprite bigCard;
     
     [SerializeField] private Material ownerMonsterColor;
@@ -37,6 +37,10 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
 
+    public GameObject Stats
+    {
+        get => card;
+    }
     public Sprite BigCard
     {
         get => bigCard;
@@ -114,13 +118,14 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         
         if (card!=null)
         {
-            Atk = card.Atk;
-            isChampion = card.IsChampion;
-            bigCard = card.BigCard;
+            Atk = card.GetComponent<CardData>().Atk;
+            isChampion = card.GetComponent<CardData>().IsChampion;
+            bigCard = card.GetComponent<CardData>().BigCard;
         }
         else
         {
             Atk = atk;
+            IsChampion = isChampion;
         }
 
         id = view.ViewID;

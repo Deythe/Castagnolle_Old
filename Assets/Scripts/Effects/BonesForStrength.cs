@@ -69,7 +69,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int unitID)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk+=2;
+        PlacementManager.instance.SearchMobWithID(unitID).Atk+=3;
     }
 
     public int GetPhaseActivation()

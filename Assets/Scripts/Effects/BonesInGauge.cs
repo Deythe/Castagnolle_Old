@@ -14,20 +14,22 @@ public class BonesInGauge : MonoBehaviour, IEffects
         {
             if (phase == usingPhase)
             {
-                for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
+                if (DiceManager.instance != null)
                 {
-                    if (DiceManager.instance.Gauge != null)
+                    for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                     {
-                        if (DiceManager.instance.Gauge[i].Equals(0))
+                        if (DiceManager.instance.Gauge != null)
                         {
-                            byte[] bytes = bones.GetRawTextureData();
-                            DiceManager.instance.Gauge[i] = 5;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
-                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
-                            used = true;
-                            DeckManager.instance.CheckUnitWithRessources();
-                            UiManager.instance.UpdateListCard();
-                            return;
+                            if (DiceManager.instance.Gauge[i].Equals(0))
+                            {
+                                DiceManager.instance.Gauge[i] = 5;
+                                DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                                    DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, 5);
+                                used = true;
+                                DeckManager.instance.CheckUnitWithRessources();
+                                UiManager.instance.UpdateListCard();
+                                return;
+                            }
                         }
                     }
                 }

@@ -11,7 +11,6 @@ public class PlacementManager : MonoBehaviour
     private GameObject currentUnit;
     private GameObject currentUnitPhoton;
     private bool isPlacing;
-    private Ray ray;
     private RaycastHit hit;
     private CardData currentCardSelection;
     private bool specialInvocation;
@@ -54,27 +53,14 @@ public class PlacementManager : MonoBehaviour
     {
         if (RoundManager.instance != null)
         {
-            CheckRaycast();
             ShowMonsterEmplacement();
-        }
-    }
-
-    void CheckRaycast()
-    {
-        if (RoundManager.instance.StateRound==2)
-        {
-            if (Input.touchCount>0)
-            {
-                ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
-                Physics.Raycast(ray, out hit);
-            }
         }
     }
 
     public void InstantiateCurrent()
     {
         currentUnit = Instantiate(goPrefabMonster,
-                new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
+            new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
                 PlayerSetup.instance.transform.rotation);
         isPlacing = true;
     }
@@ -85,7 +71,7 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                if (card.monster.GetComponent<Monster>().Status.Equals(0))
+                if (card.monster.GetComponent<Monster>().Status!=1)
                 {
                     card.monster.GetComponent<Monster>().Attacked = false;
                 }
@@ -101,6 +87,8 @@ public class PlacementManager : MonoBehaviour
         {
             if (Input.touchCount > 0)
             {
+                Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                
                 switch (Input.GetTouch(0).phase)
                 {
                     case TouchPhase.Began:
@@ -108,6 +96,10 @@ public class PlacementManager : MonoBehaviour
                         break;
                     
                     case TouchPhase.Moved:
+                        if (currentUnit == null)
+                        {
+                            InstantiateCurrent();
+                        }
                         currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z) +
                                                          PlayerSetup.instance.transform.forward;
                         break;
@@ -143,7 +135,7 @@ public class PlacementManager : MonoBehaviour
                                 }
                                 else
                                 {
-                                   currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0); 
+                                    currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0);
                                 }
                                 
                                 currentUnitPhoton = null;
