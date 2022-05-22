@@ -134,8 +134,8 @@ public class DiceManager : MonoBehaviour
                     diceTarget.transform.position.z > diceGaugeObjet[i].transform.position.z - 0.5)
                 {
                     diceTarget.GetComponent<MeshRenderer>().enabled = false;
-                    
                     PutInGauge(i, diceTarget);
+                    diceTarget = null;
                     return true;
                 }
             }
@@ -150,8 +150,22 @@ public class DiceManager : MonoBehaviour
         {
             if (diceObjet[i].Equals(dice))
             {
-                view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[index].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
+                for (int j = 0; j < diceGauge.Length; j++)
+                {
+                    if (diceGauge[j] == 0)
+                    {
+                        view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j].GetComponent<PhotonView>().ViewID, true, diceChoosen[j]);
+                        diceGauge[j] = diceChoosen[i];
+                        dicesNotDisponible[diceGauge.Length + j] = dicesNotDisponible[i];
+                        dicesNotDisponible[i] = null;
+                        diceChoosen[i] = 0;
+                        DeckManager.instance.CheckUnitWithRessources();
+                        UiManager.instance.UpdateListCard();
+                        return;
+                    }
+                }
                 
+                view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[index].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
                 diceGauge[index] = diceChoosen[i];
                 dicesNotDisponible[diceGauge.Length + index] = dicesNotDisponible[i];
                 dicesNotDisponible[i] = null;

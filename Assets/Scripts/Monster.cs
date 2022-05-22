@@ -116,7 +116,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        model.material = modelTexture;
+        if (model != null)
+        {
+            model.material = modelTexture;
+        }
+
         AddAllEffects();
         owner = view.OwnerActorNr;
         

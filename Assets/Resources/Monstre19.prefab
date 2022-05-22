@@ -93,6 +93,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: b4b6a080283f3264f9e8adbde2c2e865, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 1542026123661035232}
+  modelTexture: {fileID: 2100000, guid: ad0c642204752b545b664bcc8128d1b8, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -471,13 +473,18 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: 6366ba257af358247856e3037efc687f, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ad0c642204752b545b664bcc8128d1b8, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: 6366ba257af358247856e3037efc687f, type: 3}
       propertyPath: m_Name
       value: Volailler_Morpher
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6366ba257af358247856e3037efc687f, type: 3}
+--- !u!137 &1542026123661035232 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: 6366ba257af358247856e3037efc687f, type: 3}
+  m_PrefabInstance: {fileID: 6875749037816471282}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6028904296870175651 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6366ba257af358247856e3037efc687f, type: 3}

@@ -95,6 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: 15384863e1caa5642a606b6c4e177261, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 173887001449811914}
+  modelTexture: {fileID: 2100000, guid: e1affd9da3bf9fe43afab30cb3337f04, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -570,13 +572,18 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: 1d2f0189613eb8745ae11069213140ab, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e1affd9da3bf9fe43afab30cb3337f04, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: 1d2f0189613eb8745ae11069213140ab, type: 3}
       propertyPath: m_Name
       value: Garde_Morpher
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d2f0189613eb8745ae11069213140ab, type: 3}
+--- !u!137 &173887001449811914 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: 1d2f0189613eb8745ae11069213140ab, type: 3}
+  m_PrefabInstance: {fileID: 5216352038069327832}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4946462412913830537 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d2f0189613eb8745ae11069213140ab, type: 3}

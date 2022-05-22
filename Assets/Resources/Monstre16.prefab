@@ -95,6 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 9112926116613886069}
+  modelTexture: {fileID: 2100000, guid: 7529f3813eafd1243a8ba91e3141bdfa, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -483,7 +485,7 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: b037ea1fbbb7d1a499e06e8ea0199485, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7529f3813eafd1243a8ba91e3141bdfa, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: b037ea1fbbb7d1a499e06e8ea0199485, type: 3}
       propertyPath: m_Name
       value: Griffon_Morpher
@@ -520,6 +522,11 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!137 &9112926116613886069 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: b037ea1fbbb7d1a499e06e8ea0199485, type: 3}
+  m_PrefabInstance: {fileID: 3781457714968660071}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5563198028852635829
 PrefabInstance:
   m_ObjectHideFlags: 0

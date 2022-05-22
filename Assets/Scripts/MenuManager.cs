@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
