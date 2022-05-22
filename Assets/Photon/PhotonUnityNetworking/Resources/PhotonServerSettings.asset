@@ -54,6 +54,7 @@ MonoBehaviour:
   - RPC_TakeDamageUnit
   - RPC_InstantiateEnemyTiles
   - RPC_SyncTiles
+  - RPC_PlayAnimation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

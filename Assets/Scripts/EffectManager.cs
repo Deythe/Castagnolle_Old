@@ -7,12 +7,22 @@ using UnityEngine;
 public class EffectManager : MonoBehaviour
 {
     public static EffectManager instance;
+    [SerializeField] private PhotonView view;
+    
+    [SerializeField] private List<GameObject> effectsList;
+    [SerializeField] private List<GameObject> instantiateEffect;
     [SerializeField] private GameObject targetUnitAlly;
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject targetUnitEnnemi;
+    [SerializeField] private Transform pooler;
     private RaycastHit hit;
     private int numberIdAll = 0;
     private int i, j;
+
+    public PhotonView View
+    {
+        get => view;
+    }
 
     public GameObject AllieUnit
     {
@@ -40,6 +50,16 @@ public class EffectManager : MonoBehaviour
             targetUnitEnnemi = value;
         }
     }
+
+    public void InstantiateAllEffect()
+    {
+        for (i = 0; i < effectsList.Count ; i++)
+        {
+            instantiateEffect.Add(Instantiate(effectsList[i],Vector3.zero, PlayerSetup.instance.transform.rotation, pooler));
+            instantiateEffect[i].SetActive(false);
+        }    
+    }
+    
     private void Awake()
     {
         instance = this;
@@ -154,5 +174,43 @@ public class EffectManager : MonoBehaviour
         
         return false;   
         
+    }
+    
+    
+    [PunRPC]
+    private void RPC_PlayAnimation(int idEffect, float x, float y ,float z, float duration)
+    {
+        StopAllCoroutines();
+        StartCoroutine(CoroutinePlayAnimation(idEffect, x, y, z, duration));
+    }
+
+    IEnumerator CoroutinePlayAnimation(int idEffect, float x, float y ,float z, float duration)
+    {
+        instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
+        instantiateEffect[idEffect].SetActive(true);
+        
+        PlayAllParticulesSystem(idEffect);
+        
+        yield return new WaitForSeconds(duration);
+        
+        instantiateEffect[idEffect].SetActive(false);
+        instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
+    }
+
+    void PlayAllParticulesSystem(int idEffect)
+    {
+        if (instantiateEffect[idEffect].GetComponent<ParticleSystem>() != null)
+        {
+            instantiateEffect[idEffect].GetComponent<ParticleSystem>().Play();
+        }
+
+        for (int k = 0; k <instantiateEffect[idEffect].transform.childCount; k++)
+        {
+            if (instantiateEffect[idEffect].transform.GetChild(k).GetComponent<ParticleSystem>() != null)
+            {
+                instantiateEffect[idEffect].transform.GetChild(k).GetComponent<ParticleSystem>().Play();
+            }
+        }
+
     }
 }

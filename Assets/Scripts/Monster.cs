@@ -207,6 +207,12 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     private void OnDestroy()
     {
+        if (owner != 0) 
+        {
+            EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x, 0.6f,
+                transform.position.z, 3f);
+        }
+
         foreach (IEffects effet in effects)
         {
             effet.OnCast(2);

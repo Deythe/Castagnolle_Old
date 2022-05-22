@@ -16,10 +16,15 @@ public class PlayerSetup : MonoBehaviour
     {
         instance = this;
         cam.enabled = true;
+        
         DiceManager.instance.InitDiceMesh();
         DiceManager.instance.InitGaugeDiceMesh();
+        
+        EffectManager.instance.InstantiateAllEffect();
+            
         startCamPos = cam.transform.position;
         startCamRot = cam.transform.rotation;
+        
         UiManager.instance.CanvasPublic.worldCamera = cam;
         UiManager.instance.Waiting.SetActive(false);
     }
