@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -11,19 +12,24 @@ public class PlacementManager : MonoBehaviour
     private GameObject currentUnit;
     private GameObject currentUnitPhoton;
     private bool isPlacing;
-    private Ray ray;
     private RaycastHit hit;
     private CardData currentCardSelection;
     private bool specialInvocation;
     [SerializeField] private List<Case> board;
     [SerializeField] private bool haveAChampionOnBoard;
-    
+    private float xAveragePosition, zAveragePosition;
+    private bool isWaiting;
     [Serializable]
     public class Case{
         public GameObject monster;
         public List<Vector2> emplacement;
     }
 
+    public bool IsWaiting
+    {
+        get => isWaiting;
+    }
+    
     public bool SpecialInvocation
     {
         get => specialInvocation;
@@ -52,29 +58,18 @@ public class PlacementManager : MonoBehaviour
 
     void Update()
     {
-        CheckRaycast();
-        ShowMonsterEmplacement();
-    }
-
-    void CheckRaycast()
-    {
-        if (RoundManager.instance.StateRound==2)
+        if (RoundManager.instance != null)
         {
-            if (Input.touchCount>0)
-            {
-                ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
-                Physics.Raycast(ray, out hit);
-            }
+            ShowMonsterEmplacement();
         }
     }
 
     public void InstantiateCurrent()
     {
         currentUnit = Instantiate(goPrefabMonster,
-                new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
+            new Vector3(hit.point.x, 0.55f, hit.point.z) + PlayerSetup.instance.transform.forward,
                 PlayerSetup.instance.transform.rotation);
-
-            isPlacing = true;
+        isPlacing = true;
     }
     
     public void ReInitMonster()
@@ -83,7 +78,7 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                if (card.monster.GetComponent<Monster>().Status.Equals(0))
+                if (card.monster.GetComponent<Monster>().Status!=1)
                 {
                     card.monster.GetComponent<Monster>().Attacked = false;
                 }
@@ -99,66 +94,111 @@ public class PlacementManager : MonoBehaviour
         {
             if (Input.touchCount > 0)
             {
-                switch (Input.GetTouch(0).phase)
-                {
-                    case TouchPhase.Began:
-                        InstantiateCurrent();
-                        break;
+                if(!isWaiting){
                     
-                    case TouchPhase.Moved:
-                        currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z) +
-                                                         PlayerSetup.instance.transform.forward;
-                        break;
+                    Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                    switch (Input.GetTouch(0).phase)
+                    {
+                        case TouchPhase.Began:
+                            InstantiateCurrent();
+                            break;
 
-                    case TouchPhase.Ended:
-                        if (isPlacing)
-                        {
-                            currentUnit.transform.position = new Vector3(
-                                Mathf.FloorToInt(currentUnit.transform.position.x) + 0.5f, 0.55f,
-                                Mathf.FloorToInt(currentUnit.transform.position.z) + 0.5f);
-
-                            if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
+                        case TouchPhase.Moved:
+                            if (currentUnit == null)
                             {
-                                object[] data = new object[] {currentCardSelection.Atk, currentCardSelection.IsChampion};
-                                
-                                currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, currentUnit.transform.position,
-                                    PlayerSetup.instance.transform.rotation, 0, data);
-
-                                if (!specialInvocation)
-                                {
-                                    DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
-                                }
-                                
-                                specialInvocation = false;
-                                currentCardSelection = null;
-                                Destroy(currentUnit);
-                                
-                                goPrefabMonster = null;
-                                currentUnit = null;
-                                isPlacing = false;
-                                
-                                if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
-                                {
-                                    RoundManager.instance.StateRound = 1;
-                                }
-                                currentUnitPhoton = null;
-                            }
-                            else
-                            {
-                                Destroy(currentUnit);
+                                InstantiateCurrent();
                             }
 
-                        }
+                            currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z) +
+                                                             PlayerSetup.instance.transform.forward;
+                            break;
 
-                        break;
+                        case TouchPhase.Ended:
+                            if (isPlacing)
+                            {
+                                currentUnit.transform.position = new Vector3(
+                                    Mathf.FloorToInt(currentUnit.transform.position.x) + 0.5f, 0.5f,
+                                    Mathf.FloorToInt(currentUnit.transform.position.z) + 0.5f);
+                                currentUnit.SetActive(false);
+
+                                if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
+                                {
+                                    isPlacing = false;
+                                    StartCoroutine(CoroutineSpawnMonster());
+                                }
+                                else
+                                {
+                                    Destroy(currentUnit);
+                                }
+
+                            }
+
+                            break;
+                    }
                 }
             }
         }
     }
 
+    IEnumerator CoroutineSpawnMonster()
+    {
+        isWaiting = true;
+        EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 0,  AverageCenterX(currentUnit), 0.6f , AverageCenterZ(currentUnit), 4f);
+
+        yield return new WaitForSeconds(1.2f);
+        
+        currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
+            PlayerSetup.instance.transform.rotation, 0);
+                                
+        if (!specialInvocation)
+        {
+            DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+        }
+                                
+        currentCardSelection = null;
+        specialInvocation = false;
+        goPrefabMonster = null;
+        Destroy(currentUnit);
+        currentUnit = null;
+
+        if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
+        {
+            RoundManager.instance.StateRound = 1;
+        }
+        else
+        {
+            currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0);
+        }
+                                
+        currentUnitPhoton = null;
+        isWaiting = false;
+    }
+
+    float AverageCenterX(GameObject unit)
+    {
+        xAveragePosition = 0;
+        foreach (var center in unit.GetComponent<Monster>().GetCenters())
+        {
+            xAveragePosition += center.position.x;
+        }
+        
+        return xAveragePosition / unit.GetComponent<Monster>().GetCenters().Count;
+    }
+
+    float AverageCenterZ(GameObject unit)
+    {
+        zAveragePosition = 0;
+        foreach (var center in unit.GetComponent<Monster>().GetCenters())
+        {
+            zAveragePosition += center.position.z;
+        }
+        
+        return zAveragePosition / unit.GetComponent<Monster>().GetCenters().Count;
+    }
+
     public Monster SearchMobWithID(int unitID)
     {
-        for (int i = 0; i < PlacementManager.instance.GetBoard().Count; i++)
+        for (int i = 0; i < board.Count; i++)
         {
             if (GetBoard()[i].monster.GetComponent<Monster>().ID.Equals(unitID))
             {
@@ -200,13 +240,13 @@ public class PlacementManager : MonoBehaviour
     public bool CheckLinkWithOthers(Vector3 v)
     {
         if (Mathf.FloorToInt(v.z) == -5 &&
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 1)
+            RoundManager.instance.LocalPlayerTurn==1)
         {
             return true;
         }
 
         if ((int)v.z + 1 == 5 &&
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] == 2)
+            RoundManager.instance.LocalPlayerTurn==2)
         {
             return true;
         }
@@ -218,8 +258,7 @@ public class PlacementManager : MonoBehaviour
     {
         foreach (Case data in board)
         {
-            if (data.monster.GetComponent<Monster>().GetOwner() ==
-                (int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"])
+            if (data.monster.GetComponent<PhotonView>().AmOwner)
             {
                 foreach (var vector in data.emplacement)
                 {
@@ -286,12 +325,15 @@ public class PlacementManager : MonoBehaviour
         {
             if (board[i].monster.GetComponent<Monster>().ID == id)
             {
-                if (board[i].monster.GetComponent<Monster>().IsChampion && board[i].monster.GetComponent<PhotonView>().AmOwner)
+                if (board[i].monster.GetComponent<Monster>().IsChampion &&
+                    board[i].monster.GetComponent<PhotonView>().AmOwner)
                 {
                     Debug.Log("Not Have A Champion");
                     haveAChampionOnBoard = false;
                 }
+                
                 board.Remove(GetBoard()[i]);
+                return;
             }
         }
     }
@@ -311,7 +353,7 @@ public class PlacementManager : MonoBehaviour
     public float CenterMoreFar(GameObject obj)
     {
         float zcenter;
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] == 1)
+        if (RoundManager.instance.LocalPlayerTurn == 1)
         {
             zcenter = -10;
             foreach (var center in obj.GetComponent<Monster>().GetCenters())

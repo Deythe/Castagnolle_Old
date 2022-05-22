@@ -33,8 +33,8 @@ public class BonesForDamage : MonoBehaviour, IEffects
                         if (DiceManager.instance.Gauge[i].Equals(5))
                         {
                             DiceManager.instance.Gauge[i] = 0;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
-                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, null);
+                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                             dmg++;
                         }
                     }
@@ -53,11 +53,12 @@ public class BonesForDamage : MonoBehaviour, IEffects
             }
         }
     }
-    
+
+
     [PunRPC]
     private void RPC_Action(int unitID, int degat)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*2);
+        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*3);
     }
 
     

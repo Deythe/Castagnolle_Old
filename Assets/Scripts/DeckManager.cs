@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
     [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
-    [SerializeField] private AllCarScriptable listDeck;
+    [SerializeField] private CardListScriptable cardListDeck;
     
     private List<GameObject> monsterPossible = new List<GameObject>();
     [SerializeField] private int[] checks = new int[6];
     
     private int[] ressources;
-    
+    private int check;
     public List<GameObject> CardDeck
     {
         get => cardDeck;
@@ -46,7 +47,7 @@ public class DeckManager : MonoBehaviour
     {
         for (int i = 0; i < FireBaseManager.instance.User.currentDeck.Length; i++)
         {
-            cardDeck.Add(UiManager.instance.InitCard(listDeck.cards[FireBaseManager.instance.User.currentDeck[i]]));
+            cardDeck.Add(UiManager.instance.InitCard(cardListDeck.cards[FireBaseManager.instance.User.currentDeck[i]]));
         }
     }
 
@@ -60,59 +61,57 @@ public class DeckManager : MonoBehaviour
             ressources = cardDeck[i].GetComponent<CardData>().Ressources.ToArray();
             for (int j = 0; j < ressources.Length; j++)
             {
-                if (ressources[j] == checks[0])
+                if (!ressources[j].Equals(4))
                 {
-                    checks[0] = 0;
-                    ressources[j] = 0;
+                    if (ressources[j] == checks[0])
+                    {
+                        checks[0] = 0;
+                        ressources[j] = 0;
+                    }
+                    else if (ressources[j] == checks[1])
+                    {
+                        checks[1] = 0;
+                        ressources[j] = 0;
+                    }
+                    else if (ressources[j] == checks[2])
+                    {
+                        checks[2] = 0;
+                        ressources[j] = 0;
+                    }
+                    else if (ressources[j] == checks[3])
+                    {
+                        checks[3] = 0;
+                        ressources[j] = 0;
+                    }
+                    else if (ressources[j] == checks[4])
+                    {
+                        checks[4] = 0;
+                        ressources[j] = 0;
+                    }
+                    else if (ressources[j] == checks[5])
+                    {
+                        checks[5] = 0;
+                        ressources[j] = 0;
+                    }
                 }
-                else if (ressources[j] == checks[1])
+                else
                 {
-                    checks[1] = 0;
-                    ressources[j] = 0;
-                }
-                else if (ressources[j] == checks[2])
-                {
-                    checks[2] = 0;
-                    ressources[j] = 0;
-                }
-                else if (ressources[j] == checks[3])
-                {
-                    checks[3] = 0;
-                    ressources[j] = 0;
-                }
-                else if (ressources[j] == checks[4])
-                {
-                    checks[4] = 0;
-                    ressources[j] = 0;
-                }
-                else if (ressources[j] == checks[5])
-                {
-                    checks[5] = 0;
-                    ressources[j] = 0;
+                    Debug.Log("C'est un Neutre");
+                    check = HaveADice();
+                    if (check!=-1)
+                    {
+                        Debug.Log("C'est un Neutre et tu as une ressource");
+                        checks[check] = 0;
+                        ressources[j] = 0;    
+                    }
                 }
             }
 
             if (AllCheckValide(ressources) && !(PlacementManager.instance.HaveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().IsChampion))
             {
-                //CheckCardAlreadyPossible(cardDeck[i]);
                 monsterPossible.Add(cardDeck[i]);
             }
         }
-    }
-
-    private void CheckCardAlreadyPossible(GameObject go)
-    {
-        for (int j = 0; j < monsterPossible.Count; j++)
-        {
-            if (monsterPossible[j].GetComponent<CardData>().Prefabs == go.GetComponent<CardData>().Prefabs)
-            {
-                return;
-            }    
-        }
-        
-        monsterPossible.Add(go);
-        
-        
     }
 
     private void InitCheck()
@@ -130,17 +129,19 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    public void DeleteCartFromDeck(GameObject go)
+    private int HaveADice()
     {
-        for (int i = 0; i < cardDeck.Count; i++)
+        for(int j = 0; j < checks.Length; j++)
         {
-            if (go.Equals(cardDeck[i]))
+            if (checks[j] != 0)
             {
-                cardDeck.RemoveAt(i);
+                return j;
             }
         }
-    }
 
+        return -1;
+    }
+    
     bool AllCheckValide(int[] list)
     {
         for (int i = 0; i < list.Length; i++)

@@ -1,3 +1,4 @@
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,7 @@ public class MenuLoginManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     private void Update()
@@ -39,6 +41,7 @@ public class MenuLoginManager : MonoBehaviour
         {
             if (FireBaseManager.instance.User != null)
             {
+                PhotonNetwork.ConnectUsingSettings();
                 FireBaseManager.instance.User.isConnected = true;
                 SceneManager.LoadScene(1);
             }

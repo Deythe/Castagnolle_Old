@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using Photon.Pun;
 using TMPro;
@@ -12,12 +14,10 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private GameObject waiting;
     [SerializeField] private Canvas canvas;
-    [SerializeField] private TMP_Text numberRound;
-   
+
     [SerializeField] private TMP_Text fps;
     [SerializeField] private TMP_Text hp;
     [SerializeField] private TMP_Text hpEnnemi;
-    
     
     [SerializeField] private GameObject uiPlayerTurn;
     [SerializeField] private GameObject endTurn;
@@ -28,21 +28,28 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject menuNoChoice;
     
     [SerializeField] private RectTransform content;
+    
+    private GameObject card;
+    
     [SerializeField] private GameObject bigCart;
-
-    [SerializeField] private GameObject card;
+    [SerializeField] private TMP_Text lifeCard;
+    [SerializeField] private RectTransform ressourceCard;
+    
     [SerializeField] private RectTransform cardListChose;
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject settingsButtonMenu;
     [SerializeField] private GameObject viewButton;
     [SerializeField] private GameObject shader;
-    
+
+
+    private List<int> pivotResources;
     private bool settingsOnOff;
     private bool viewTacticsOn;
-    private float originalScrolPositionY;
+    private float originalScrollPositionY;
     private float framerate;
     private float deltaTime;
-
+    private bool waitingCoroutine;
+    private RaycastHit hit;
     public GameObject Waiting
     {
         get => waiting;
@@ -82,30 +89,77 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        originalScrolPositionY = scrollView.transform.localPosition.y;
+        originalScrollPositionY = scrollView.transform.localPosition.y;
+        
+        if (RoundManager.instance.LocalPlayerTurn.Equals(1))
+        {
+            shader.SetActive(true);
+        }
+        else
+        {
+            shader.SetActive(false);
+        }
     }
 
     void Update()
     {
-        ChangePosition();
-        EnableDisableThrowDiceButton();
-        EnableDisableScrollView();
-        EnableDisableEndTurn();
-        EnableDisableBattleButton();
-        EnableDisableMenuYesChoice();
-        EnableDisableMenuNoChoice();
-        EnableDisableShader();
-        UpdateFPS();
+        if (RoundManager.instance != null)
+        {
+            CheckRaycast();
+            ChangePosition();
+            EnableDisableThrowDiceButton();
+            EnableDisableScrollView();
+            EnableDisableEndTurn();
+            EnableDisableBattleButton();
+            EnableDisableMenuYesChoice();
+            EnableDisableMenuNoChoice();
+            UpdateFPS();
+        }
     }
+    
+    void CheckRaycast()
+        {
+            if (RoundManager.instance.StateRound!=2)
+            {
+                if (Input.touchCount > 0)
+                {
+                    switch (Input.GetTouch(0).phase)
+                    {
+                        case TouchPhase.Began:
+                            Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                            if(hit.collider != null && hit.collider.GetComponent<Monster>() != null)
+                            {
+                                StopAllCoroutines();
+                                StartCoroutine(CoroutineShowingcard(hit.collider));
+                            }
+                            break;
+                        case TouchPhase.Ended:
+                            StopAllCoroutines();
+                            ShowingOffBigCard();
+                            break;
+                    }
+                }
+            }
+        }
+
+    private IEnumerator CoroutineShowingcard(Collider go)
+    {
+        yield return new WaitForSeconds(0.3f);
+        if (go != null)
+        {
+            AbleBoardMonsterCard(go);
+        }
+    }
+    
 
     public void UpdateHp()
     {
-        hp.text = "PV : " + LifeManager.instance.OwnLife;
+        hp.text = ""+LifeManager.instance.OwnLife;
     }
     
     public void UpdateHpEnnemi()
     {
-        hpEnnemi.text = "PV : " + LifeManager.instance.EnnemiLife;
+        hpEnnemi.text = ""+LifeManager.instance.EnnemiLife;
     }
     
     void UpdateFPS()
@@ -114,16 +168,41 @@ public class UiManager : MonoBehaviour
         framerate = 1.0f / deltaTime;
         fps.text = Mathf.Ceil (framerate).ToString ();
     }
-
-    public void AbleUpdateCard(Sprite card)
+    
+    public void AbleBoardMonsterCard(Collider go)
     {
-        bigCart.GetComponent<Image>().sprite = card;
+        bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().BigCard;
+        lifeCard.text = ""+ go.GetComponent<Monster>().Atk;
+        pivotResources = go.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+        
+        for (int i = 0; i <  pivotResources.Count; i++)
+        {
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
+                DiceManager.instance.DiceListScriptable.symbolsList[pivotResources[i]];
+            ressourceCard.GetChild(i).gameObject.SetActive(true);
+        }
+        
+        bigCart.SetActive(true);
+    }
+
+    public void AbleDeckCardTouch()
+    {
+        bigCart.GetComponent<Image>().sprite = card.GetComponent<CardData>().BigCard;
+        lifeCard.text = ""+card.GetComponent<CardData>().Atk;
+
+        for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
+        {
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
+                DiceManager.instance.DiceListScriptable.symbolsList[card.GetComponent<CardData>().Ressources[i]];
+            ressourceCard.GetChild(i).gameObject.SetActive(true);
+        }
+        
         bigCart.SetActive(true);
     }
 
     public void ChangePosition()
     {
-        if (card != null)
+        if (card != null && !card.GetComponent<CardData>().IsTouching)
         {
             if(Input.touchCount > 0)
             {
@@ -134,6 +213,11 @@ public class UiManager : MonoBehaviour
 
     public void ShowingOffBigCard()
     {
+        for (int i = 0; i < ressourceCard.childCount; i++)
+        {
+            ressourceCard.GetChild(i).gameObject.SetActive(false);
+        }
+        
         bigCart.SetActive(false);
     }
 
@@ -163,8 +247,8 @@ public class UiManager : MonoBehaviour
 
     void EnableDisableThrowDiceButton()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==0)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==0)
         {
             uiPlayerTurn.SetActive(true);
         }
@@ -176,21 +260,21 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableScrollView()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && !DiceManager.instance.DeckEmpy())
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY+300, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+250, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrolPositionY, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.5f).SetEase(Ease.Linear);
         }
     }
     
     void EnableDisableMenuYesChoice()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
         {
             menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(230, 0.5f).SetEase(Ease.Linear);
         }
@@ -202,8 +286,8 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableMenuNoChoice()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
         {
             menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(-230, 0.5f).SetEase(Ease.Linear);
         }
@@ -215,8 +299,8 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableBattleButton()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==1)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1)
         {
             menuBattlePhase.SetActive(true);
         }
@@ -227,8 +311,8 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableEndTurn()
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound==3)
+        if (RoundManager.instance.LocalPlayerTurn ==
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==3)
         {
             endTurn.SetActive(true);
         }
@@ -236,10 +320,6 @@ public class UiManager : MonoBehaviour
         {
             endTurn.SetActive(false);
         }
-    }
-    public void ChangeRoundUI()
-    {
-        numberRound.text = "" + (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"];
     }
 
     public void ChangeViewPlayer()
@@ -257,20 +337,8 @@ public class UiManager : MonoBehaviour
         scrollView.SetActive(!settingsOnOff);
     }
     
-    void EnableDisableShader()
+    public void EnableDisableShader(bool b)
     {
-        if ((int) PhotonNetwork.LocalPlayer.CustomProperties["PlayerNumber"] ==
-            (int) PhotonNetwork.LocalPlayer.CustomProperties["RoundNumber"] && RoundManager.instance.StateRound!=2)
-        {
-            shader.SetActive(true);
-        }
-        else
-        {
-            shader.SetActive(false);
-        }
+        shader.SetActive(b);
     }
-    
-    
-    
-    
 }

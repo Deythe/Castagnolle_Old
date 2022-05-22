@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1764594795200175919}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.55, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  card: {fileID: 7236249880086410052, guid: 1f76c86e05c708442b610332a29c0a4b, type: 3}
+  bigCard: {fileID: 0}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -128,7 +130,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 0.1, z: 2}
+  m_Size: {x: 2, y: 0.3, z: 2}
   m_Center: {x: 0.5, y: 0, z: 0.5}
 --- !u!114 &7616565447229796995
 MonoBehaviour:
@@ -144,7 +146,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171}
   cardUnit: {fileID: 1764594795200175919, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
+  usingPhase: 3
   boardPosition: []
+  numberPoupoul: 1
 --- !u!1 &4786434997981504987
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,7 +160,6 @@ GameObject:
   - component: {fileID: 8199586146027132789}
   - component: {fileID: 2181384773189629170}
   - component: {fileID: 1861264255899719493}
-  - component: {fileID: 764509148856083307}
   m_Layer: 6
   m_Name: Enclos
   m_TagString: Untagged
@@ -229,20 +232,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &764509148856083307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4786434997981504987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72f282529d8d7364faff840710f109a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storeInTexcoordChannel: 1
-  cospatialVertexDistance: 0.01
 --- !u!1 &7230849743625029377
 GameObject:
   m_ObjectHideFlags: 0

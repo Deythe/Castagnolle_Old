@@ -7,12 +7,22 @@ using UnityEngine;
 public class EffectManager : MonoBehaviour
 {
     public static EffectManager instance;
+    [SerializeField] private PhotonView view;
+    
+    [SerializeField] private List<GameObject> effectsList;
+    [SerializeField] private List<GameObject> instantiateEffect;
     [SerializeField] private GameObject targetUnitAlly;
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject targetUnitEnnemi;
-    private Ray ray;
-    private int numberIdAll = 0;
+    [SerializeField] private Transform pooler;
     private RaycastHit hit;
+    private int numberIdAll = 0;
+    private int i, j;
+
+    public PhotonView View
+    {
+        get => view;
+    }
 
     public GameObject AllieUnit
     {
@@ -40,6 +50,16 @@ public class EffectManager : MonoBehaviour
             targetUnitEnnemi = value;
         }
     }
+
+    public void InstantiateAllEffect()
+    {
+        for (i = 0; i < effectsList.Count ; i++)
+        {
+            instantiateEffect.Add(Instantiate(effectsList[i],Vector3.zero, PlayerSetup.instance.transform.rotation, pooler));
+            instantiateEffect[i].SetActive(false);
+        }    
+    }
+    
     private void Awake()
     {
         instance = this;
@@ -47,28 +67,9 @@ public class EffectManager : MonoBehaviour
 
     void Update()
     {
-        SelectTarget();
-        //ActivateAllEffectWhenUnitDie();
-    }
-
-    public void ActivateAllEffectWhenUnitDie()
-    {
-        if (numberIdAll < PlacementManager.instance.GetBoard().Count)
+        if (RoundManager.instance != null)
         {
-            Debug.Log("Unit invoqué");
-            numberIdAll = PlacementManager.instance.GetBoard().Count;
-        }else if (numberIdAll > PlacementManager.instance.GetBoard().Count)
-        {
-            Debug.Log("Unit morte");
-            numberIdAll = PlacementManager.instance.GetBoard().Count;
-            
-            foreach (var cases in PlacementManager.instance.GetBoard())
-            {
-                if (cases.monster.GetComponent<Monster>().HaveAnEffectThisTurn(5))
-                {
-                    cases.monster.GetComponent<Monster>().ActivateEffects(5);
-                }
-            }    
+            SelectTarget();
         }
     }
 
@@ -78,12 +79,10 @@ public class EffectManager : MonoBehaviour
         {
             if (Input.touchCount > 0)
             {
-                ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
-                Physics.Raycast(ray, out hit);
-                
                 switch (Input.GetTouch(0).phase)
                 {
                     case TouchPhase.Began:
+                        Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                         if (hit.collider != null)
                         {
                             if (hit.collider.GetComponent<Monster>() != null)
@@ -138,5 +137,80 @@ public class EffectManager : MonoBehaviour
         targetUnitEnnemi = null;
         currentUnit = null;
         RoundManager.instance.StateRound = state;
+    }
+    
+    public bool CheckHeroism(Transform go, List<GameObject> mobNextTo, int numberCheck)
+    {
+        for (i = 0; i < numberCheck; i++)
+        {
+            for (j = 0; j < PlacementManager.instance.GetBoard().Count; j++)
+            {
+                foreach (var unitAlly in go.GetComponent<Monster>().GetCenters())
+                {
+                    if (!PlacementManager.instance.GetBoard()[j].monster.GetComponent<PhotonView>().AmOwner)
+                    {
+                        Debug.Log(PlacementManager.instance.GetBoard()[j].emplacement);
+                        foreach (var center in PlacementManager.instance.GetBoard()[j].emplacement)
+                        {
+                            if (Vector2.Distance(center, new Vector2(unitAlly.position.x, unitAlly.position.z))
+                                .Equals(1))
+                            {
+                                if (!mobNextTo.Contains(PlacementManager.instance.GetBoard()[j].monster))
+                                {
+                                    mobNextTo.Add(PlacementManager.instance.GetBoard()[j].monster);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (mobNextTo.Count.Equals(numberCheck))
+        {
+            mobNextTo.Clear();
+            return true;
+        }
+        
+        return false;   
+        
+    }
+    
+    
+    [PunRPC]
+    private void RPC_PlayAnimation(int idEffect, float x, float y ,float z, float duration)
+    {
+        StopAllCoroutines();
+        StartCoroutine(CoroutinePlayAnimation(idEffect, x, y, z, duration));
+    }
+
+    IEnumerator CoroutinePlayAnimation(int idEffect, float x, float y ,float z, float duration)
+    {
+        instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
+        instantiateEffect[idEffect].SetActive(true);
+        
+        PlayAllParticulesSystem(idEffect);
+        
+        yield return new WaitForSeconds(duration);
+        
+        instantiateEffect[idEffect].SetActive(false);
+        instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
+    }
+
+    void PlayAllParticulesSystem(int idEffect)
+    {
+        if (instantiateEffect[idEffect].GetComponent<ParticleSystem>() != null)
+        {
+            instantiateEffect[idEffect].GetComponent<ParticleSystem>().Play();
+        }
+
+        for (int k = 0; k <instantiateEffect[idEffect].transform.childCount; k++)
+        {
+            if (instantiateEffect[idEffect].transform.GetChild(k).GetComponent<ParticleSystem>() != null)
+            {
+                instantiateEffect[idEffect].transform.GetChild(k).GetComponent<ParticleSystem>().Play();
+            }
+        }
+
     }
 }

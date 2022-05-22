@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5347874786083823171}
   - component: {fileID: 5173444060119363847}
   - component: {fileID: -4557785253544110790}
+  - component: {fileID: 4132164646395129511}
   m_Layer: 0
   m_Name: Monstre15
   m_TagString: Monster
@@ -49,7 +50,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.1, z: 1}
+  m_Size: {x: 1, y: 0.3, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5347874786083823171
 MonoBehaviour:
@@ -102,13 +103,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  card: {fileID: 7236249880086410052, guid: a1dc8dc6a236ee94699fee9e4877674c, type: 3}
+  bigCard: {fileID: 0}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
   ennemiMonsterColorChoosen: {fileID: 2100000, guid: 614d14a9b05c28143a1ebc0e727d7f71, type: 2}
   view: {fileID: 5347874786083823171}
   owner: 0
-  atk: 0
+  atk: 1
   id: 0
   centers:
   - {fileID: 8411546079355229961}
@@ -117,9 +120,24 @@ MonoBehaviour:
   hpView: {fileID: 6180872983062155530}
   canvasRenderer: {fileID: 1207847455092746132}
   attacked: 0
-  status: 0
+  status: 2
   animator: {fileID: 0}
   isChampion: 0
+--- !u!114 &4132164646395129511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764594795200175919}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d618368921eb8444198c0cd34c9ad1fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalCard: {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
+  view: {fileID: 5347874786083823171}
+  used: 0
 --- !u!1 &8475639055820988864
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +149,7 @@ GameObject:
   - component: {fileID: 8297594205331212568}
   - component: {fileID: 5042983040624097137}
   - component: {fileID: 8908107407826162478}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: obj0
   m_TagString: Untagged
   m_Icon: {fileID: 0}

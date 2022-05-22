@@ -13,7 +13,7 @@ public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     {
         if (Input.touchCount > 0)
         {
-            if(RoundManager.instance.StateRound==2)
+            if(RoundManager.instance.StateRound==2 && !PlacementManager.instance.IsWaiting)
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(0).phase == TouchPhase.Moved)
                 {

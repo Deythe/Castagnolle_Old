@@ -5,7 +5,10 @@ using TMPro;
 using UnityEngine;
 
 public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
-{    
+{
+    [SerializeField] private GameObject card;
+    [SerializeField] private Sprite bigCard;
+    
     [SerializeField] private Material ownerMonsterColor;
     [SerializeField] private Material ennemiMonsterColor;
     
@@ -25,13 +28,23 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private Canvas canvasRenderer;
     
     [SerializeField] private bool attacked;
-    [SerializeField] private int status; //0 = normal, 1 = Immobile
+    [SerializeField] private int status; //0 = normal, 1 = Immobile, -1 = Dead
     [SerializeField] private Animator animator;
     [SerializeField] private bool isChampion;
+    
+    
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
 
+    public GameObject Stats
+    {
+        get => card;
+    }
+    public Sprite BigCard
+    {
+        get => bigCard;
+    }
     public int ID
     {
         get => id;
@@ -100,15 +113,19 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        object[] instantiationData = info.photonView.InstantiationData;
-        
         AddAllEffects();
         owner = view.OwnerActorNr;
         
-        if (instantiationData!=null)
+        if (card!=null)
         {
-            Atk = (int) instantiationData[0];
-            isChampion = (bool) instantiationData[1];
+            Atk = card.GetComponent<CardData>().Atk;
+            isChampion = card.GetComponent<CardData>().IsChampion;
+            bigCard = card.GetComponent<CardData>().BigCard;
+        }
+        else
+        {
+            Atk = atk;
+            IsChampion = isChampion;
         }
 
         id = view.ViewID;
@@ -126,10 +143,9 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
 
         canvasRenderer.worldCamera = PlayerSetup.instance.GetCam();
-        canvasRenderer.GetComponentInParent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
+        canvasRenderer.GetComponent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
         
         PlacementManager.instance.AddMonsterBoard(gameObject);
-        ActivateEffects(0);
     }
 
     public bool HaveAnEffectThisTurn(int i)
@@ -191,6 +207,12 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     private void OnDestroy()
     {
+        if (owner != 0) 
+        {
+            EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x, 0.6f,
+                transform.position.z, 3f);
+        }
+
         foreach (IEffects effet in effects)
         {
             effet.OnCast(2);
@@ -203,9 +225,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 PhotonNetwork.Destroy(extension[i]);
             }
         }
-        
+
         PlacementManager.instance.RemoveMonsterBoard(id);
+        BattlePhaseManager.instance.IsAttacking = false;
     }
+    
     public void BeChoosen()
     {
         foreach (MeshRenderer ms in mrs)

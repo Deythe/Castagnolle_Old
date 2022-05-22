@@ -29,7 +29,6 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
                     PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
                     PlacementManager.instance.CurrentCardSelection = prefabs.GetComponent<CardData>();
                     UiManager.instance.ShowingOffBigCard();
-                    PlacementManager.instance.InstantiateCurrent();
                     EffectManager.instance.CancelSelection(2);
                     used = true;
                 }

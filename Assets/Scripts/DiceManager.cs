@@ -9,16 +9,24 @@ public class DiceManager : MonoBehaviour
     public static DiceManager instance;
     [SerializeField] private PhotonView view;
     
-    [SerializeField] private List<DiceScriptable> diceDeck;
-
+    [SerializeField] private List<DiceScriptable> diceDeck = new List<DiceScriptable>();
+    [SerializeField] private DiceListScriptable diceListDeck;
+    
     [SerializeField] private GameObject[] diceObjet = new GameObject[3];
     [SerializeField] private GameObject[] diceGaugeObjet = new GameObject[3];
-    
+
+    [SerializeField] private DiceScriptable[] dicesNotDisponible = new DiceScriptable[6];
+        
     [SerializeField] private int[] diceChoosen = new int[3];
     [SerializeField] private int[] diceGauge = new int[3];
-    
+
     [SerializeField] private Vector3 spawner;
     private int random;
+
+    public DiceListScriptable DiceListScriptable
+    {
+        get => diceListDeck;
+    }
 
     public PhotonView View
     {
@@ -51,22 +59,35 @@ public class DiceManager : MonoBehaviour
     {
         instance = this;
     }
+    
+    private void Start()
+    {
+        InitDeck();
+    }
 
-    public void InitDice()
+    private void InitDeck()
+    {
+        for(int i = 0; i < FireBaseManager.instance.User.currentDiceDeck.Length; i++)
+        {
+            diceDeck.Add(diceListDeck.diceDeck[FireBaseManager.instance.User.currentDiceDeck[i]]);
+        }
+    }
+
+    public void InitDiceMesh()
     {
         for (int i = 0; i < diceChoosen.Length; i++)
         {
             spawner = PlayerSetup.instance.GetSpawner()[i].position;
-            diceObjet[i] = PhotonNetwork.Instantiate("Dice", spawner,PlayerSetup.instance.transform.rotation,0);
+            diceObjet[i] = PhotonNetwork.Instantiate("Dice", spawner, PlayerSetup.instance.transform.rotation * Quaternion.Euler(-90,0,0),0);
         }
     }
     
-    public void InitGaugeDice()
+    public void InitGaugeDiceMesh()
     {
         for (int i = 0; i < diceChoosen.Length; i++)
         {
             spawner = PlayerSetup.instance.GetGaugeSpawner()[i].position;
-            diceGaugeObjet[i] = PhotonNetwork.Instantiate("GaugeDice", spawner,PlayerSetup.instance.transform.rotation,0);
+            diceGaugeObjet[i] = PhotonNetwork.Instantiate("GaugeDice", spawner,PlayerSetup.instance.transform.rotation* Quaternion.Euler(-90,0,0),0);
         }
     }
 
@@ -76,8 +97,11 @@ public class DiceManager : MonoBehaviour
         {
             random = Random.Range(0, diceDeck.Count);
             diceChoosen[i] = PickDice(random).faces[Random.Range(0, 6)];
+
+            dicesNotDisponible[i] = PickDice(random);
+            diceDeck.Remove(PickDice(random));
             
-            diceObjet[i].GetComponent<MeshRenderer>().material.mainTexture = PickDice(random).texture;
+            diceObjet[i].GetComponent<MeshRenderer>().material.mainTexture = diceListDeck.textureList[diceChoosen[i]];
             diceObjet[i].GetComponent<MeshRenderer>().enabled = true;
         }
         
@@ -109,11 +133,8 @@ public class DiceManager : MonoBehaviour
                 if (diceTarget.transform.position.z < diceGaugeObjet[i].transform.position.z + 0.5 &&
                     diceTarget.transform.position.z > diceGaugeObjet[i].transform.position.z - 0.5)
                 {
-                    Texture2D tex = diceTarget.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
-                    byte[] bytes = tex.GetRawTextureData();
-                    
-                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, bytes);
                     diceTarget.GetComponent<MeshRenderer>().enabled = false;
+                    
                     PutInGauge(i, diceTarget);
                     return true;
                 }
@@ -129,7 +150,11 @@ public class DiceManager : MonoBehaviour
         {
             if (diceObjet[i].Equals(dice))
             {
+                view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[index].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
+                
                 diceGauge[index] = diceChoosen[i];
+                dicesNotDisponible[diceGauge.Length + index] = dicesNotDisponible[i];
+                dicesNotDisponible[i] = null;
                 diceChoosen[i] = 0;
                 DeckManager.instance.CheckUnitWithRessources();
                 UiManager.instance.UpdateListCard();
@@ -148,6 +173,17 @@ public class DiceManager : MonoBehaviour
         DeckManager.instance.CheckUnitWithRessources();
         UiManager.instance.UpdateListCard();
     }
+    
+    public void DeleteAllResources(int[] resource)
+    {
+        for (int i = 0; i < resource.Length; i++)
+        {
+            DeleteResource(resource[i]);
+        }
+
+        DeckManager.instance.CheckUnitWithRessources();
+        UiManager.instance.UpdateListCard();
+    }
 
     public void DeleteResource(int i)
     {
@@ -155,19 +191,49 @@ public class DiceManager : MonoBehaviour
         {
             if (j < diceChoosen.Length)
             {
-                if (i.Equals(diceChoosen[j]))
+                if (i.Equals(4))
+                {
+                    if (diceChoosen[j] != 0)
+                    {
+                        diceChoosen[j] = 0;
+                        diceDeck.Add(dicesNotDisponible[j]);
+                        dicesNotDisponible[j] = null;
+                        diceObjet[j].GetComponent<MeshRenderer>().enabled = false;
+                        return;
+                    }
+                }
+                else if (i.Equals(diceChoosen[j]))
                 {
                     diceChoosen[j] = 0;
+                    if (dicesNotDisponible[j]!=null)
+                    {
+                        diceDeck.Add(dicesNotDisponible[j]);
+                    }
+
+                    dicesNotDisponible[j] = null;
                     diceObjet[j].GetComponent<MeshRenderer>().enabled = false;
                     return;
                 }
             }
             else
             {
-                if (i.Equals(diceGauge[j-diceGauge.Length]))
+                if (i.Equals(4))
+                {
+                    if (diceGauge[j-diceGauge.Length] != 0)
+                    {
+                        diceGauge[j-diceGauge.Length] = 0;
+                        diceDeck.Add(dicesNotDisponible[j]);
+                        dicesNotDisponible[j] = null;
+                        view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
+                        return;
+                    }
+                }
+                else if (i.Equals(diceGauge[j-diceGauge.Length]))
                 {
                     diceGauge[j-diceGauge.Length] = 0;
-                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, null);
+                    diceDeck.Add(dicesNotDisponible[j]);
+                    dicesNotDisponible[j] = null;
+                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
                     return;
                 }
             }
@@ -181,16 +247,10 @@ public class DiceManager : MonoBehaviour
 
 
     [PunRPC]
-    private void RPC_SynchGaugeDice(int i, bool b, byte[] array)
+    private void RPC_SynchGaugeDice(int id, bool b, int index)
     {
-        if (array != null)
-        {
-            Texture2D tex = new Texture2D(128, 128, TextureFormat.RGB24, false);
-            tex.LoadRawTextureData(array);
-            tex.Apply();
-            PhotonView.Find(i).GetComponent<MeshRenderer>().material.mainTexture = tex;
-        }
-        PhotonView.Find(i).GetComponent<MeshRenderer>().enabled = b;
+        PhotonView.Find(id).GetComponent<MeshRenderer>().material.mainTexture = diceListDeck.textureList[index];
+        PhotonView.Find(id).GetComponent<MeshRenderer>().enabled = b;
     }
     
 }

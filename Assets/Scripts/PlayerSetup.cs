@@ -16,10 +16,15 @@ public class PlayerSetup : MonoBehaviour
     {
         instance = this;
         cam.enabled = true;
-        DiceManager.instance.InitDice();
-        DiceManager.instance.InitGaugeDice();
+        
+        DiceManager.instance.InitDiceMesh();
+        DiceManager.instance.InitGaugeDiceMesh();
+        
+        EffectManager.instance.InstantiateAllEffect();
+            
         startCamPos = cam.transform.position;
         startCamRot = cam.transform.rotation;
+        
         UiManager.instance.CanvasPublic.worldCamera = cam;
         UiManager.instance.Waiting.SetActive(false);
     }
@@ -43,7 +48,7 @@ public class PlayerSetup : MonoBehaviour
     {
         if (b)
         {
-            cam.transform.DOMove(new Vector3(0, 17, 2f * Math.Sign(startCamPos.z)), 0.3f);
+            cam.transform.DOMove(new Vector3(0, 20, 2f * Math.Sign(startCamPos.z)), 0.3f);
             cam.transform.DORotateQuaternion(Quaternion.Euler(90, startCamRot.eulerAngles.y, startCamRot.eulerAngles.z), 0.3f);
         }
         else

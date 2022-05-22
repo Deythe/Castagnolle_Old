@@ -6,6 +6,7 @@ public class Berserk : MonoBehaviour, IEffects
     [SerializeField] private PhotonView view;
     [SerializeField] private int usingPhase = 1;
     private bool used;
+    private int numberPunch = 3;
     
     public void OnCast(int phase)
     {
@@ -13,8 +14,18 @@ public class Berserk : MonoBehaviour, IEffects
         {
             if (view.AmOwner)
             {
-                transform.GetComponent<Monster>().Attacked = false;
-                used = true;
+                if (numberPunch > 0)
+                {
+                    transform.GetComponent<Monster>().Attacked = false;
+                    numberPunch--;
+                    used = true;
+                    used = false;
+                }
+                else
+                {
+                    numberPunch = 3;
+                    used = true;
+                }
             }
         }
     }
