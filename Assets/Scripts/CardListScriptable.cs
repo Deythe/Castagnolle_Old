@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Create List Of Cards", fileName = "CardList")]
-public class AllCarScriptable : ScriptableObject
+public class CardListScriptable : ScriptableObject
 {
     public List<GameObject> cards;
 }
