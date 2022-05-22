@@ -9,6 +9,9 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private GameObject card;
     [SerializeField] private Sprite bigCard;
     
+    [SerializeField] private SkinnedMeshRenderer model;
+    [SerializeField] private Material modelTexture;
+    
     [SerializeField] private Material ownerMonsterColor;
     [SerializeField] private Material ennemiMonsterColor;
     
@@ -113,6 +116,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        model.material = modelTexture;
         AddAllEffects();
         owner = view.OwnerActorNr;
         

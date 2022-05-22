@@ -95,6 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: 6ea2c27475845d64b827d175bab6192a, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 7631012992817897620}
+  modelTexture: {fileID: 2100000, guid: a4a2d9a96e4767244a99f9c678bbe84f, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -392,7 +394,7 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: a4a2d9a96e4767244a99f9c678bbe84f, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_Name
       value: Morphidian
@@ -400,6 +402,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
@@ -454,6 +460,11 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!137 &7631012992817897620 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
+  m_PrefabInstance: {fileID: 2588228545527789702}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3000025776270315203
 PrefabInstance:
   m_ObjectHideFlags: 0

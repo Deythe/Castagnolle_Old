@@ -119,7 +119,6 @@ public class PlacementManager : MonoBehaviour
                                 currentUnit.transform.position = new Vector3(
                                     Mathf.FloorToInt(currentUnit.transform.position.x) + 0.5f, 0.5f,
                                     Mathf.FloorToInt(currentUnit.transform.position.z) + 0.5f);
-                                currentUnit.SetActive(false);
 
                                 if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                                 {

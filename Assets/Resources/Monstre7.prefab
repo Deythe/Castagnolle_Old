@@ -96,6 +96,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: dd0c9dd57869a314880018b46a00c726, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 7291981233283272998}
+  modelTexture: {fileID: 2100000, guid: 93535ec5461b23b4887d188a451cbaea, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -488,10 +490,14 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 93535ec5461b23b4887d188a451cbaea, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
       propertyPath: m_Name
       value: CHALLMYST_Morpher
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
@@ -544,6 +550,11 @@ MonoBehaviour:
 --- !u!4 &2933280374101372639 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
+  m_PrefabInstance: {fileID: 3404619652025977140}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7291981233283272998 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: 26e58b290d37664409c2d6f3740eade7, type: 3}
   m_PrefabInstance: {fileID: 3404619652025977140}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4348964663817707442

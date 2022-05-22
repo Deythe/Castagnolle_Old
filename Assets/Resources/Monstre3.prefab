@@ -94,6 +94,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 7236249880086410052, guid: e74b7eaba023a4542af023ee2b544ba6, type: 3}
   bigCard: {fileID: 0}
+  model: {fileID: 2351535640409491107}
+  modelTexture: {fileID: 2100000, guid: b9ab94a76e875c649b1304ebc54934ac, type: 2}
   ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
   ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   ownerMonsterColorChoosen: {fileID: 2100000, guid: 4c4e1565196275d4fb9417694d7df31f, type: 2}
@@ -462,7 +464,7 @@ PrefabInstance:
     - target: {fileID: -3887185075125053422, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: b9ab94a76e875c649b1304ebc54934ac, type: 2}
+      objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
     - target: {fileID: 919132149155446097, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
       propertyPath: m_Name
       value: Gobeline_Morpher2
@@ -471,8 +473,17 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
+--- !u!137 &2351535640409491107 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3887185075125053422, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
+  m_PrefabInstance: {fileID: 7687544440981806769}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7381062383805064160 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 67c1e4dc2b7d0494c8375c2a56fa0fbb, type: 3}
