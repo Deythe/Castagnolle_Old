@@ -131,9 +131,9 @@ public class DeckManager : MonoBehaviour
 
     private int HaveADice()
     {
-        for(int j = 0; j < ressources.Length; j++)
+        for(int j = 0; j < checks.Length; j++)
         {
-            if (ressources[j] != 0)
+            if (checks[j] != 0)
             {
                 return j;
             }

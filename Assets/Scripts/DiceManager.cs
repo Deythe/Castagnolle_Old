@@ -78,7 +78,7 @@ public class DiceManager : MonoBehaviour
         for (int i = 0; i < diceChoosen.Length; i++)
         {
             spawner = PlayerSetup.instance.GetSpawner()[i].position;
-            diceObjet[i] = PhotonNetwork.Instantiate("Dice", spawner,PlayerSetup.instance.transform.rotation,0);
+            diceObjet[i] = PhotonNetwork.Instantiate("Dice", spawner, PlayerSetup.instance.transform.rotation * Quaternion.Euler(-90,0,0),0);
         }
     }
     
@@ -87,7 +87,7 @@ public class DiceManager : MonoBehaviour
         for (int i = 0; i < diceChoosen.Length; i++)
         {
             spawner = PlayerSetup.instance.GetGaugeSpawner()[i].position;
-            diceGaugeObjet[i] = PhotonNetwork.Instantiate("GaugeDice", spawner,PlayerSetup.instance.transform.rotation,0);
+            diceGaugeObjet[i] = PhotonNetwork.Instantiate("GaugeDice", spawner,PlayerSetup.instance.transform.rotation* Quaternion.Euler(-90,0,0),0);
         }
     }
 
