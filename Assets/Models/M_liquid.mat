@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -59,6 +59,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_236c9a2f93b44a3abfdd7c18c2deb92f_Texture_1:
+        m_Texture: {fileID: 2800000, guid: d6ee656be8922324891b868c86ef3594, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_83e699226d044665842e96f351a92ef7_Texture_1:
+        m_Texture: {fileID: 2800000, guid: d6ee656be8922324891b868c86ef3594, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9d526bb2651547cdb45ef1d229c3a6df_Texture_1:
+        m_Texture: {fileID: 2800000, guid: d6ee656be8922324891b868c86ef3594, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -102,6 +114,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Speed: 0.2
     - _SrcBlend: 1
     - _Surface: 0
     - _WorkflowMode: 1
@@ -110,10 +123,14 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BeerColor: {r: 0.88981146, g: 1, b: 0.033018887, a: 0}
+    - _BeerColor2: {r: 1, g: 1, b: 1, a: 0}
+    - _BubbleColor: {r: 0.9811321, g: 0.9658893, b: 0.7821289, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FrontColor: {r: 0.68956923, g: 0.9811321, b: 0.8928776, a: 0}
-    - _SideColor: {r: 0.9622642, g: 0.792963, b: 0.13163051, a: 0}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FrontColor: {r: 0.9568627, g: 1, b: 0, a: 0}
+    - _SideColor: {r: 0.25852948, g: 0.15566039, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &659540429790371662
