@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Evolve : MonoBehaviour, IEffects
 {
+    [SerializeField] private CardData card;
+        
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject blankCard;
     
@@ -74,10 +76,10 @@ public class Evolve : MonoBehaviour, IEffects
                     cardListEvolve.GetChild(i).gameObject.SetActive(false);
                 }
                 
-                PhotonNetwork.Instantiate(EffectManager.instance.TargetUnit.name, transform.position,
-                    transform.rotation, 0);
-                
-                EffectManager.instance.CancelSelection(1);
+                PlacementManager.instance.SpecialInvocation = true;
+                PlacementManager.instance.SetGOPrefabsMonster(EffectManager.instance.AllieUnit);
+                UiManager.instance.ShowingOffBigCard();
+                EffectManager.instance.CancelSelection(2);
                 PhotonNetwork.Destroy(gameObject);
             }
         }

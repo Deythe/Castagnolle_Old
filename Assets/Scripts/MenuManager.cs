@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -13,22 +14,27 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public static MenuManager instance;
     
     [SerializeField] private TMP_Text nickname;
-    [SerializeField] private TMP_Text searching;
+    
     [SerializeField] private Button chooseDeckButton;
     [SerializeField] private Button playButton;
     [SerializeField] private Transform allMenu;
     [SerializeField] private Transform content;
+    [SerializeField] private SpriteRenderer animRecherche;
+    [SerializeField] private Image connexionStatus;
+    [SerializeField] private List<Sprite> connexionSprites;
     private bool find;
     private Hashtable hash = new Hashtable();
 
     private void Awake()
     {
+        Time.timeScale = 1;
         instance = this;
     }
 
     private void Start()
     {
-        searching.text = "Connexion au serveur";
+        connexionStatus.sprite = connexionSprites[1];
+        animRecherche.enabled = false;
         chooseDeckButton.interactable = false;
         PhotonNetwork.ConnectUsingSettings();
         playButton.interactable = false;
@@ -73,12 +79,23 @@ public class MenuManager : MonoBehaviourPunCallbacks
             allMenu.DOLocalMoveX(0, 0.2f).SetEase(Ease.Linear);
         }
     }
-    
-    public void QuitQueue()
+
+    public void PlayOrTuto()
     {
-        PhotonNetwork.Disconnect();
+        
+        EnableDisableChoseDeck(true);
+        
+        /*
+        if (FireBaseManager.instance.User.firstTime)
+        {
+            SceneManager.LoadScene(4);
+        }
+        else
+        {
+            EnableDisableChoseDeck(true);
+        }*/
     }
-    
+
     public void SearchGame()
     {
         PhotonNetwork.JoinRandomRoom();
@@ -90,6 +107,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         chooseDeckButton.interactable = true;
+        connexionStatus.sprite = connexionSprites[1];
         PhotonNetwork.JoinLobby();
     }
     
@@ -104,7 +122,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby(){
         base.OnJoinedLobby();
         chooseDeckButton.interactable = true;
-        searching.text = "Connecté";
+        connexionStatus.sprite = connexionSprites[2];
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -128,12 +146,14 @@ public class MenuManager : MonoBehaviourPunCallbacks
         Debug.Log("On joined Room");
         base.OnJoinedRoom();
         find = true;
-
-        searching.text = "Recherche de joueurs";
+        animRecherche.enabled = true;
     }
-
-    public void GoToDeckScene()
+    
+    public override void OnDisconnected (DisconnectCause cause)
     {
-        SceneManager.LoadScene(3);
+        base.OnDisconnected(cause);
+        connexionStatus.sprite = connexionSprites[0];
+        playButton.interactable = false;
+        PhotonNetwork.ConnectUsingSettings();
     }
 }

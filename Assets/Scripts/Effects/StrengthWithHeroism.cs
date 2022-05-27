@@ -18,7 +18,8 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
         {
             if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism) && phase==usingPhase)
             {
-                view.RPC("RPC_Action", RpcTarget.AllViaServer, GetComponent<Monster>().ID);
+                Debug.Log("HEROIQUEEEEE");
+                view.RPC("RPC_Action", RpcTarget.AllViaServer);
                 used = true;
                 EffectManager.instance.CancelSelection(1);
             }
@@ -30,9 +31,9 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     }
     
     [PunRPC]
-    private void RPC_Action(int idTarget)
+    private void RPC_Action()
     {
-        PlacementManager.instance.SearchMobWithID(idTarget).Atk+=2;
+        GetComponent<Monster>().Atk+=2;
     }
 
     public int GetPhaseActivation()

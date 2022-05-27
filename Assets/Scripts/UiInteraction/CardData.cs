@@ -93,7 +93,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).deltaPosition.y < 5)
             {
-                Debug.Log(Input.GetTouch(0).deltaPosition.y);
                 ReInit();
             }
         }
@@ -112,6 +111,8 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
             }
         }
     }
+    
+    
 
     private void ReInit()
     {

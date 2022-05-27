@@ -11,13 +11,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     [SerializeField] private SkinnedMeshRenderer model;
     [SerializeField] private Material modelTexture;
-    
-    [SerializeField] private Material ownerMonsterColor;
-    [SerializeField] private Material ennemiMonsterColor;
-    
-    [SerializeField] private Material ownerMonsterColorChoosen;
-    [SerializeField] private Material ennemiMonsterColorChoosen;
-    
+
     [SerializeField] private PhotonView view;
     
     [SerializeField] private int owner = 0;
@@ -28,13 +22,12 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private List<MeshRenderer> mrs;
     
     [SerializeField] private TMP_Text hpView;
-    [SerializeField] private Canvas canvasRenderer;
-    
+
     [SerializeField] private bool attacked;
-    [SerializeField] private int status; //0 = normal, 1 = Immobile, -1 = Dead
-    [SerializeField] private Animator animator;
+    [SerializeField] private bool isMovable;
+    [SerializeField] private bool isPeon;
     [SerializeField] private bool isChampion;
-    
+    [SerializeField] private Animator animator;
     
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
@@ -52,14 +45,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         get => id;
     }
-    public int Status
-    {
-        get => status;
-        set
-        {
-            status = value;
-        }
-    }
+
     public int Atk
     {
         get => atk;
@@ -87,7 +73,26 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         get => animator;
     }
     
-    public bool IsChampion
+    public bool p_isPeon
+    {
+        get => isPeon;
+        set
+        {
+            isPeon = value;
+        }
+    }
+
+    
+    public bool p_isMovable
+    {
+        get => isMovable;
+        set
+        {
+            isMovable = value;
+        }
+    }
+    
+    public bool p_isChampion
     {
         get => isChampion;
         set
@@ -133,25 +138,13 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         else
         {
             Atk = atk;
-            IsChampion = isChampion;
+            p_isChampion = isChampion;
         }
 
         id = view.ViewID;
 
-        foreach (var ms in mrs)
-        {   
-            if (view.AmOwner)
-            {
-                ms.material.color = ownerMonsterColor.color;
-            }
-            else
-            {
-                ms.material.color = ennemiMonsterColor.color;
-            }
-        }
-
-        canvasRenderer.worldCamera = PlayerSetup.instance.GetCam();
-        canvasRenderer.GetComponent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
+        InitColorsTiles();
+        hpView.GetComponentInParent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
         
         PlacementManager.instance.AddMonsterBoard(gameObject);
     }
@@ -212,13 +205,17 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
 
     }
-    
+
     private void OnDestroy()
     {
         if (owner != 0) 
         {
-            EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x, 0.6f,
-                transform.position.z, 3f);
+            if (EffectManager.instance != null && gameObject.activeSelf)
+            {
+                EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x,
+                    0.6f,
+                    transform.position.z, 3f);
+            }
         }
 
         foreach (IEffects effet in effects)
@@ -244,26 +241,54 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {
             if (view.AmOwner)
             {
-                ms.material.color = ownerMonsterColorChoosen.color;
+                if (!isMovable && Attacked)
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[6].color;
+                }
+                else
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[2].color;
+                }
             }
             else
             {
-                ms.material.color = ennemiMonsterColorChoosen.color;
+                if (!isMovable && Attacked)
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[7].color;
+                }
+                else
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[3].color;
+                }
             }
         }
     }
 
-    public void NotChossen()
+    public void InitColorsTiles()
     {
         foreach (var ms in mrs)
-        {
+        {   
             if (view.AmOwner)
             {
-                ms.material.color = ownerMonsterColor.color;
+                if (!isMovable)
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[4].color;
+                }
+                else
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[0].color;
+                }
             }
             else
             {
-                ms.material.color = ennemiMonsterColor.color;
+                if (!isMovable)
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[5].color;
+                }
+                else
+                {
+                    ms.material.color = PlacementManager.instance.p_listMaterial[1].color;
+                }
             }
         }
     }
@@ -280,11 +305,6 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public int GetOwner()
     {
         return owner;
-    }
-
-    public PhotonView GetView()
-    {
-        return view;
     }
 
     public List<GameObject> GetExtention()

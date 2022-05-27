@@ -31,7 +31,9 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
                 }
                 
                 view.RPC("RPC_Action", RpcTarget.All, check);
-                check = 0;
+                check = 0; 
+                
+                DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection(1);
                 used = true;
             }

@@ -10,6 +10,7 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
     [SerializeField] private int usingPhase = 3;
     [SerializeField] private List<Vector2> boardPosition = new List<Vector2>();
     [SerializeField] private int numberPoupoul=1;
+    [SerializeField] private GameObject unitPivot;
     private int random;
     private bool used;
     private bool here;
@@ -34,12 +35,6 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
             }
         }
     }
-    
-    [PunRPC]
-    private void RPC_Action(float x, float z)
-    {
-        PhotonNetwork.Instantiate(cardUnit.name, new Vector3(x,0.55f,z), PlayerSetup.instance.transform.rotation, 0);
-    }
 
     private void Action()
     {
@@ -58,7 +53,7 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
 
             if (!here)
             {
-                view.RPC("RPC_Action", RpcTarget.Others, boardPosition[random].x, boardPosition[random].y);
+                PhotonNetwork.Instantiate(cardUnit.name, new Vector3(boardPosition[random].x,0.5f,boardPosition[random].y), PlayerSetup.instance.transform.rotation, 0);
                 return;
             }
             

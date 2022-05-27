@@ -20,42 +20,45 @@ public class Gauge : MonoBehaviour
                 ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
                 Physics.Raycast(ray, out hit);
 
-                switch (Input.GetTouch(0).phase)
+                if (hit.collider != null)
                 {
-                    case TouchPhase.Began:
-                        if (hit.collider.transform.CompareTag("Dice"))
-                        {
-                            target = hit.collider.gameObject;
-                            originalPosition = target.transform.position;
-
-                            mooving = true;
-                        }
-
-                        break;
-
-                    case TouchPhase.Moved:
-                        if (mooving)
-                        {
-                            target.transform.position = new Vector3(hit.point.x, 0.8f, hit.point.z);
-                        }
-
-                        break;
-
-                    case TouchPhase.Ended:
-                        mooving = false;
-                        if (target != null)
-                        {
-                            if (DiceManager.instance.CheckPositionDiceGauge(target))
+                    switch (Input.GetTouch(0).phase)
+                    {
+                        case TouchPhase.Began:
+                            if (hit.collider.transform.CompareTag("Dice"))
                             {
-                                Debug.Log("Test");
+                                target = hit.collider.gameObject;
+                                originalPosition = target.transform.position;
+
+                                mooving = true;
                             }
 
-                            target.transform.position = originalPosition;
-                        }
+                            break;
 
-                        target = null;
-                        waiting = false;
-                        break;
+                        case TouchPhase.Moved:
+                            if (mooving)
+                            {
+                                target.transform.position = new Vector3(hit.point.x, 0.8f, hit.point.z) + PlayerSetup.instance.transform.forward;;
+                            }
+
+                            break;
+
+                        case TouchPhase.Ended:
+                            mooving = false;
+                            if (target != null)
+                            {
+                                if (DiceManager.instance.CheckPositionDiceGauge(target))
+                                {
+                                    Debug.Log("Test");
+                                }
+
+                                target.transform.position = originalPosition;
+                            }
+
+                            target = null;
+                            waiting = false;
+                            break;
+                    }
                 }
             }
         }

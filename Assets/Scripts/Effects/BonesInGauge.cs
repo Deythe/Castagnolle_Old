@@ -27,7 +27,6 @@ public class BonesInGauge : MonoBehaviour, IEffects
                                     DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, 5);
                                 used = true;
                                 DeckManager.instance.CheckUnitWithRessources();
-                                UiManager.instance.UpdateListCard();
                                 return;
                             }
                         }

@@ -41,7 +41,6 @@ public class MenuLoginManager : MonoBehaviour
         {
             if (FireBaseManager.instance.User != null)
             {
-                PhotonNetwork.ConnectUsingSettings();
                 FireBaseManager.instance.User.isConnected = true;
                 SceneManager.LoadScene(1);
             }
@@ -51,6 +50,12 @@ public class MenuLoginManager : MonoBehaviour
                 FireBaseManager.instance.OnConnected();
             }
         }
+    }
+    
+    public void VisitorConnect()
+    {
+        FireBaseManager.instance.User = new User("Visiteur", false, true);
+        SceneManager.LoadScene(1);
     }
     
     public void SetNickname(string value)

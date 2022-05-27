@@ -27,7 +27,6 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
                     PhotonNetwork.Destroy(EffectManager.instance.AllieUnit);
                     PlacementManager.instance.SpecialInvocation = true;
                     PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
-                    PlacementManager.instance.CurrentCardSelection = prefabs.GetComponent<CardData>();
                     UiManager.instance.ShowingOffBigCard();
                     EffectManager.instance.CancelSelection(2);
                     used = true;

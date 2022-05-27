@@ -42,6 +42,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
                     view.RPC("RPC_Action", RpcTarget.AllViaServer, targetUnit.GetComponent<PhotonView>().ViewID,
                         dmg);
                     
+                    DeckManager.instance.CheckUnitWithRessources();
                     EffectManager.instance.CancelSelection(1);
                     used = true;
                 }

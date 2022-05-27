@@ -15,39 +15,41 @@ public class BonesForStrength : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (HaveABoneInGauge())
+            if (phase == 3)
             {
-                if (phase == 3)
+                if (HaveABoneInGauge())
                 {
                     RoundManager.instance.StateRound = 7;
                     EffectManager.instance.CurrentUnit = gameObject;
                 }
-                else if (phase == 7)
+                else
                 {
-                    targetUnit = EffectManager.instance.AllieUnit;
-
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                        EffectManager.instance.AllieUnit.GetComponent<Monster>().ID);
-
-                    for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
-                    {
-                        if (DiceManager.instance.Gauge[i].Equals(5))
-                        {
-                            DiceManager.instance.Gauge[i] = 0;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
-                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
-                            EffectManager.instance.CancelSelection(1);
-                            used = true;
-                            return;
-                        }
-                    }
-
+                    Debug.Log("Pas de Bones");
+                    EffectManager.instance.CancelSelection(1);
                 }
             }
-            else
+            else if (phase == 7)
             {
-                Debug.Log("Pas de Bones");
-                EffectManager.instance.CancelSelection(1);
+                Debug.Log("CACA");
+                targetUnit = EffectManager.instance.AllieUnit;
+
+                view.RPC("RPC_Action", RpcTarget.AllViaServer,
+                    EffectManager.instance.AllieUnit.GetComponent<Monster>().ID);
+
+                for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
+                {
+                    if (DiceManager.instance.Gauge[i].Equals(5))
+                    {
+                        DiceManager.instance.Gauge[i] = 0;
+                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
+                        EffectManager.instance.CancelSelection(1);
+                        used = true;
+                        return;
+                    }
+                }
+                
+                DeckManager.instance.CheckUnitWithRessources();
             }
         }
     }

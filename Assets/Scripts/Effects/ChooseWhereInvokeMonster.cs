@@ -18,7 +18,6 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
             {
                 PlacementManager.instance.SpecialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().Prefabs);
-                PlacementManager.instance.CurrentCardSelection = cardInstance.GetComponent<CardData>();
                 UiManager.instance.ShowingOffBigCard();
                 EffectManager.instance.CancelSelection(2);
             }

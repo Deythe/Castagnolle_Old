@@ -23,7 +23,7 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     {
         if (usingPhase == phase)
         {
-            if (!view.AmOwner)
+            if (view.AmOwner)
             {
                 Debug.Log("Poupouleeee");
                 numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
@@ -49,6 +49,8 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                     }
                 }
                 
+                DeckManager.instance.CheckUnitWithRessources();
+                UiManager.instance.UpdateListCard();
                 EffectManager.instance.CancelSelection(1);
             }
         }
@@ -56,7 +58,7 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
 
     private void Update()
     {
-        if (!view.AmOwner)
+        if (view.AmOwner)
         {
             if (numberUnitCurrent > PlacementManager.instance.GetBoard().Count)
             {
@@ -73,7 +75,6 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                         if (PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster.Equals(originalCard.GetComponent<CardData>().Prefabs))
                         {
                             DeckManager.instance.CheckUnitWithRessources();
-                            UiManager.instance.UpdateListCard();
                         }
                     }
                 }

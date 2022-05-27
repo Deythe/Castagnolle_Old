@@ -89,9 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd805ddab4130c548b81946f3b1453ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bigCard: {fileID: 21300000, guid: 0e395c7d2ffb21b4296448444e8f2adc, type: 3}
+  bigCard: {fileID: 21300000, guid: fe5306eeb894e8e4ba24bbaf317f5e79, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: fd77994d012932b4d9a96226daa37ed5, type: 3}
   atk: 4
-  resources: 0100000001000000
+  resources: 030000000300000004000000
   isChampion: 0
   isTouching: 0

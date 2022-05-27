@@ -6,6 +6,7 @@ using UnityEngine;
 public class User {
     
     public string userName;
+    public bool firstTime;
     public bool isConnected;
     public int[] currentDeck;
     public int[] currentDiceDeck;
@@ -13,9 +14,10 @@ public class User {
     public User() {
     }
 
-    public User(string usernameEnv, bool b) {
+    public User(string usernameEnv, bool connect, bool firstTimeCheck) {
         userName = usernameEnv;
-        isConnected = b;
+        isConnected = connect;
+        firstTime = firstTimeCheck;
         currentDeck = new int[8];
         currentDiceDeck = new int[12];
     }

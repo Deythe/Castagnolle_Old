@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Scroll : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
+public class Scroll : MonoBehaviour, IPointerExitHandler
 {
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -14,13 +14,9 @@ public class Scroll : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
             PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
             PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
             UiManager.instance.ShowingOffBigCard();
-            PlacementManager.instance.InstantiateCurrent();
+            //PlacementManager.instance.InstantiateCurrent();
             RoundManager.instance.StateRound = 2;
             UiManager.instance.Card = null;
         }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
     }
 }

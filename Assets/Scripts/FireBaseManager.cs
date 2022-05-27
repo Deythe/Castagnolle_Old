@@ -5,6 +5,7 @@ using Firebase.Database;
 using Firebase.Auth;
 using Firebase.Extensions;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class FireBaseManager : MonoBehaviour
 {
@@ -100,10 +101,15 @@ public class FireBaseManager : MonoBehaviour
 
     public void WriteNewUser()
     {
-        user = new User(MenuLoginManager.instance.GetNickname(), true);
+        user = new User(MenuLoginManager.instance.GetNickname(), true, true);
         string json = JsonUtility.ToJson(user);
         root.Child("users").Child(userFirebase.UserId).SetRawJsonValueAsync(json);
         create = false;
+    }
+
+    public void FirstTimeChecked()
+    {
+        root.Child("users").Child(userFirebase.UserId).Child("firstTime").SetValueAsync(false);
     }
     
     public void OnConnected()
@@ -141,8 +147,6 @@ public class FireBaseManager : MonoBehaviour
 
         });
     }
-    
-    
 
     public string GetStringRequest()
     {

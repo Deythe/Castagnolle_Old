@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed5190edb2622bf489388d57b2a88f3a, type: 3}
   m_Name: DiceLuchadorkBase
   m_EditorClassIdentifier: 
-  texture: {fileID: 2800000, guid: 9487e7d7f74ee9c4e855bbb006343089, type: 3}
-  faces: 010000000100000001000000010000000100000000000000
+  faces: 010000000100000001000000010000000100000004000000

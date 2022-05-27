@@ -67,7 +67,51 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                     }
                 }
                 
+                DeckManager.instance.CheckUnitWithRessources();
+                UiManager.instance.UpdateListCard();
                 EffectManager.instance.CancelSelection(1);
+            }
+        }else if (phase == 2)
+        {
+            if (view.AmOwner)
+            {
+                if (gameObject.Equals(motherUnit))
+                {
+                    //Debug.Log("WasMotherUnit");
+                    if (unitOnBoard.Count > 1)
+                    {
+                        //Debug.Log("New Mother UNit");
+                        motherUnit = unitOnBoard[1];
+                        degatMore--;
+                    }
+                    else
+                    {
+                        degatMore = 0;
+                        motherUnit = null;
+                        ResetUnit();
+                        return;
+                    }
+                }
+            
+                //Debug.Log("Destroy");
+                foreach (var card in DeckManager.instance.CardDeck)
+                {
+                    if (card != null)
+                    {
+                        if (originalCard.ContainsKey(card.GetComponent<CardData>().Prefabs))
+                        {
+                            if (!originalCard[card.GetComponent<CardData>().Prefabs].Length
+                                .Equals(card.GetComponent<CardData>().Ressources.Count))
+                            {
+                                card.GetComponent<CardData>().Ressources
+                                    .Add(originalCard[card.GetComponent<CardData>().Prefabs][
+                                        card.GetComponent<CardData>().Ressources.Count]);
+                            }
+                        }
+                    }
+                }
+
+                unitOnBoard.Remove(gameObject);
             }
         }
     }
@@ -89,7 +133,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                         .AmOwner)
                     {
                         if (PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster.GetComponent<Monster>()
-                            .IsChampion)
+                            .p_isChampion)
                         {
                             view.RPC("RPC_Action", RpcTarget.AllViaServer,
                                 PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster
@@ -112,17 +156,20 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     {
         foreach (var card in DeckManager.instance.CardDeck)
         {
-            if (card.GetComponent<CardData>().IsChampion)
+            if (card != null)
             {
-                card.GetComponent<CardData>().Ressources.Clear();
-                card.GetComponent<CardData>().Ressources =
-                    new List<int>(originalCard[card.GetComponent<CardData>().Prefabs]);
+                if (card.GetComponent<CardData>().IsChampion)
+                {
+                    card.GetComponent<CardData>().Ressources.Clear();
+                    card.GetComponent<CardData>().Ressources =
+                        new List<int>(originalCard[card.GetComponent<CardData>().Prefabs]);
+                }
             }
         }
     }
 
     private void OnDestroy()
-    {
+    {/*
         if (view.AmOwner)
         {
             if (gameObject.Equals(motherUnit))
@@ -162,7 +209,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             }
 
             unitOnBoard.Remove(gameObject);
-        }
+        }*/
     }
 
     [PunRPC]
