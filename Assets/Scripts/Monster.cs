@@ -21,8 +21,10 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private List<Transform> centers;
     [SerializeField] private List<MeshRenderer> mrs;
     
-    [SerializeField] private TMP_Text hpView;
-
+    [SerializeField] private GameObject hpPackage;
+    [SerializeField] private TMP_Text hpViewNormal;
+    [SerializeField] private MeshRenderer glow;
+    
     [SerializeField] private bool attacked;
     [SerializeField] private bool isMovable;
     [SerializeField] private bool isPeon;
@@ -32,6 +34,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
+
+    public GameObject p_model
+    {
+        get => model.gameObject;
+    }
 
     public GameObject Stats
     {
@@ -52,7 +59,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         set
         {
             atk = value;
-            hpView.text = ""+atk;
+            hpViewNormal.text = ""+atk;
             CheckDeath();
         }
     }
@@ -89,6 +96,15 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         set
         {
             isMovable = value;
+            Debug.Log(isMovable);
+            if (isMovable)
+            {
+                ChangeMeshRenderer(0);
+            }
+            else
+            {
+                ChangeMeshRenderer(4);
+            }
         }
     }
     
@@ -115,7 +131,14 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         if (owner!=0)
         {
-            hpView.enabled = UiManager.instance.ViewTacticsOn;
+            if (UiManager.instance.ViewTacticsOn)
+            {
+                hpPackage.transform.rotation = Quaternion.Euler(90, hpPackage.transform.rotation.eulerAngles.y,hpPackage.transform.rotation.eulerAngles.z);
+            }
+            else
+            {
+                hpPackage.transform.rotation = Quaternion.Euler(45, hpPackage.transform.rotation.eulerAngles.y,hpPackage.transform.rotation.eulerAngles.z);
+            }
         }
     }
 
@@ -128,6 +151,15 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
         AddAllEffects();
         owner = view.OwnerActorNr;
+
+        if (view.AmOwner)
+        {
+            glow.material = RoundManager.instance.p_listMatPlayerGlow[0];
+        }
+        else
+        {
+            glow.material = RoundManager.instance.p_listMatPlayerGlow[1];
+        }
         
         if (card!=null)
         {
@@ -144,8 +176,8 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         id = view.ViewID;
 
         InitColorsTiles();
-        hpView.GetComponentInParent<RectTransform>().rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
-        
+        hpPackage.SetActive(true);
+        hpPackage.transform.rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
         PlacementManager.instance.AddMonsterBoard(gameObject);
     }
 
@@ -193,6 +225,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             if (effet.GetPhaseActivation() == 3 || effet.GetPhaseActivation() == 1 && view.AmOwner)
             {
                 effet.SetUsed(false);
+                model.gameObject.layer = 7;
             }
         }
     }
@@ -202,6 +235,10 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
         {
             effects.Add(effet);
+            if (view.AmOwner && (effet.GetPhaseActivation() == 3 || effet.GetPhaseActivation() == 1))
+            {
+                model.gameObject.layer = 7;
+            }
         }
 
     }
@@ -210,7 +247,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         if (owner != 0) 
         {
-            if (EffectManager.instance != null && gameObject.activeSelf)
+            if (EffectManager.instance != null)
             {
                 EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x,
                     0.6f,
@@ -243,11 +280,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable && Attacked)
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[6].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[6];
                 }
                 else
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[2].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[2];
                 }
             }
             else
@@ -264,6 +301,21 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
 
+    void ChangeMeshRenderer(int index)
+    {
+        foreach (var ms in mrs)
+        {   
+            if (view.AmOwner)
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[index];
+            }
+            else
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[index + 1];
+            }
+        }
+    }
+
     public void InitColorsTiles()
     {
         foreach (var ms in mrs)
@@ -272,22 +324,22 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable)
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[4].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[4];
                 }
                 else
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[0].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[0];
                 }
             }
             else
             {
                 if (!isMovable)
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[5].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[5];
                 }
                 else
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[1].color;
+                    ms.material = PlacementManager.instance.p_listMaterial[1];
                 }
             }
         }

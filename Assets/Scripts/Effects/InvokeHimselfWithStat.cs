@@ -25,6 +25,8 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
                 
                 PlacementManager.instance.RemoveMonsterBoard(GetComponent<Monster>().ID);
                 EffectManager.instance.CancelSelection(2);
+                UiManager.instance.p_textFeedBack.enabled = true;
+                UiManager.instance.SetTextFeedBack(0);
                 gameObject.SetActive(false);
             }
         }else if (phase == 0)
@@ -37,6 +39,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
                         motherUnit.GetComponent<Monster>().Atk);
                     
                     PhotonNetwork.Destroy(motherUnit);
+                    GetComponent<Monster>().p_model.layer = 6;
                     motherUnit = null;
                     used = true;
                 }

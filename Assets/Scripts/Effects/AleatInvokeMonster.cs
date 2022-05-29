@@ -32,6 +32,7 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
                 
                 used = true;
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }
@@ -53,7 +54,8 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
 
             if (!here)
             {
-                PhotonNetwork.Instantiate(cardUnit.name, new Vector3(boardPosition[random].x,0.5f,boardPosition[random].y), PlayerSetup.instance.transform.rotation, 0);
+                unitPivot = PhotonNetwork.Instantiate(cardUnit.name, new Vector3(boardPosition[random].x,0.5f,boardPosition[random].y), PlayerSetup.instance.transform.rotation, 0);
+                unitPivot.GetComponent<Monster>().ActivateEffects(0);
                 return;
             }
             

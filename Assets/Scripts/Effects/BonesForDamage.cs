@@ -44,13 +44,15 @@ public class BonesForDamage : MonoBehaviour, IEffects
                     
                     DeckManager.instance.CheckUnitWithRessources();
                     EffectManager.instance.CancelSelection(1);
+                    GetComponent<Monster>().p_model.layer = 6;
                     used = true;
                 }
             }
             else
             {
-                Debug.Log("Pas de Bones");
                 EffectManager.instance.CancelSelection(1);
+                UiManager.instance.ShowTextFeedBackWithDelay(3);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }

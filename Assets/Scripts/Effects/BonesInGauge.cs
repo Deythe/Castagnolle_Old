@@ -26,6 +26,7 @@ public class BonesInGauge : MonoBehaviour, IEffects
                                 DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
                                     DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, 5);
                                 used = true;
+                                GetComponent<Monster>().p_model.layer = 6;
                                 DeckManager.instance.CheckUnitWithRessources();
                                 return;
                             }

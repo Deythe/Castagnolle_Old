@@ -24,8 +24,8 @@ public class BonesForStrength : MonoBehaviour, IEffects
                 }
                 else
                 {
-                    Debug.Log("Pas de Bones");
                     EffectManager.instance.CancelSelection(1);
+                    UiManager.instance.ShowTextFeedBackWithDelay(3);
                 }
             }
             else if (phase == 7)
@@ -45,10 +45,10 @@ public class BonesForStrength : MonoBehaviour, IEffects
                             DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                         EffectManager.instance.CancelSelection(1);
                         used = true;
+                        GetComponent<Monster>().p_model.layer = 6;
                         return;
                     }
                 }
-                
                 DeckManager.instance.CheckUnitWithRessources();
             }
         }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -13,6 +15,8 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     [SerializeField] private bool isChampion;
     
     [SerializeField] private bool isTouching;
+    [SerializeField] private TMP_Text lifeCard;
+    [SerializeField] private RectTransform ressourceCard;
     private RectTransform rec;
     
     private float initialYPosition;
@@ -84,6 +88,17 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
             {
                 ReInit();
             }
+        }
+    }
+
+    private void OnEnable()
+    {
+        lifeCard.text = "" + atk;
+        
+        for (int i = 0; i < resources.Count; i++)
+        {
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[resources[i]];
+            ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
     }
 

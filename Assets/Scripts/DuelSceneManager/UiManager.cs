@@ -52,6 +52,20 @@ public class UiManager : MonoBehaviour
     
     [SerializeField] private GameObject winSprite;
     [SerializeField] private GameObject looseSprite;
+
+    [SerializeField] private List<Sprite> textFeedbacksList;
+    [SerializeField] private Image textFeedBack;
+
+    [SerializeField] private GameObject prefabHitMarker;
+    [SerializeField] private List<GameObject> listHitMarkes;
+
+    [SerializeField] private GameObject prefabEnemyPointer;
+    [SerializeField] private GameObject instanceEnemyPointer;
+
+    [SerializeField] private Animation banner;
+
+    [SerializeField] private GameObject borderStatus;
+    [SerializeField] private Image helpPage;
     
     private List<int> pivotResources;
     private bool settingsOnOff;
@@ -61,6 +75,21 @@ public class UiManager : MonoBehaviour
     private float deltaTime;
     private bool waitingCoroutine;
     private RaycastHit hit;
+    private WaitForSeconds time = new WaitForSeconds(3f);
+
+    public GameObject p_borderStatus
+    {
+        get => borderStatus;
+    }
+    public GameObject p_instanceEnemyPointer
+    {
+        get => instanceEnemyPointer;
+    }
+
+    public Image p_textFeedBack
+    {
+        get => textFeedBack;
+    }
 
     public GameObject p_winSprite
     {
@@ -128,6 +157,18 @@ public class UiManager : MonoBehaviour
         }
     }
 
+    public void InitPlayerMarkers()
+    {
+        listHitMarkes = new List<GameObject>();
+        for (int i = 0; i < 4; i++)
+        {
+            listHitMarkes.Add(Instantiate(prefabHitMarker, Vector3.zero, Quaternion.Euler(45,PlayerSetup.instance.transform.rotation.eulerAngles.y,0)));
+            listHitMarkes[i].SetActive(false);
+        }
+        
+        instanceEnemyPointer = Instantiate(prefabEnemyPointer,Vector3.zero, Quaternion.Euler(45,PlayerSetup.instance.transform.rotation.eulerAngles.y,0));
+    }
+
     void Update()
     {
         if (RoundManager.instance != null)
@@ -156,11 +197,12 @@ public class UiManager : MonoBehaviour
                             Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                             if(hit.collider != null && (hit.collider.GetComponent<Monster>() != null || hit.collider.GetComponent<UnitExtension>() != null))
                             {
-                                StopAllCoroutines();
+                                StopCoroutine(CoroutineShowingcard(hit.collider));
                                 StartCoroutine(CoroutineShowingcard(hit.collider));
                             }
                             break;
                         case TouchPhase.Ended:
+                            StopCoroutine(CoroutineShowingcard(hit.collider));
                             ShowingOffBigCard();
                             break;
                     }
@@ -168,12 +210,20 @@ public class UiManager : MonoBehaviour
             }
         }
 
+    public void SetTextFeedBack(int i)
+    {
+        textFeedBack.sprite = textFeedbacksList[i];
+    }
+
     private IEnumerator CoroutineShowingcard(Collider go)
     {
-        yield return new WaitForSeconds(0.3f);
-        if (go != null)
+        yield return new WaitForSeconds(0.5f);
+        if (Input.touchCount > 0)
         {
-            AbleBoardMonsterCard(go);
+            if (go != null)
+            {
+                AbleBoardMonsterCard(go);
+            }
         }
     }
 
@@ -232,13 +282,21 @@ public class UiManager : MonoBehaviour
         {
             bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().BigCard;
             lifeCard.text = "" + go.GetComponent<Monster>().Atk;
-            pivotResources = go.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+            if (go.GetComponent<Monster>().Stats.GetComponent<CardData>() != null)
+            {
+                pivotResources = go.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+            }
         }
         else
         {
             bigCart.GetComponent<Image>().sprite = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().BigCard;
             lifeCard.text = "" + go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Atk;
-            pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+            if (go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Stats.GetComponent<CardData>() !=
+                null)
+            {
+                pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Stats
+                    .GetComponent<CardData>().Ressources;
+            }
         }
 
         for (int i = 0; i <  pivotResources.Count; i++)
@@ -258,8 +316,7 @@ public class UiManager : MonoBehaviour
 
         for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
         {
-            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
-                DiceManager.instance.DiceListScriptable.symbolsList[card.GetComponent<CardData>().Ressources[i]];
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[card.GetComponent<CardData>().Ressources[i]];
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         
@@ -279,7 +336,6 @@ public class UiManager : MonoBehaviour
 
     public void ShowingOffBigCard()
     {
-        StopAllCoroutines();
         for (int i = 0; i < ressourceCard.childCount; i++)
         {
             ressourceCard.GetChild(i).gameObject.SetActive(false);
@@ -330,7 +386,7 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && DeckManager.instance.MonsterPossible.Count!=0)
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+250, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+240, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
@@ -398,10 +454,16 @@ public class UiManager : MonoBehaviour
     public void ChangeSettingStatus()
     {
         settingsOnOff = !settingsOnOff;
+        helpPage.enabled = false;
         settingsButtonMenu.SetActive(!settingsOnOff);
         settingsMenu.SetActive(settingsOnOff);
         viewButton.SetActive(!settingsOnOff);
         scrollView.SetActive(!settingsOnOff);
+    }
+    
+    public void EnableDisableHelpPage()
+    {
+        helpPage.enabled = !helpPage.enabled;
     }
     
     public void EnableDisableShader(bool b)
@@ -411,11 +473,76 @@ public class UiManager : MonoBehaviour
     
     public void UpdateLifeShaderAlly(int value)
     {
-        lifeShaderAlly.SetFloat("_Fill", value / 20f);
+        if (RoundManager.instance.LocalPlayerTurn == 1)
+        {
+            lifeShaderAlly.SetFloat("_Fill", value / 20f);
+        }else
+        {
+            lifeShaderEnemy.SetFloat("_Fill", value / 20f);
+        }
     }
     
     public void UpdateLifeShaderEnemy(int value)
     {
-        lifeShaderEnemy.SetFloat("_Fill", value / 20f);
+        if (RoundManager.instance.LocalPlayerTurn == 1)
+        {
+            lifeShaderEnemy.SetFloat("_Fill", value / 20f);
+        }
+        else
+        {
+            lifeShaderAlly.SetFloat("_Fill", value / 20f);
+        }
     }
+
+    public void ShowTextFeedBackWithDelay(int index)
+    {
+        StartCoroutine(CoroutineShowTextFeedBackWithDelay(index));
+    }
+
+    public void PlayHitMarker(Vector3 v, int damage)
+    {
+        foreach (GameObject hitMarker in listHitMarkes)
+        {
+            if (!hitMarker.GetComponent<GhostNumber>().p_isPlaying)
+            {
+                hitMarker.GetComponent<TMP_Text>().text = "-" + damage;
+                hitMarker.transform.position = v + (2*Vector3.up);
+                hitMarker.SetActive(true);
+                return;
+            }
+        }
+    }
+
+    IEnumerator CoroutineShowTextFeedBackWithDelay(int index)
+    {
+        textFeedBack.sprite = textFeedbacksList[index];
+        textFeedBack.enabled = true;
+        yield return time;
+        textFeedBack.enabled = false;
+    }
+
+    public void BannerItsYourTurnToPlay()
+    {
+        banner.Play();
+    }
+
+
+    public void EnableBorderStatus(float r, float g, float b)
+    {
+        borderStatus.GetComponent<Image>().color = new Color(r/255, g/255, b/255, 0);
+        borderStatus.GetComponent<Image>().DOFade(1, 1f);
+    }
+
+    public void DisableBorderStatus()
+    {
+        borderStatus.GetComponent<Image>().DOFade(0, 1f);
+    }
+
+    public void BorderSingleFlash(float r, float g, float b)
+    {
+        borderStatus.GetComponent<Image>().color = new Color(r/255, g/255, b/255, 0);
+        borderStatus.GetComponent<Image>().DOFade(1, 1f).OnComplete(DisableBorderStatus);
+    }
+    
+
 }

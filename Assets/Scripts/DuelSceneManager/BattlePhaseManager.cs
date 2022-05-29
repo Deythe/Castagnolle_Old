@@ -18,7 +18,9 @@ public class BattlePhaseManager : MonoBehaviour
 
         private GameObject unitTarget = null;
         private GameObject unitFusion;
-        
+
+        private int motherUnitTiles;
+        private Monster unitPivot;
         private int result;
         private bool isAttacking;
         private int numberView;
@@ -120,6 +122,14 @@ public class BattlePhaseManager : MonoBehaviour
                                                 }
                                                 
                                                 unitTarget = unit.monster;
+                                                UiManager.instance.p_instanceEnemyPointer.transform.position =
+                                                    new Vector3(PlacementManager.instance.AverageCenterX(unitTarget), 3,PlacementManager.instance.AverageCenterZ(unitTarget));
+                                                
+                                                if (!UiManager.instance.p_instanceEnemyPointer.activeSelf)
+                                                {
+                                                    UiManager.instance.p_instanceEnemyPointer.SetActive(true);
+                                                }
+
                                                 unitTarget.GetComponent<Monster>().BeChoosen();
                                                 isAttacking = true;
                                             }
@@ -132,7 +142,7 @@ public class BattlePhaseManager : MonoBehaviour
 
                     else if (Input.GetTouch(0).phase == TouchPhase.Ended)
                     {
-                        if (unitsSelected != null)
+                        if (unitsSelected != null && !RoundManager.instance.StateRound.Equals(4))
                         {
                             RoundManager.instance.StateRound = 4;
                         }
@@ -151,6 +161,9 @@ public class BattlePhaseManager : MonoBehaviour
             if (unitsSelected.GetComponent<Monster>().Animator != null)
             {
                 unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
+                EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
+                    1f,
+                    PlacementManager.instance.AverageCenterZ(unitTarget)-PlayerSetup.instance.transform.forward.z, 3f);
             }
 
             yield return new WaitForSeconds(0.5f);
@@ -284,12 +297,12 @@ public class BattlePhaseManager : MonoBehaviour
                         {
                             unitFusion = PhotonNetwork.Instantiate("Tile", deadUnitCenters[x].position,
                                 PlayerSetup.instance.transform.rotation, 0);
-                            playerView.RPC("RPC_SyncTiles", RpcTarget.All, unitFusion.GetComponent<PhotonView>().ViewID,unitMore.GetComponent<Monster>().ID);
+                            playerView.RPC("RPC_SyncTiles", RpcTarget.AllViaServer, unitFusion.GetComponent<PhotonView>().ViewID, motherUnitTiles);
                         }
                         else
                         {
                             playerView.RPC("RPC_InstantiateEnemyTiles", RpcTarget.Others,
-                                unitMore.GetComponent<Monster>().ID, deadUnitCenters[x].position.x,
+                                motherUnitTiles, deadUnitCenters[x].position.x,
                                 deadUnitCenters[x].position.z);
                         }
                         
@@ -303,6 +316,7 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator AddAllExtension(GameObject unitMore, bool owner)
         {
+            motherUnitTiles = unitMore.GetComponent<Monster>().ID;
             numberView = PhotonNetwork.ViewCount;
             sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
             for (int i = 0; i < sizeListCentersEnnemi; i++)
@@ -411,7 +425,7 @@ public class BattlePhaseManager : MonoBehaviour
         private void RPC_InstantiateEnemyTiles(int idMore, float x, float z)
         {
             unitFusion = PhotonNetwork.Instantiate("Tile", new Vector3(x, 0.5f, z), PlayerSetup.instance.transform.rotation, 0);
-            playerView.RPC("RPC_SyncTiles", RpcTarget.All, unitFusion.GetComponent<PhotonView>().ViewID, idMore);
+            playerView.RPC("RPC_SyncTiles", RpcTarget.AllViaServer, unitFusion.GetComponent<PhotonView>().ViewID, idMore);
         }
         
         [PunRPC]
@@ -429,9 +443,13 @@ public class BattlePhaseManager : MonoBehaviour
         [PunRPC]
         private void RPC_TakeDamageUnit(int unitSelected, int damage, int unitTarget, int damage2)
         {
-            PlacementManager.instance.SearchMobWithID(unitSelected).Atk -= Mathf.Abs(damage);
-            PlacementManager.instance.SearchMobWithID(unitTarget).Atk -= Mathf.Abs(damage2);
+            unitPivot = PlacementManager.instance.SearchMobWithID(unitSelected);
+            UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage);
+            unitPivot.Atk -= Mathf.Abs(damage);
+            
+            unitPivot = PlacementManager.instance.SearchMobWithID(unitTarget);
+            UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage2);
+            unitPivot.Atk -= Mathf.Abs(damage2);
         }
-
     }
 

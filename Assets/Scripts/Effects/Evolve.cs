@@ -67,19 +67,22 @@ public class Evolve : MonoBehaviour, IEffects
                 {
                     used = true;    
                 }
+                GetComponent<Monster>().p_model.layer = 6;
                 
             }else if (phase == 8)
             {
-                used = true;
                 for (int i = cardListEvolve.childCount-1; i >= 0; i--)
                 {
                     cardListEvolve.GetChild(i).gameObject.SetActive(false);
                 }
                 
-                PlacementManager.instance.SpecialInvocation = true;
-                PlacementManager.instance.SetGOPrefabsMonster(EffectManager.instance.AllieUnit);
-                UiManager.instance.ShowingOffBigCard();
-                EffectManager.instance.CancelSelection(2);
+                PhotonNetwork.Instantiate(EffectManager.instance.AllieUnit.name, transform.position,
+                    transform.rotation, 0);
+                
+                EffectManager.instance.CancelSelection(1);
+                used = true;
+
+                GetComponent<Monster>().p_isChampion = false;
                 PhotonNetwork.Destroy(gameObject);
             }
         }

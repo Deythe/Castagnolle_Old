@@ -20,22 +20,22 @@ public class UnitExtension : MonoBehaviour
         {
             if (unitParent.GetComponent<Monster>().p_isMovable)
             {
-                ms.material.color = PlacementManager.instance.p_listMaterial[4].color;
+                ms.material = PlacementManager.instance.p_listMaterial[0];
             }
             else
             {
-                ms.material.color = PlacementManager.instance.p_listMaterial[0].color;
+                ms.material = PlacementManager.instance.p_listMaterial[4];
             }
         }
         else
         {
             if (unitParent.GetComponent<Monster>().p_isMovable)
             {
-                ms.material.color = PlacementManager.instance.p_listMaterial[5].color;
+                ms.material = PlacementManager.instance.p_listMaterial[1];
             }
             else
             {
-                ms.material.color = PlacementManager.instance.p_listMaterial[1].color;
+                ms.material = PlacementManager.instance.p_listMaterial[5];
             }
         }
         

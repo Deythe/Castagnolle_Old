@@ -23,12 +23,13 @@ public class Stun : MonoBehaviour, IEffects
                 view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
                 used = true;
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
 
         if (phase == 2)
         {
-            targetUnit.GetComponent<Monster>().p_isMovable = false;
+            targetUnit.GetComponent<Monster>().p_isMovable = true;
             targetUnit.GetComponent<Monster>().Attacked = false;
         }
     }

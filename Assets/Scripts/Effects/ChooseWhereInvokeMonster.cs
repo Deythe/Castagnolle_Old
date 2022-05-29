@@ -20,6 +20,10 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
                 PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().Prefabs);
                 UiManager.instance.ShowingOffBigCard();
                 EffectManager.instance.CancelSelection(2);
+                UiManager.instance.p_textFeedBack.enabled = true;
+                UiManager.instance.SetTextFeedBack(0);
+                UiManager.instance.EnableBorderStatus(68,168,254);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }

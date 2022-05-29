@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
@@ -15,11 +16,17 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [SerializeField] private int localPlayerTurn;
     [SerializeField] private int currentPlayerNumberTurnNumberTurn;
     [SerializeField] private int timerPerRound = 60;
+    [SerializeField] private List<Material> listMatPlayerGlow;
     private int timer;
     private int roundState; 
     private GameObject playerInstance;
     private WaitForSeconds tick= new WaitForSeconds(1);
 
+    public List<Material> p_listMatPlayerGlow
+    {
+        get => listMatPlayerGlow;
+    }
+    
     public int p_Timer
     {
         get => timer;
@@ -40,6 +47,41 @@ public class RoundManager : MonoBehaviourPunCallbacks
         set
         {
             roundState = value;
+            switch (roundState)
+            {
+                case 0:
+                case 1:
+                    UiManager.instance.DisableBorderStatus();
+                    UiManager.instance.p_instanceEnemyPointer.SetActive(false);
+                    UiManager.instance.p_textFeedBack.enabled = false;
+                    UiManager.instance.DisableBorderStatus();
+                    break;
+                case 3:
+                    UiManager.instance.DisableBorderStatus();
+                    UiManager.instance.p_instanceEnemyPointer.SetActive(false);
+                    UiManager.instance.p_textFeedBack.enabled = false;
+                    UiManager.instance.EnableBorderStatus(255,0,0);
+                    break;
+                case 4 :
+                    UiManager.instance.SetTextFeedBack(4);
+                    UiManager.instance.p_textFeedBack.enabled = true;
+                    break;
+                case 5:
+                    UiManager.instance.EnableBorderStatus(68,168,254);
+                    break;
+                case 6:
+                    UiManager.instance.EnableBorderStatus(68,168,254);
+                    UiManager.instance.p_instanceEnemyPointer.SetActive(false);
+                    UiManager.instance.SetTextFeedBack(2);
+                    UiManager.instance.p_textFeedBack.enabled = true;
+                    break;
+                case 7 :
+                    UiManager.instance.EnableBorderStatus(68,168,254);
+                    UiManager.instance.p_instanceEnemyPointer.SetActive(false);
+                    UiManager.instance.SetTextFeedBack(1);
+                    UiManager.instance.p_textFeedBack.enabled = true;
+                    break;
+            }
         }
     }
 
@@ -89,6 +131,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             StopAllCoroutines();
             UiManager.instance.EnableDisableTimer(true);
             StartCoroutine(CoroutineTimer());
+            UiManager.instance.BannerItsYourTurnToPlay();
         }
         else
         {
@@ -111,11 +154,15 @@ public class RoundManager : MonoBehaviourPunCallbacks
             PlacementManager.instance.ReInitPlacement();
         }
         
+        UiManager.instance.DisableBorderStatus();
+        UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
+        UiManager.instance.p_textFeedBack.enabled = false;
         DeckManager.instance.MonsterPossible.Clear();
         PlacementManager.instance.ReInitMonster();
         BattlePhaseManager.instance.ClearUnits();
-
+        EffectManager.instance.Cancel();
+        
         playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
     }
 
@@ -123,7 +170,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
         DeckManager.instance.MonsterPossible.Clear();
-        roundState = 3;
+        StateRound = 3;
     }
     
     public void Action()
@@ -168,6 +215,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             else
             {
                 timer = timerPerRound;
+                UiManager.instance.BannerItsYourTurnToPlay();
                 UiManager.instance.EnableDisableTimer(true);
                 UiManager.instance.EnableDisableShader(true);
                 StopAllCoroutines();
@@ -180,6 +228,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             if (localPlayerTurn==1)
             {
                 timer = timerPerRound;
+                UiManager.instance.BannerItsYourTurnToPlay();
                 UiManager.instance.EnableDisableShader(true);
                 UiManager.instance.EnableDisableTimer(true);
                 StopAllCoroutines();

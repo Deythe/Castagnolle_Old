@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_LifeAllyLiquid
-  m_Shader: {fileID: -6465566751694194690, guid: 24352a2384b64fd4bb70c614f5250d19, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 89deabe9eed8c0143a1eb07831b70085, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -93,13 +93,14 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _Fill: 1
-    - _FoamSize: -1.89
-    - _FoamSpeed: 0.25
+    - _Fill: 0
+    - _FoamControl: 1.54
+    - _FoamSize: -0.2
+    - _FoamSpeed: 0.07
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _GradientIntensity: 0
+    - _GradientIntensity: 2
     - _MeshSize: 3.2
     - _Metallic: 0
     - _OcclusionStrength: 1
@@ -119,12 +120,12 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BeerColor: {r: 0.39493796, g: 0, b: 0.990566, a: 0}
-    - _BeerColor2: {r: 1, g: 0.19515024, b: 0, a: 1}
-    - _BubbleColor: {r: 0.9339623, g: 0.87959236, b: 0.77095944, a: 0}
+    - _BeerColor: {r: 0.3745098, g: 0.003921569, b: 0, a: 0}
+    - _BeerColor2: {r: 0.89073944, g: 0.5642904, b: 0, a: 1}
+    - _BubbleColor: {r: 0.9811321, g: 0.7700737, b: 0.5784977, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
+    - _FoamColor: {r: 0.93333334, g: 0.8784314, b: 0.77254903, a: 0}
     - _FrontColor: {r: 0.68956923, g: 0.9811321, b: 0.8928776, a: 0}
     - _SideColor: {r: 0.81960785, g: 0.69834, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}

@@ -16,16 +16,20 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism) && phase==usingPhase)
+            if (phase==usingPhase)
             {
-                Debug.Log("HEROIQUEEEEE");
-                view.RPC("RPC_Action", RpcTarget.AllViaServer);
-                used = true;
-                EffectManager.instance.CancelSelection(1);
-            }
-            else
-            {
-                EffectManager.instance.CancelSelection(1);
+                if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
+                {
+                    view.RPC("RPC_Action", RpcTarget.AllViaServer);
+                    used = true;
+                    EffectManager.instance.CancelSelection(1);
+                } else
+                {
+                    EffectManager.instance.CancelSelection(1);
+                    UiManager.instance.ShowTextFeedBackWithDelay(3);
+                }
+                
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }

@@ -14,7 +14,7 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     [SerializeField] private bool used;
     
     private int numberUnitCurrent;
-    private int usingPhase = 0;
+    [SerializeField] private int usingPhase = 0;
     
     private int[] pivotRessourceList;
     private int pivot;
@@ -44,8 +44,11 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 {
                     if (card.GetComponent<CardData>().Prefabs.Equals(originalCard.GetComponent<CardData>().Prefabs))
                     {
-                        card.GetComponent<CardData>().Ressources
-                            .RemoveAt(card.GetComponent<CardData>().Ressources.Count - 1);
+                        if (card.GetComponent<CardData>().Ressources.Count > 0)
+                        {
+                            card.GetComponent<CardData>().Ressources
+                                .RemoveAt(card.GetComponent<CardData>().Ressources.Count - 1);
+                        }
                     }
                 }
                 

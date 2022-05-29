@@ -31,6 +31,7 @@ public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
             {
                 if(RoundManager.instance.StateRound==2 && !PlacementManager.instance.IsWaiting && PlacementManager.instance.SpecialInvocation)
                 {
+                    UiManager.instance.p_textFeedBack.enabled = false;
                     PlacementManager.instance.CancelSelection();
                 }
             }

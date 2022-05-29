@@ -204,8 +204,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Email
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
-  m_sharedMaterial: {fileID: 3761137976099299544, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
+  m_sharedMaterial: {fileID: -7190850054893415807, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -525,7 +525,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -539,7 +539,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 594403925}
   m_OnClick:
     m_PersistentCalls:
@@ -1051,10 +1051,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Password
+  m_text: Mot de passe
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
-  m_sharedMaterial: {fileID: 3761137976099299544, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
+  m_sharedMaterial: {fileID: -7190850054893415807, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1450,8 +1450,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
-  m_sharedMaterial: {fileID: 3761137976099299544, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
+  m_sharedMaterial: {fileID: -7190850054893415807, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1799,7 +1799,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1813,7 +1813,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1401740387}
   m_TextViewport: {fileID: 1259169977}
   m_TextComponent: {fileID: 2016690303}
@@ -2438,7 +2438,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: -193}
+  m_AnchoredPosition: {x: -20, y: -199}
   m_SizeDelta: {x: 250, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1920818319
@@ -2466,7 +2466,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.8018868, g: 0.7981043, b: 0.7981043, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2480,7 +2480,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1920818320}
   m_TextViewport: {fileID: 1045317221}
   m_TextComponent: {fileID: 1263022464}
@@ -2665,7 +2665,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2679,7 +2679,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1923153591}
   m_OnClick:
     m_PersistentCalls:
@@ -2928,8 +2928,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
-  m_sharedMaterial: {fileID: 3761137976099299544, guid: 43da9439159c7f842afa369a52ff5ae1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
+  m_sharedMaterial: {fileID: -7190850054893415807, guid: c9deed577a55e484f9bce6359b48670d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

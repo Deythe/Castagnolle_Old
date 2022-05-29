@@ -33,7 +33,10 @@ public class DiceForAtk : MonoBehaviour, IEffects
                 else
                 {
                     EffectManager.instance.CancelSelection(1);
+                    UiManager.instance.ShowTextFeedBackWithDelay(3);
                 }
+                
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }

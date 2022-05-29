@@ -131,10 +131,16 @@ public class EffectManager : MonoBehaviour
 
     public void CancelSelection(int state)
     {
+        Cancel();
+        RoundManager.instance.StateRound = state;
+    }
+
+    public void Cancel()
+    {
+        UiManager.instance.p_textFeedBack.enabled = false;
         targetUnitAlly = null;
         targetUnitEnnemi = null;
         currentUnit = null;
-        RoundManager.instance.StateRound = state;
     }
     
     public bool CheckHeroism(Transform go, List<GameObject> mobNextTo, int numberCheck)
@@ -164,7 +170,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        if (mobNextTo.Count.Equals(numberCheck))
+        if (mobNextTo.Count>=numberCheck)
         {
             mobNextTo.Clear();
             return true;
@@ -205,7 +211,7 @@ public class EffectManager : MonoBehaviour
         instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
     }
 
-    void PlayAllParticulesSystem(int idEffect)
+    public void PlayAllParticulesSystem(int idEffect)
     {
         if (instantiateEffect[idEffect].GetComponent<ParticleSystem>() != null)
         {

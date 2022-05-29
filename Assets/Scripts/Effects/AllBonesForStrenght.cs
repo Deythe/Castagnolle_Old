@@ -35,6 +35,7 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
                 
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
                 used = true;
             }
         }

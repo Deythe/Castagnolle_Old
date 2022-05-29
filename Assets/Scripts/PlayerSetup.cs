@@ -28,7 +28,8 @@ public class PlayerSetup : MonoBehaviour
         
         UiManager.instance.CanvasPublic.worldCamera = cam;
         UiManager.instance.Waiting.SetActive(false);
-
+        UiManager.instance.InitPlayerMarkers();
+        
         if (RoundManager.instance.LocalPlayerTurn.Equals(2))
         {
             DiceManager.instance.Gauge[0] = 4;
@@ -37,6 +38,10 @@ public class PlayerSetup : MonoBehaviour
         }
     }
 
+    public Vector3 p_startCamPos
+    {
+        get => startCamPos;
+    }
     public Camera GetCam()
     {
         return cam;

@@ -22,6 +22,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private SpriteRenderer animRecherche;
     [SerializeField] private Image connexionStatus;
     [SerializeField] private List<Sprite> connexionSprites;
+    [SerializeField] private GameObject transparency;
+    [SerializeField] private GameObject tutoObject;
+    [SerializeField] private Image shader;
     private bool find;
     private Hashtable hash = new Hashtable();
 
@@ -40,8 +43,18 @@ public class MenuManager : MonoBehaviourPunCallbacks
         playButton.interactable = false;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         nickname.text = FireBaseManager.instance.User.userName;
+        
+        if (FireBaseManager.instance.User.firstTime)
+        {
+            transparency.SetActive(true);
+            tutoObject.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutQuint);
+        }
     }
-    
+
+    public Image p_shader
+    {
+        get => shader;
+    }
     public Button PlayButton
     {
         get => playButton;
@@ -80,28 +93,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void PlayOrTuto()
-    {
-        
-        EnableDisableChoseDeck(true);
-        
-        /*
-        if (FireBaseManager.instance.User.firstTime)
-        {
-            SceneManager.LoadScene(4);
-        }
-        else
-        {
-            EnableDisableChoseDeck(true);
-        }*/
-    }
-
     public void SearchGame()
     {
         PhotonNetwork.JoinRandomRoom();
         EnableDisableChoseDeck(false);
         DisableEnableAllDeckButton(false);
         playButton.interactable = false;
+        shader.enabled = false;
     }
 
     public override void OnConnectedToMaster()
@@ -152,8 +150,28 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnDisconnected (DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        connexionStatus.sprite = connexionSprites[0];
+        if (connexionStatus != null)
+        {
+            connexionStatus.sprite = connexionSprites[0];
+        }
+        
         playButton.interactable = false;
         PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public void GoToTuto()
+    {
+        SceneManager.LoadScene(4);
+    }
+
+    public void CancelTuto()
+    {
+        FireBaseManager.instance.User.firstTime = false;
+        if (FireBaseManager.instance.User.isConnected)
+        {
+            FireBaseManager.instance.FirstTimeChecked();
+        }
+        transparency.SetActive(false);
+        tutoObject.transform.DOScale(Vector3.zero, 0.75f).SetEase(Ease.InQuad);
     }
 }

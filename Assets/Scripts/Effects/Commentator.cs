@@ -24,6 +24,8 @@ public class Commentator : MonoBehaviour, IEffects
                 }
                 
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
+                used = true;
             }
         }
     }

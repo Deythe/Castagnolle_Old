@@ -29,6 +29,10 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
                     PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
                     UiManager.instance.ShowingOffBigCard();
                     EffectManager.instance.CancelSelection(2);
+                    UiManager.instance.p_textFeedBack.enabled = true;
+                    UiManager.instance.SetTextFeedBack(0);
+                    UiManager.instance.EnableBorderStatus(68,168,254);
+                    GetComponent<Monster>().p_model.layer = 6;
                     used = true;
                 }
                 else

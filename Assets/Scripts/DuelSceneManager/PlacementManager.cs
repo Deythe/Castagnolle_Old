@@ -163,11 +163,6 @@ public class PlacementManager : MonoBehaviour
 
     IEnumerator CoroutineSpawnMonster()
     {
-        if (!specialInvocation)
-        {
-            DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
-        }
-        
         isWaiting = true;
         EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 0,  AverageCenterX(currentUnit), 0.6f , AverageCenterZ(currentUnit), 4f);
 
@@ -176,7 +171,11 @@ public class PlacementManager : MonoBehaviour
         currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
             PlayerSetup.instance.transform.rotation, 0);
         
-
+        if (!specialInvocation)
+        {
+            DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+        }
+        
         specialInvocation = false;
         currentCardSelection = null;
         goPrefabMonster = null;
@@ -194,7 +193,7 @@ public class PlacementManager : MonoBehaviour
         isWaiting = false;
     }
 
-    float AverageCenterX(GameObject unit)
+    public float AverageCenterX(GameObject unit)
     {
         xAveragePosition = 0;
         foreach (var center in unit.GetComponent<Monster>().GetCenters())
@@ -205,7 +204,7 @@ public class PlacementManager : MonoBehaviour
         return xAveragePosition / unit.GetComponent<Monster>().GetCenters().Count;
     }
 
-    float AverageCenterZ(GameObject unit)
+    public float AverageCenterZ(GameObject unit)
     {
         zAveragePosition = 0;
         foreach (var center in unit.GetComponent<Monster>().GetCenters())

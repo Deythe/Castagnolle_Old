@@ -32,7 +32,10 @@ public class KillWithHeroism : MonoBehaviour, IEffects
                 else
                 {
                     EffectManager.instance.CancelSelection(1);
+                    UiManager.instance.ShowTextFeedBackWithDelay(3);
+                    GetComponent<Monster>().p_model.layer = 6;
                 }
+                
             }
             else if (phase == 6)
             {
@@ -40,6 +43,7 @@ public class KillWithHeroism : MonoBehaviour, IEffects
                     EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
 
                 used = true;
+                GetComponent<Monster>().p_model.layer = 6;
                 EffectManager.instance.CancelSelection(1);
             }
         }

@@ -17,15 +17,21 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism) && phase==usingPhase)
+            if (phase == usingPhase)
             {
-                GetComponent<Monster>().Attacked = false;
-                used = true;
-                EffectManager.instance.CancelSelection(1);
-            }
-            else
-            {
-                EffectManager.instance.CancelSelection(1);
+                if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
+                {
+                    GetComponent<Monster>().Attacked = false;
+                    used = true;
+                    EffectManager.instance.CancelSelection(1);
+                    GetComponent<Monster>().p_model.layer = 6;
+                }
+                else
+                {
+                    EffectManager.instance.CancelSelection(1);
+                    UiManager.instance.ShowTextFeedBackWithDelay(3);
+                    GetComponent<Monster>().p_model.layer = 6;
+                }
             }
         }
     }

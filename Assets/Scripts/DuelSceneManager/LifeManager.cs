@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,6 +24,12 @@ public class LifeManager : MonoBehaviour
           get => ennemiLife;
           set
           {
+               if (PlayerSetup.instance != null)
+               {
+                    UiManager.instance.PlayHitMarker(
+                         new Vector3(-0.5f*Math.Sign(PlayerSetup.instance.p_startCamPos.z), 1f, -6.5f * Math.Sign(PlayerSetup.instance.p_startCamPos.z)), ennemiLife - value);
+               }
+
                ennemiLife = value;
                UiManager.instance.UpdateHpEnnemi();
                UiManager.instance.UpdateLifeShaderEnemy(ennemiLife);
@@ -35,6 +42,18 @@ public class LifeManager : MonoBehaviour
           get => life;
           set
           {
+               if (PlayerSetup.instance != null)
+               {
+                    UiManager.instance.PlayHitMarker(
+                         new Vector3(0, 1, 7f * Math.Sign(PlayerSetup.instance.p_startCamPos.z)), life - value);
+               }
+               
+               if ((life - value).Equals(3))
+               {
+                    Debug.Log("Prout");
+                    UiManager.instance.BorderSingleFlash(255,0,0);
+               }
+
                life = value;
                UiManager.instance.UpdateHp();
                UiManager.instance.UpdateLifeShaderAlly(life);
@@ -133,16 +152,15 @@ public class LifeManager : MonoBehaviour
      IEnumerator CoroutineShowWinOrLose()
      {
           UiManager.instance.p_settingMenu.SetActive(false);
-          Time.timeScale = 0;
           if (life > 0 && ennemiLife<=0)
           {
-               UiManager.instance.p_winSprite.SetActive(true);
+               UiManager.instance.p_winSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }else if (life <= 0 && ennemiLife>0)
           {
-               UiManager.instance.p_looseSprite.SetActive(true);
+               UiManager.instance.p_looseSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }else if (life <= 0 && ennemiLife<=0)
           {
-               UiManager.instance.p_looseSprite.SetActive(true);
+               UiManager.instance.p_looseSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }
           
           yield return new WaitForSecondsRealtime(4f);
