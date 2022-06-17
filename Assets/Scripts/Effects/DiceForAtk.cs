@@ -20,6 +20,7 @@ public class DiceForAtk : MonoBehaviour, IEffects
                     DiceManager.instance.DiceChoosen[HaveDice()] = 0;
                     DeckManager.instance.CheckUnitWithRessources();
                     EffectManager.instance.CancelSelection(1);
+                    GetComponent<Monster>().ChangeMeshRenderer(0);
                     used = true;
                 }else if (HaveDiceInGauge()!=-1)
                 {
@@ -28,6 +29,7 @@ public class DiceForAtk : MonoBehaviour, IEffects
                     DiceManager.instance.DiceChoosen[HaveDiceInGauge()] = 0;
                     DeckManager.instance.CheckUnitWithRessources();
                     EffectManager.instance.CancelSelection(1);
+                    GetComponent<Monster>().ChangeMeshRenderer(0);
                     used = true;
                 }
                 else

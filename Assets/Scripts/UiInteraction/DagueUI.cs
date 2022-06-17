@@ -14,7 +14,6 @@ public class DagueUI : MonoBehaviour
 
     private void Move()
     {
-        Debug.Log("CacaKipU");
         transform.DOLocalMoveY(transform.position.y + 0.5f, time)
             .OnComplete(() => transform.DOLocalMoveY(originalYposition, time).OnComplete(Move));
     }

@@ -281,7 +281,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 122991271}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 440616030}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: EnableDisableSoundManagerSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &122991271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779,6 +791,13 @@ MonoBehaviour:
   transparency: {fileID: 974956966}
   tutoObject: {fileID: 968862811}
   shader: {fileID: 854541598}
+  buttonsSprite:
+  - {fileID: 21300000, guid: de471d4af155dc14f973748da929d7b8, type: 3}
+  - {fileID: 21300000, guid: 7ece5760850645440aa0559136b0fdd1, type: 3}
+  - {fileID: 21300000, guid: cdba213162c0b664a8c6fe45f7222e45, type: 3}
+  - {fileID: 21300000, guid: e819aa15bd53daa4095145d022d7b563, type: 3}
+  musicButton: {fileID: 1067248085}
+  sfxButton: {fileID: 122991271}
 --- !u!4 &440616031
 Transform:
   m_ObjectHideFlags: 0
@@ -1837,7 +1856,7 @@ GameObject:
   - component: {fileID: 1067248083}
   - component: {fileID: 1067248086}
   - component: {fileID: 1067248085}
-  - component: {fileID: 1067248084}
+  - component: {fileID: 1067248087}
   m_Layer: 5
   m_Name: Music
   m_TagString: Untagged
@@ -1862,10 +1881,48 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -106.4, y: -628.8}
+  m_AnchoredPosition: {x: -106.40001, y: -628.79987}
   m_SizeDelta: {x: 152, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1067248084
+--- !u!114 &1067248085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067248082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: de471d4af155dc14f973748da929d7b8, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1067248086
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067248082}
+  m_CullTransparentMesh: 1
+--- !u!114 &1067248087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1908,45 +1965,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1067248085}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1067248085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1067248082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: de471d4af155dc14f973748da929d7b8, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1067248086
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1067248082}
-  m_CullTransparentMesh: 1
+      m_Calls:
+      - m_Target: {fileID: 440616030}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: EnableDisableSoundManagerMusic
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1104289651
 GameObject:
   m_ObjectHideFlags: 0
@@ -3313,7 +3344,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770394964}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1770394966
 Camera:
   m_ObjectHideFlags: 0

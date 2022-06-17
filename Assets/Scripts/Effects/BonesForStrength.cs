@@ -41,15 +41,15 @@ public class BonesForStrength : MonoBehaviour, IEffects
                     if (DiceManager.instance.Gauge[i].Equals(5))
                     {
                         DiceManager.instance.Gauge[i] = 0;
-                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
                             DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                         EffectManager.instance.CancelSelection(1);
                         used = true;
                         GetComponent<Monster>().p_model.layer = 6;
+                        DeckManager.instance.CheckUnitWithRessources();
                         return;
                     }
                 }
-                DeckManager.instance.CheckUnitWithRessources();
             }
         }
     }

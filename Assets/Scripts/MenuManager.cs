@@ -27,6 +27,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Image shader;
     private bool find;
     private Hashtable hash = new Hashtable();
+    [SerializeField] private List<Sprite> buttonsSprite;
+    [SerializeField] private Image musicButton;
+    [SerializeField] private Image sfxButton;
 
     private void Awake()
     {
@@ -49,6 +52,24 @@ public class MenuManager : MonoBehaviourPunCallbacks
             transparency.SetActive(true);
             tutoObject.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutQuint);
         }
+        
+        if (SoundManager.instance.p_musicEnabled)
+        {
+            musicButton.sprite = buttonsSprite[0];
+        }
+        else
+        {
+            musicButton.sprite = buttonsSprite[1];
+        }
+        
+        if (SoundManager.instance.p_sfxEnabled)
+        {
+            sfxButton.sprite = buttonsSprite[2];
+        }
+        else
+        {
+            sfxButton.sprite = buttonsSprite[3];
+        }
     }
 
     public Image p_shader
@@ -64,7 +85,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
@@ -85,6 +106,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (b)
         {
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
             allMenu.DOLocalMoveX(-720, 0.2f).SetEase(Ease.Linear);
         }
         else
@@ -95,6 +117,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void SearchGame()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         PhotonNetwork.JoinRandomRoom();
         EnableDisableChoseDeck(false);
         DisableEnableAllDeckButton(false);
@@ -112,6 +135,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void Disconnect()
     {
+        SoundManager.instance.PlaySFXSound(1, 0.07f);
         PhotonNetwork.Disconnect();
         FireBaseManager.instance.User = null;
         SceneManager.LoadScene(0);
@@ -161,11 +185,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void GoToTuto()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         SceneManager.LoadScene(4);
     }
 
     public void CancelTuto()
     {
+        SoundManager.instance.PlaySFXSound(1, 0.07f);
         FireBaseManager.instance.User.firstTime = false;
         if (FireBaseManager.instance.User.isConnected)
         {
@@ -173,5 +199,34 @@ public class MenuManager : MonoBehaviourPunCallbacks
         }
         transparency.SetActive(false);
         tutoObject.transform.DOScale(Vector3.zero, 0.75f).SetEase(Ease.InQuad);
+    }
+
+    public void EnableDisableSoundManagerMusic()
+    {
+        SoundManager.instance.EnableDisableMusic();
+        if (SoundManager.instance.p_musicEnabled)
+        {
+            musicButton.sprite = buttonsSprite[0];
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
+        }
+        else
+        {
+            SoundManager.instance.PlaySFXSound(1, 0.07f);
+            musicButton.sprite = buttonsSprite[1];
+        }
+    }
+    
+    public void EnableDisableSoundManagerSFX()
+    {
+        SoundManager.instance.EnableDisableSFX();
+        if (SoundManager.instance.p_sfxEnabled)
+        {
+            sfxButton.sprite = buttonsSprite[2];
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
+        }
+        else
+        {
+            sfxButton.sprite = buttonsSprite[3];
+        }
     }
 }

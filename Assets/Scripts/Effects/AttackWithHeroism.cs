@@ -25,6 +25,7 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
                     used = true;
                     EffectManager.instance.CancelSelection(1);
                     GetComponent<Monster>().p_model.layer = 6;
+                    GetComponent<Monster>().ChangeMeshRenderer(0);
                 }
                 else
                 {

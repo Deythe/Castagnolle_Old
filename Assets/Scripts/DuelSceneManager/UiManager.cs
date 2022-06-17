@@ -6,6 +6,7 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
 
@@ -65,7 +66,16 @@ public class UiManager : MonoBehaviour
     [SerializeField] private Animation banner;
 
     [SerializeField] private GameObject borderStatus;
-    [SerializeField] private Image helpPage;
+    [SerializeField] private GameObject helpPage;
+
+    [SerializeField] private GameObject dicesPlayer1;
+    [SerializeField] private GameObject dicesPlayer2;
+    
+    [SerializeField] private List<Sprite> buttonsSprite;
+    [SerializeField] private Image musicButton;
+    [SerializeField] private Image sfxButton;
+
+    [SerializeField] private Button throwButton;
     
     private List<int> pivotResources;
     private bool settingsOnOff;
@@ -76,6 +86,22 @@ public class UiManager : MonoBehaviour
     private bool waitingCoroutine;
     private RaycastHit hit;
     private WaitForSeconds time = new WaitForSeconds(3f);
+
+    public Button p_throwButton
+    {
+        get => throwButton;
+    }
+
+    public GameObject p_dicePlayer1
+    {
+        get => dicesPlayer1;
+    }
+    
+    public GameObject p_dicePlayer2
+    {
+        get => dicesPlayer2;
+    }
+
 
     public GameObject p_borderStatus
     {
@@ -139,7 +165,18 @@ public class UiManager : MonoBehaviour
     
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }else
+        {
+            Destroy(gameObject);
+        }
+
+        helpPage.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height*0.7f);
+        bigCart.GetComponent<RectTransform>().localPosition =
+            new Vector3(bigCart.GetComponent<RectTransform>().localPosition.x, Screen.height * 0.17f, 0);
+        //bigCart.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width*0.85f, Screen.height * 0.55f);
     }
 
     private void Start()
@@ -155,6 +192,25 @@ public class UiManager : MonoBehaviour
         {
             shader.SetActive(false);
         }
+        
+        if (SoundManager.instance.p_musicEnabled)
+        {
+            musicButton.sprite = buttonsSprite[0];
+        }
+        else
+        {
+            musicButton.sprite = buttonsSprite[1];
+        }
+        
+        if (SoundManager.instance.p_sfxEnabled)
+        {
+            sfxButton.sprite = buttonsSprite[2];
+        }
+        else
+        {
+            sfxButton.sprite = buttonsSprite[3];
+        }
+        
     }
 
     public void InitPlayerMarkers()
@@ -386,7 +442,7 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && DeckManager.instance.MonsterPossible.Count!=0)
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+240, 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(Screen.height/7f), 0.5f).SetEase(Ease.Linear);
         }
         else
         {
@@ -399,11 +455,11 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
         {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(230, 0.5f).SetEase(Ease.Linear);
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.3f, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(550, 0.5f).SetEase(Ease.Linear);
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.5f).SetEase(Ease.Linear);
         }
     }
     
@@ -412,12 +468,12 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
         {
-            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(-230, 0.5f).SetEase(Ease.Linear);
+            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.3f, 0.5f).SetEase(Ease.Linear);
         }
         else
         {
             
-            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-550, 0.5f).SetEase(Ease.Linear);
+            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.5f).SetEase(Ease.Linear);
         }
     }
     void EnableDisableBattleButton()
@@ -448,13 +504,22 @@ public class UiManager : MonoBehaviour
     public void ChangeViewPlayer()
     {
         viewTacticsOn = !viewTacticsOn;
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         PlayerSetup.instance.ChangeView(viewTacticsOn);
     }
 
     public void ChangeSettingStatus()
     {
         settingsOnOff = !settingsOnOff;
-        helpPage.enabled = false;
+        if (settingsOnOff)
+        {
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
+        }
+        else
+        {
+            SoundManager.instance.PlaySFXSound(1, 0.07f);
+        }
+        helpPage.SetActive(false);
         settingsButtonMenu.SetActive(!settingsOnOff);
         settingsMenu.SetActive(settingsOnOff);
         viewButton.SetActive(!settingsOnOff);
@@ -463,7 +528,8 @@ public class UiManager : MonoBehaviour
     
     public void EnableDisableHelpPage()
     {
-        helpPage.enabled = !helpPage.enabled;
+        helpPage.SetActive(!helpPage.activeSelf);
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
     }
     
     public void EnableDisableShader(bool b)
@@ -544,5 +610,32 @@ public class UiManager : MonoBehaviour
         borderStatus.GetComponent<Image>().DOFade(1, 1f).OnComplete(DisableBorderStatus);
     }
     
-
+    public void EnableDisableSoundManagerMusic()
+    {
+        SoundManager.instance.EnableDisableMusic();
+        if (SoundManager.instance.p_musicEnabled)
+        {
+            musicButton.sprite = buttonsSprite[0];
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
+        }
+        else
+        {
+            SoundManager.instance.PlaySFXSound(1, 0.07f);
+            musicButton.sprite = buttonsSprite[1];
+        }
+    }
+    
+    public void EnableDisableSoundManagerSFX()
+    {
+        SoundManager.instance.EnableDisableSFX();
+        if (SoundManager.instance.p_sfxEnabled)
+        {
+            sfxButton.sprite = buttonsSprite[2];
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
+        }
+        else
+        {
+            sfxButton.sprite = buttonsSprite[3];
+        }
+    }
 }

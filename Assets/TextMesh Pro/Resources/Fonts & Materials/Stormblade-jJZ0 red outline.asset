@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: Stormblade-jJZ0 red outline
   m_EditorClassIdentifier: 
-  hashCode: 461253103
+  hashCode: 1256743757
   material: {fileID: 3761137976099299544}
-  materialHashCode: -1712918801
+  materialHashCode: -214012851
   m_Version: 1.1.0
   m_SourceFontFileGUID: e552571c2c40a09478b6f75a09278576
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: e552571c2c40a09478b6f75a09278576, type: 3}

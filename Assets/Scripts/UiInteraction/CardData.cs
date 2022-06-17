@@ -18,8 +18,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     [SerializeField] private TMP_Text lifeCard;
     [SerializeField] private RectTransform ressourceCard;
     private RectTransform rec;
-    
-    private float initialYPosition;
 
     public bool IsTouching
     {
@@ -66,9 +64,11 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         }
     }
     
-    private void Start()
+    private void Awake()
     {
         rec = GetComponent<RectTransform>();
+        rec.sizeDelta = new Vector2(Screen.height * 0.086f, Screen.height * 0.086f);
+        ReInit();
     }
 
     private void Update()
@@ -120,7 +120,6 @@ public class CardData : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
                 isTouching = true;
-                initialYPosition = transform.localPosition.y;
                 UiManager.instance.Card = gameObject;
                 UiManager.instance.AbleDeckCardTouch();
             }

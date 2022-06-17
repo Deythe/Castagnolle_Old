@@ -63,7 +63,13 @@ public class LifeManager : MonoBehaviour
      
      private void Awake()
      {
-          instance = this;
+          if (instance == null)
+          {
+               instance = this;
+          }else
+          {
+               Destroy(gameObject);
+          }
           OwnLife = 20;
           EnnemiLife = 20;
      }
@@ -133,6 +139,7 @@ public class LifeManager : MonoBehaviour
 
      public void GiveUp()
      {
+          SoundManager.instance.PlaySFXSound(1, 0.07f);
           lifeManagerView.RPC("RPC_GiveUp", RpcTarget.AllViaServer, RoundManager.instance.LocalPlayerTurn);
      }
 
@@ -151,21 +158,25 @@ public class LifeManager : MonoBehaviour
 
      IEnumerator CoroutineShowWinOrLose()
      {
+          SoundManager.instance.StopMusic();
           UiManager.instance.p_settingMenu.SetActive(false);
           if (life > 0 && ennemiLife<=0)
-          {
+          {    SoundManager.instance.PlaySFXSound(2, 0.1f);
                UiManager.instance.p_winSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }else if (life <= 0 && ennemiLife>0)
           {
+               SoundManager.instance.PlaySFXSound(3, 0.1f);
                UiManager.instance.p_looseSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }else if (life <= 0 && ennemiLife<=0)
           {
+               SoundManager.instance.PlaySFXSound(3, 0.1f);
                UiManager.instance.p_looseSprite.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutBack).OnComplete(()=>Time.timeScale = 0);
           }
           
           yield return new WaitForSecondsRealtime(4f);
           PhotonNetwork.LeaveRoom();
           PhotonNetwork.Disconnect();
+          SoundManager.instance.StarMenuMusic();
           SceneManager.LoadScene(1);
      }
      

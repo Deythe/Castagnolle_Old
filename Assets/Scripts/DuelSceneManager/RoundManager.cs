@@ -87,7 +87,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }else
+        {
+            Destroy(gameObject);
+        }
         currentPlayerNumberTurnNumberTurn = 1;
         if (PhotonNetwork.IsMasterClient)
         {
@@ -102,6 +108,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        SoundManager.instance.StarGameMusic();
         roundState = 0;
         SpawnNewPlayer();
     }
@@ -146,6 +153,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     public void EndRound()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         timer=0;
         StopAllCoroutines();
         
@@ -162,12 +170,15 @@ public class RoundManager : MonoBehaviourPunCallbacks
         PlacementManager.instance.ReInitMonster();
         BattlePhaseManager.instance.ClearUnits();
         EffectManager.instance.Cancel();
+        UiManager.instance.p_throwButton.interactable = true;
         
-        playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
+        playerView.RPC("RPC_EndTurn", RpcTarget.All);
     }
 
     public void BattlePhase()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
+        SoundManager.instance.PlaySFXSound(6, 0.05f);
         DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
         DeckManager.instance.MonsterPossible.Clear();
         StateRound = 3;
@@ -175,6 +186,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     
     public void Action()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         switch (roundState)
         {
             case 4:
@@ -188,6 +200,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public void CancelAction()
     {
+        SoundManager.instance.PlaySFXSound(1, 0.07f);
         switch (roundState)
         {
             case 4:
@@ -259,10 +272,41 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         base.OnDisconnected(cause);
         SceneManager.LoadScene(1);
-        DiceManager.instance = null;
-        DeckManager.instance = null;
-        UiManager.instance = null;
-        EffectManager.instance = null;
-        instance = null;
     }
+
+    public void PlayDiceAnim()
+    {
+        UiManager.instance.p_throwButton.interactable = false;
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
+        StartCoroutine(CoroutinePlayDiceAnim());
+    }
+
+    IEnumerator CoroutinePlayDiceAnim()
+    {
+        SoundManager.instance.PlaySFXSound(4, 0.07f);
+        if (localPlayerTurn == 1)
+        {
+            UiManager.instance.p_dicePlayer1.SetActive(true);
+            UiManager.instance.p_dicePlayer2.SetActive(false);
+            for (int i = 0; i < UiManager.instance.p_dicePlayer1.transform.childCount; i++)
+            {
+                UiManager.instance.p_dicePlayer1.transform.GetChild(i).GetComponent<Animation>().Play();
+            }
+        }
+        else
+        {
+            UiManager.instance.p_dicePlayer2.SetActive(true);
+            UiManager.instance.p_dicePlayer1.SetActive(false);
+            for (int i = 0; i < UiManager.instance.p_dicePlayer2.transform.childCount; i++)
+            {
+                UiManager.instance.p_dicePlayer2.transform.GetChild(i).GetComponent<Animation>().Play();
+            }
+        }
+
+        yield return tick;
+        UiManager.instance.p_dicePlayer1.SetActive(false);
+        UiManager.instance.p_dicePlayer2.SetActive(false);
+        DiceManager.instance.ChooseDice();
+    }
+    
 }

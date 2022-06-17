@@ -62,7 +62,13 @@ public class EffectManager : MonoBehaviour
     
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Update()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,6 +25,7 @@ public class TutoManager : MonoBehaviour
 
     void Start()
     {
+        PhotonNetwork.Disconnect();
         player1.Prepare();
         FireBaseManager.instance.User.firstTime = false;
         if (FireBaseManager.instance.User.isConnected)
@@ -36,10 +38,13 @@ public class TutoManager : MonoBehaviour
     {
         if (b)
         {
+            SoundManager.instance.PlaySFXSound(0, 0.07f);
             currentIndexPage++;
+            
         }
         else
         {
+            SoundManager.instance.PlaySFXSound(1, 0.07f);
             currentIndexPage--;
         }
 

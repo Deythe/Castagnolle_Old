@@ -67,7 +67,13 @@ public class PlacementManager : MonoBehaviour
     }
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Update()
@@ -92,6 +98,9 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
+                card.monster.GetComponent<Monster>().Attacked = true;
+                card.monster.GetComponent<Monster>().InitColorsTiles();
+                
                 if (card.monster.GetComponent<Monster>().p_isMovable)
                 {
                     card.monster.GetComponent<Monster>().Attacked = false;
@@ -164,10 +173,11 @@ public class PlacementManager : MonoBehaviour
     IEnumerator CoroutineSpawnMonster()
     {
         isWaiting = true;
+        SoundManager.instance.PlaySFXSound(5, 0.05f);
         EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 0,  AverageCenterX(currentUnit), 0.6f , AverageCenterZ(currentUnit), 4f);
 
         yield return new WaitForSeconds(1.2f);
-        
+
         currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
             PlayerSetup.instance.transform.rotation, 0);
         

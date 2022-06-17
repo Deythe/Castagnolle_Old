@@ -54,6 +54,7 @@ public class MenuLoginManager : MonoBehaviour
     
     public void VisitorConnect()
     {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
         FireBaseManager.instance.User = new User("Visiteur", false, true);
         SceneManager.LoadScene(1);
     }

@@ -23,7 +23,7 @@ public class BonesInGauge : MonoBehaviour, IEffects
                             if (DiceManager.instance.Gauge[i].Equals(0))
                             {
                                 DiceManager.instance.Gauge[i] = 5;
-                                DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                                DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
                                     DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, 5);
                                 used = true;
                                 GetComponent<Monster>().p_model.layer = 6;

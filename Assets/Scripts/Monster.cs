@@ -301,7 +301,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
 
-    void ChangeMeshRenderer(int index)
+    public void ChangeMeshRenderer(int index)
     {
         foreach (var ms in mrs)
         {   
@@ -322,7 +322,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {   
             if (view.AmOwner)
             {
-                if (!isMovable)
+                if (!isMovable && Attacked)
                 {
                     ms.material = PlacementManager.instance.p_listMaterial[4];
                 }
@@ -333,7 +333,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             }
             else
             {
-                if (!isMovable)
+                if (!isMovable && Attacked)
                 {
                     ms.material = PlacementManager.instance.p_listMaterial[5];
                 }

@@ -626,7 +626,7 @@ MonoBehaviour:
   bigCard: {fileID: 21300000, guid: 2e33202addd9e824ea35c790a287ac61, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: a48a22bf1bd8a834297c85a178194bda, type: 3}
   atk: 6
-  resources: 
+  resources: 010000000100000004000000
   isChampion: 0
   isTouching: 0
   lifeCard: {fileID: 1265315020523794899}

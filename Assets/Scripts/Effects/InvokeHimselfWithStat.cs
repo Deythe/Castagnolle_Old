@@ -35,7 +35,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
             {
                 if (motherUnit != null)
                 {
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer, GetComponent<Monster>().ID,
+                    view.RPC("RPC_Action", RpcTarget.All, GetComponent<Monster>().ID,
                         motherUnit.GetComponent<Monster>().Atk);
                     
                     PhotonNetwork.Destroy(motherUnit);
@@ -49,7 +49,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
 
     private void OnDestroy()
     {
-        if (motherUnit != null)
+        if (motherUnit != null && !motherUnit.Equals(gameObject))
         {
             if (motherUnit.GetComponent<PhotonView>().AmOwner)
             {

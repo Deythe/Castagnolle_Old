@@ -68,7 +68,13 @@ public class BattlePhaseManager : MonoBehaviour
 
         private void Awake()
         {
-            instance = this;
+            if (instance == null)
+            {
+                instance = this;
+            }else
+            {
+                Destroy(gameObject);
+            }
         }
 
         void Update()
@@ -161,11 +167,12 @@ public class BattlePhaseManager : MonoBehaviour
             if (unitsSelected.GetComponent<Monster>().Animator != null)
             {
                 unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
-                EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
-                    1f,
-                    PlacementManager.instance.AverageCenterZ(unitTarget)-PlayerSetup.instance.transform.forward.z, 3f);
             }
-
+            
+            EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
+                1f,
+                PlacementManager.instance.AverageCenterZ(unitTarget)-PlayerSetup.instance.transform.forward.z, 3f);
+            SoundManager.instance.PlaySFXSound(7, 0.07f);
             yield return new WaitForSeconds(0.5f);
             
             if (unitsSelected.GetComponent<Monster>().Animator != null)
