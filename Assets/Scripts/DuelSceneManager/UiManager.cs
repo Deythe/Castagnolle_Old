@@ -76,6 +76,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] private Image sfxButton;
 
     [SerializeField] private Button throwButton;
+    [SerializeField] private CanvasScaler canvasScaler;
     
     private List<int> pivotResources;
     private bool settingsOnOff;
@@ -173,10 +174,8 @@ public class UiManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        helpPage.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height*0.7f);
-        bigCart.GetComponent<RectTransform>().localPosition =
-            new Vector3(bigCart.GetComponent<RectTransform>().localPosition.x, Screen.height * 0.17f, 0);
-        //bigCart.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width*0.85f, Screen.height * 0.55f);
+        bigCart.GetComponent<RectTransform>().localScale = new Vector3(canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f);
+        helpPage.GetComponent<RectTransform>().localScale = new Vector3(canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f);
     }
 
     private void Start()
@@ -230,7 +229,6 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance != null)
         {
             CheckRaycast();
-            ChangePosition();
             EnableDisableThrowDiceButton();
             EnableDisableScrollView();
             EnableDisableEndTurn();
@@ -379,17 +377,6 @@ public class UiManager : MonoBehaviour
         bigCart.SetActive(true);
     }
 
-    public void ChangePosition()
-    {
-        if (card != null && !card.GetComponent<CardData>().IsTouching)
-        {
-            if(Input.touchCount > 0)
-            {
-                card.GetComponent<RectTransform>().localPosition = new Vector3(card.GetComponent<RectTransform>().localPosition.x,Input.touches[0].position.y-150,card.GetComponent<RectTransform>().localPosition.z);
-            }
-        }
-    }
-
     public void ShowingOffBigCard()
     {
         for (int i = 0; i < ressourceCard.childCount; i++)
@@ -442,7 +429,7 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && DeckManager.instance.MonsterPossible.Count!=0)
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(Screen.height/7f), 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
         }
         else
         {

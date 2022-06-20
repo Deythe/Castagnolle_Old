@@ -12,6 +12,6 @@ public class DeckButton : MonoBehaviour
         FireBaseManager.instance.User.currentDeck = deck.indexCrea;
         FireBaseManager.instance.User.currentDiceDeck = deck.diceDeck.diceDeck;
         MenuManager.instance.PlayButton.interactable = true;
-        MenuManager.instance.p_shader.enabled = true;
+        //MenuManager.instance.p_shader.enabled = true;
     }
 }

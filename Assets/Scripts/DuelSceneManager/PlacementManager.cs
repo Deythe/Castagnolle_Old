@@ -87,7 +87,7 @@ public class PlacementManager : MonoBehaviour
     public void InstantiateCurrent(float x, float z )
     {
         currentUnit = Instantiate(goPrefabMonster,
-            new Vector3(x, 0.5f, z) + PlayerSetup.instance.transform.forward,
+            new Vector3(x, 0.55f, z) + PlayerSetup.instance.transform.forward,
                 PlayerSetup.instance.transform.rotation);
         isPlacing = true;
     }
@@ -136,7 +136,7 @@ public class PlacementManager : MonoBehaviour
                                 InstantiateCurrent(hit.point.x, hit.point.z);
                             }
 
-                            currentUnit.transform.position = new Vector3(hit.point.x, 0.5f, hit.point.z) +
+                            currentUnit.transform.position = new Vector3(hit.point.x, 0.55f, hit.point.z) +
                                                              PlayerSetup.instance.transform.forward;
                             break;
 

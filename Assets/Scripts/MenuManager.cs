@@ -25,12 +25,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject transparency;
     [SerializeField] private GameObject tutoObject;
     [SerializeField] private Image shader;
-    private bool find;
-    private Hashtable hash = new Hashtable();
+    
     [SerializeField] private List<Sprite> buttonsSprite;
     [SerializeField] private Image musicButton;
     [SerializeField] private Image sfxButton;
-
+    [SerializeField] private CanvasScaler canvasScaler;
+    private bool find;
+    private Hashtable hash = new Hashtable();
     private void Awake()
     {
         Time.timeScale = 1;
@@ -50,7 +51,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         if (FireBaseManager.instance.User.firstTime)
         {
             transparency.SetActive(true);
-            tutoObject.transform.DOScale(Vector3.one, 1f).SetEase(Ease.OutQuint);
+            tutoObject.transform.DOScale(new Vector3(1.5f,1.5f,1.5f), 1f).SetEase(Ease.OutQuint);
         }
         
         if (SoundManager.instance.p_musicEnabled)
@@ -85,7 +86,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
@@ -107,7 +108,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         if (b)
         {
             SoundManager.instance.PlaySFXSound(0, 0.07f);
-            allMenu.DOLocalMoveX(-720, 0.2f).SetEase(Ease.Linear);
+            allMenu.DOLocalMoveX(-canvasScaler.referenceResolution.x, 0.2f).SetEase(Ease.Linear);
         }
         else
         {
@@ -122,7 +123,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         EnableDisableChoseDeck(false);
         DisableEnableAllDeckButton(false);
         playButton.interactable = false;
-        shader.enabled = false;
+        //shader.enabled = false;
     }
 
     public override void OnConnectedToMaster()
