@@ -25,7 +25,6 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
         {
             if (view.AmOwner)
             {
-                Debug.Log("Poupouleeee");
                 numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
 
                 if (unitOnBoard == null)

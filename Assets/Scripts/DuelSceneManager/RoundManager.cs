@@ -50,6 +50,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
             switch (roundState)
             {
                 case 0:
+                    StartCoroutine(CoroutineTimer());
+                    break;
                 case 1:
                     UiManager.instance.DisableBorderStatus();
                     UiManager.instance.p_instanceEnemyPointer.SetActive(false);
@@ -154,9 +156,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
     public void EndRound()
     {
         SoundManager.instance.PlaySFXSound(0, 0.07f);
-        timer=0;
         StopAllCoroutines();
-        
+
         if (!PlacementManager.instance.IsWaiting)
         {
             PlacementManager.instance.ReInitPlacement();
@@ -217,42 +218,27 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_EndTurn()
     {
-        roundState = 0;
-        if (currentPlayerNumberTurnNumberTurn==1)
+        if (currentPlayerNumberTurnNumberTurn == 1)
         {
-            if (localPlayerTurn==1)
-            {
-                UiManager.instance.EnableDisableShader(false);
-                UiManager.instance.EnableDisableTimer(false);
-            }
-            else
-            {
-                timer = timerPerRound;
-                UiManager.instance.BannerItsYourTurnToPlay();
-                UiManager.instance.EnableDisableTimer(true);
-                UiManager.instance.EnableDisableShader(true);
-                StopAllCoroutines();
-                StartCoroutine(CoroutineTimer());
-            }
             currentPlayerNumberTurnNumberTurn = 2;
         }
         else
         {
-            if (localPlayerTurn==1)
-            {
-                timer = timerPerRound;
-                UiManager.instance.BannerItsYourTurnToPlay();
-                UiManager.instance.EnableDisableShader(true);
-                UiManager.instance.EnableDisableTimer(true);
-                StopAllCoroutines();
-                StartCoroutine(CoroutineTimer());
-            }
-            else
-            {
-                UiManager.instance.EnableDisableTimer(false);
-                UiManager.instance.EnableDisableShader(false);
-            }
             currentPlayerNumberTurnNumberTurn = 1;
+        }
+
+        if (currentPlayerNumberTurnNumberTurn.Equals(localPlayerTurn))
+        {
+            timer = timerPerRound;
+            UiManager.instance.BannerItsYourTurnToPlay();
+            UiManager.instance.EnableDisableTimer(true);
+            UiManager.instance.EnableDisableShader(true);
+            StateRound = 0;
+        }
+        else
+        {
+            UiManager.instance.EnableDisableShader(false);
+            UiManager.instance.EnableDisableTimer(false);
         }
     }
 

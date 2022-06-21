@@ -145,7 +145,7 @@ MonoBehaviour:
   targetUnit: {fileID: 0}
   usingPhase: 3
   mobNextTo: []
-  heroism: 1
+  heroism: 3
 --- !u!1 &2765539426764036632
 GameObject:
   m_ObjectHideFlags: 0
