@@ -1,26 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Scroll : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
+public class Scroll : MonoBehaviour, IPointerExitHandler
 {
-    public void OnPointerExit(PointerEventData eventData)
+    private ScrollRect scrollRect;
+
+    private void Start()
     {
-        if (UiManager.instance.Card != null)
-        {
-            GetComponentInParent<ScrollRect>().horizontal = true;
-            PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
-            PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
-            UiManager.instance.ShowingOffBigCard();
-            PlacementManager.instance.InstantiateCurrent();
-            RoundManager.instance.StateRound = 2;
-            UiManager.instance.Card = null;
-        }
+        scrollRect = GetComponentInParent<ScrollRect>();
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerExit(PointerEventData eventData)
     {
+        if (Input.touchCount > 0)
+        {
+            if (UiManager.instance.Card != null && Input.GetTouch(0).phase != TouchPhase.Ended)
+            {
+                scrollRect.horizontal = true;
+                PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
+                PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
+                UiManager.instance.ShowingOffBigCard();
+                RoundManager.instance.StateRound = 2;
+                UiManager.instance.Card.GetComponent<CardData>().ReInit();
+                UiManager.instance.Card = null;
+            }
+        }
     }
 }

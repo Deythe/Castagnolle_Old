@@ -6,15 +6,19 @@ using UnityEngine;
 public class User {
     
     public string userName;
+    public bool firstTime;
     public bool isConnected;
     public int[] currentDeck;
-    
+    public int[] currentDiceDeck;
+
     public User() {
     }
 
-    public User(string usernameEnv, bool b, int[] tab) {
+    public User(string usernameEnv, bool connect, bool firstTimeCheck) {
         userName = usernameEnv;
-        isConnected = b;
-        currentDeck = tab;
+        isConnected = connect;
+        firstTime = firstTimeCheck;
+        currentDeck = new int[8];
+        currentDiceDeck = new int[12];
     }
 }

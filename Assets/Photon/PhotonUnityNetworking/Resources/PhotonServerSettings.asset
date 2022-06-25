@@ -52,6 +52,11 @@ MonoBehaviour:
   - RPC_Action
   - RPC_Ring
   - RPC_TakeDamageUnit
+  - RPC_InstantiateEnemyTiles
+  - RPC_SyncTiles
+  - RPC_PlayAnimation
+  - RPC_ActivateEffect
+  - RPC_GiveUp
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

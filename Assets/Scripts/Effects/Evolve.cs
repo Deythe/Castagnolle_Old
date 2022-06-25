@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Evolve : MonoBehaviour, IEffects
 {
+    [SerializeField] private CardData card;
+        
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject blankCard;
     
@@ -34,7 +36,7 @@ public class Evolve : MonoBehaviour, IEffects
             {
                 kill++;
                 Debug.Log("Kill++");
-                if (kill == 3)
+                if (kill == 2)
                 {
                     if (cardListEvolve.childCount==0)
                     {
@@ -65,6 +67,7 @@ public class Evolve : MonoBehaviour, IEffects
                 {
                     used = true;    
                 }
+                GetComponent<Monster>().p_model.layer = 6;
                 
             }else if (phase == 8)
             {
@@ -73,11 +76,13 @@ public class Evolve : MonoBehaviour, IEffects
                     cardListEvolve.GetChild(i).gameObject.SetActive(false);
                 }
                 
-                PhotonNetwork.Instantiate(EffectManager.instance.TargetUnit.name, transform.position,
+                PhotonNetwork.Instantiate(EffectManager.instance.AllieUnit.name, transform.position,
                     transform.rotation, 0);
                 
                 EffectManager.instance.CancelSelection(1);
                 used = true;
+
+                GetComponent<Monster>().p_isChampion = false;
                 PhotonNetwork.Destroy(gameObject);
             }
         }

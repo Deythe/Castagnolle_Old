@@ -23,12 +23,13 @@ public class Stun : MonoBehaviour, IEffects
                 view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
                 used = true;
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
 
         if (phase == 2)
         {
-            targetUnit.GetComponent<Monster>().Status = 0;
+            targetUnit.GetComponent<Monster>().p_isMovable = true;
             targetUnit.GetComponent<Monster>().Attacked = false;
         }
     }
@@ -37,7 +38,7 @@ public class Stun : MonoBehaviour, IEffects
     private void RPC_Action(int idTarget)
     {
         targetUnit = PlacementManager.instance.SearchMobWithID(idTarget).gameObject;
-        targetUnit.GetComponent<Monster>().Status = 1;
+        targetUnit.GetComponent<Monster>().p_isMovable = false;
         targetUnit.GetComponent<Monster>().Attacked = true;
     }
 

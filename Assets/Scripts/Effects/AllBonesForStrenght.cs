@@ -24,15 +24,18 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
                     if (DiceManager.instance.Gauge[i].Equals(5))
                     {
                         DiceManager.instance.Gauge[i] = 0;
-                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
-                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, null);
+                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
+                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                         check++;
                     }
                 }
                 
                 view.RPC("RPC_Action", RpcTarget.All, check);
-                check = 0;
+                check = 0; 
+                
+                DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection(1);
+                GetComponent<Monster>().p_model.layer = 6;
                 used = true;
             }
         }
@@ -41,7 +44,7 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int checks)
     {
-        GetComponent<Monster>().Atk+=(2*check);
+        GetComponent<Monster>().Atk+=(2*checks);
     }
 
     public int GetPhaseActivation()

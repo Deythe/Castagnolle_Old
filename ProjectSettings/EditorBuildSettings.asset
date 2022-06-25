@@ -10,11 +10,14 @@ EditorBuildSettings:
     guid: 2efd86eac9b48a540bd28ddabd63f610
   - enabled: 1
     path: Assets/Scenes/MenuScene.unity
-    guid: 9570446495766544885bab766de52fb0
+    guid: 80e6e2e5f08beac4c99cd9b1d6a7fed2
   - enabled: 1
     path: Assets/Scenes/DuelScene.unity
     guid: 94ec2b00335c56d49be35b2e34fb6979
   - enabled: 1
     path: Assets/Scenes/DecksScene.unity
     guid: fe132b58c28154544b8ad961bcc3d8ed
+  - enabled: 1
+    path: Assets/Scenes/TutoScene.unity
+    guid: 8886b1ec58db6a74786a6a62e0d86711
   m_configObjects: {}

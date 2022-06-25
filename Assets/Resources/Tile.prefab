@@ -47,8 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b6a1e1665b6b14d98980395a6b787b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerMonsterColor: {fileID: 2100000, guid: 8977966cdcc0b4842a08141b42decef5, type: 2}
-  ennemiMonsterColor: {fileID: 2100000, guid: d277f7db288930d43ad730f0d4649983, type: 2}
   unitParent: {fileID: 0}
   ms: {fileID: 8938856954926693616}
   center: {fileID: 6278403805223342815}

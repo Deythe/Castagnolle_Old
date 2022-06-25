@@ -1,3 +1,4 @@
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,7 @@ public class MenuLoginManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     private void Update()
@@ -48,6 +50,13 @@ public class MenuLoginManager : MonoBehaviour
                 FireBaseManager.instance.OnConnected();
             }
         }
+    }
+    
+    public void VisitorConnect()
+    {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
+        FireBaseManager.instance.User = new User("Visiteur", false, true);
+        SceneManager.LoadScene(1);
     }
     
     public void SetNickname(string value)

@@ -34,7 +34,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
                         {
                             DiceManager.instance.Gauge[i] = 0;
                             DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
-                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, null);
+                                DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                             dmg++;
                         }
                     }
@@ -42,22 +42,26 @@ public class BonesForDamage : MonoBehaviour, IEffects
                     view.RPC("RPC_Action", RpcTarget.AllViaServer, targetUnit.GetComponent<PhotonView>().ViewID,
                         dmg);
                     
+                    DeckManager.instance.CheckUnitWithRessources();
                     EffectManager.instance.CancelSelection(1);
+                    GetComponent<Monster>().p_model.layer = 6;
                     used = true;
                 }
             }
             else
             {
-                Debug.Log("Pas de Bones");
                 EffectManager.instance.CancelSelection(1);
+                UiManager.instance.ShowTextFeedBackWithDelay(3);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }
-    
+
+
     [PunRPC]
     private void RPC_Action(int unitID, int degat)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*2);
+        PlacementManager.instance.SearchMobWithID(unitID).Atk-=(degat*3);
     }
 
     

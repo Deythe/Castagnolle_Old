@@ -7,23 +7,23 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject cardInstance;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private int usingPhase = 0;
     private bool used;
     
     public void OnCast(int phase)
     {
-        if (phase == 3)
+        if (phase == usingPhase)
         {
             if (view.AmOwner)
             {
-                PhotonNetwork.Destroy(EffectManager.instance.AllieUnit);
                 PlacementManager.instance.SpecialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().Prefabs);
-                PlacementManager.instance.CurrentCardSelection = cardInstance.GetComponent<CardData>();
                 UiManager.instance.ShowingOffBigCard();
-                PlacementManager.instance.InstantiateCurrent();
                 EffectManager.instance.CancelSelection(2);
-                used = true;
+                UiManager.instance.p_textFeedBack.enabled = true;
+                UiManager.instance.SetTextFeedBack(0);
+                UiManager.instance.EnableBorderStatus(68,168,254);
+                GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }

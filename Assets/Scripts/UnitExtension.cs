@@ -1,30 +1,44 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class UnitExtension : MonoBehaviour, IPunInstantiateMagicCallback
+public class UnitExtension : MonoBehaviour
 {
-    [SerializeField] private Material ownerMonsterColor;
-    [SerializeField] private Material ennemiMonsterColor;
-
     [SerializeField] private GameObject unitParent;
     [SerializeField] private MeshRenderer ms;
     [SerializeField] private Transform center;
     [SerializeField] private PhotonView view;
-    
-    public void OnPhotonInstantiate(PhotonMessageInfo info)
+
+    public GameObject p_unitParent
     {
-        object[] instantiationData = info.photonView.InstantiationData;
+        get => unitParent;
+    }
+    public void Init(int idmore)
+    {
+        unitParent = PlacementManager.instance.SearchMobWithID(idmore).gameObject;
         
         if (view.AmOwner)
         {
-            ms.material.color = ownerMonsterColor.color;
+            if (unitParent.GetComponent<Monster>().p_isMovable)
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[0];
+            }
+            else
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[4];
+            }
         }
         else
         {
-            ms.material.color = ennemiMonsterColor.color;
+            if (unitParent.GetComponent<Monster>().p_isMovable)
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[1];
+            }
+            else
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[5];
+            }
         }
         
-        unitParent = PhotonView.Find((int)instantiationData[0]).gameObject;
         unitParent.GetComponent<Monster>().GetExtention().Add(gameObject);
         unitParent.GetComponent<Monster>().GetCenters().Add(center);
         unitParent.GetComponent<Monster>().GetMeshRenderers().Add(ms);
