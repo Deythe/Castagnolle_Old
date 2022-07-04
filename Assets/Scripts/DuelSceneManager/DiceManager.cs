@@ -159,7 +159,6 @@ public class DiceManager : MonoBehaviour
                         dicesNotDisponible[i] = null;
                         diceChoosen[i] = 0;
                         DeckManager.instance.CheckUnitWithRessources();
-                        UiManager.instance.UpdateListCard();
                         return;
                     }
                 }
@@ -170,7 +169,7 @@ public class DiceManager : MonoBehaviour
                 dicesNotDisponible[i] = null;
                 diceChoosen[i] = 0;
                 DeckManager.instance.CheckUnitWithRessources();
-                UiManager.instance.UpdateListCard();
+
                 return;
             }
         }

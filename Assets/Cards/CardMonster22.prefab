@@ -682,14 +682,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd805ddab4130c548b81946f3b1453ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enabled: 0
   bigCard: {fileID: 21300000, guid: f26414697918b0744b6015b39b769fa5, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: d010692599a7e7d4aaab94212f8263b7, type: 3}
   atk: 6
   resources: 0400000004000000
   isChampion: 0
-  isTouching: 0
   lifeCard: {fileID: 8344133904513023309}
   resourceCard: {fileID: 3893527762588728156}
+  image: {fileID: 7236249880086410054}
 --- !u!1 &8022179952688005337
 GameObject:
   m_ObjectHideFlags: 0

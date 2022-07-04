@@ -9,7 +9,8 @@ using UnityEngine.UI;
 public class CardData : MonoBehaviour, IPointerEnterHandler
 {
     public static bool isTouching;
-    
+
+    [SerializeField] private bool enabled;
     [SerializeField] private Sprite bigCard;
     [SerializeField] private GameObject prefabs;
     [SerializeField] private int atk;
@@ -17,10 +18,29 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private bool isChampion;
     [SerializeField] private TMP_Text lifeCard;
     [SerializeField] private RectTransform resourceCard;
+    [SerializeField] private Image image;
+
+    private Color transparent = new Color(1, 1, 1, 0.1f);
     private ScrollRect scrollRectParent;
     private RectTransform rec;
     private float initialPositionY;
-    
+
+    public bool p_enabled
+    {
+        get => enabled;
+        set
+        {
+            enabled = value;
+            if (enabled)
+            {
+                image.color = Color.white;
+            }
+            else
+            {
+                image.color = transparent;
+            }
+        }
+    }
     public Sprite BigCard
     {
         get => bigCard;
@@ -81,34 +101,42 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (Input.touchCount > 0)
+        if (enabled)
         {
-            if (Input.GetTouch(0).phase == TouchPhase.Began && !isTouching)
+            if (Input.touchCount > 0)
             {
-                isTouching = true;
-                initialPositionY = transform.localPosition.y;
-                UiManager.instance.Card = gameObject;
-                UiManager.instance.AbleDeckCardTouch();
+                if (Input.GetTouch(0).phase == TouchPhase.Began && !isTouching)
+                {
+                    isTouching = true;
+                    initialPositionY = transform.localPosition.y;
+                    UiManager.instance.Card = gameObject;
+                    UiManager.instance.AbleDeckCardTouch();
+                }
             }
         }
     }
 
     private void Update()
     {
-        if (isTouching && UiManager.instance.Card.Equals(gameObject) && Input.touchCount > 0)
+        if (enabled)
         {
-            rec.localPosition =
-                    new Vector3(rec.localPosition.x, rec.localPosition.y+Input.GetTouch(0).deltaPosition.y, rec.localPosition.z);
-
-            if (Input.GetTouch(0).deltaPosition.y > 10)
+            if (isTouching && UiManager.instance.Card.Equals(gameObject) && Input.touchCount > 0)
             {
-                scrollRectParent.horizontal = false;
+                rec.localPosition =
+                    new Vector3(rec.localPosition.x, rec.localPosition.y + Input.GetTouch(0).deltaPosition.y,
+                        rec.localPosition.z);
+
+                if (Input.GetTouch(0).deltaPosition.y > 10)
+                {
+                    scrollRectParent.horizontal = false;
+                }
+
+                if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.touches[0].deltaPosition.x > 15 ||
+                    Input.touches[0].deltaPosition.x < -15)
+                {
+                    ReInit();
+                }
             }
-
-            if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.touches[0].deltaPosition.x > 15 ||  Input.touches[0].deltaPosition.x < -15 )
-            {
-                ReInit();
-            } 
         }
     }
 

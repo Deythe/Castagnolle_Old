@@ -167,7 +167,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
         UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
         UiManager.instance.p_textFeedBack.enabled = false;
-        DeckManager.instance.MonsterPossible.Clear();
         PlacementManager.instance.ReInitMonster();
         BattlePhaseManager.instance.ClearUnits();
         EffectManager.instance.Cancel();
@@ -181,7 +180,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
         SoundManager.instance.PlaySFXSound(0, 0.07f);
         SoundManager.instance.PlaySFXSound(6, 0.05f);
         DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
-        DeckManager.instance.MonsterPossible.Clear();
         StateRound = 3;
     }
     

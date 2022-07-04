@@ -9,7 +9,6 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
     [SerializeField] private CardListScriptable cardListDeck;
     
-    private List<GameObject> monsterPossible = new List<GameObject>();
     [SerializeField] private int[] checks = new int[6];
     
     private int[] ressources;
@@ -22,16 +21,7 @@ public class DeckManager : MonoBehaviour
             cardDeck = value;
         }
     }
-    
-    public List<GameObject> MonsterPossible
-    {
-        get => monsterPossible;
-        set
-        {
-            monsterPossible = value;
-        }
-    }
-    
+
     private void Awake()
     {
         if (instance == null)
@@ -59,8 +49,7 @@ public class DeckManager : MonoBehaviour
 
     public void CheckUnitWithRessources()
     {
-        monsterPossible.Clear();
-        
+
         for (int i = 0; i < cardDeck.Count; i++)
         {
             InitCheck();
@@ -113,11 +102,14 @@ public class DeckManager : MonoBehaviour
 
             if (AllCheckValide(ressources) && !(PlacementManager.instance.HaveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().IsChampion))
             {
-                monsterPossible.Add(cardDeck[i]);
+                cardDeck[i].GetComponent<CardData>().p_enabled = true;
+            }
+            else
+            {
+                cardDeck[i].GetComponent<CardData>().p_enabled = false;
+                UiManager.instance.MoveCardAtEnd(cardDeck[i]);
             }
         }
-        
-        UiManager.instance.UpdateListCard();
     }
 
     private void InitCheck()

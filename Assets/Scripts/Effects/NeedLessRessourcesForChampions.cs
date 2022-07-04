@@ -68,7 +68,6 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                UiManager.instance.UpdateListCard();
                 EffectManager.instance.CancelSelection(1);
             }
         }else if (phase == 2)
@@ -142,7 +141,6 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                             //degatMore = 0;
                             //ResetUnit();
                             DeckManager.instance.CheckUnitWithRessources();
-                            UiManager.instance.UpdateListCard();
                             //motherUnit = null;
                             //unitOnBoard.Clear();
                         }

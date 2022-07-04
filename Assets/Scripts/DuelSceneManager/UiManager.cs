@@ -296,12 +296,20 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn == 1)
         {
             player1FaceHp.text = "" + LifeManager.instance.OwnLife;
+            player1FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player1FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
             player1ProfileHp.text = "" + LifeManager.instance.OwnLife;
+            player1ProfileHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player1ProfileHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
         }
         else
         {
             player2FaceHp.text = "" + LifeManager.instance.OwnLife;
+            player2FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player2FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
             player2ProfileHp.text = "" + LifeManager.instance.OwnLife;
+            player2ProfileHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player2FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
         }
     }
 
@@ -314,12 +322,20 @@ public class UiManager : MonoBehaviour
         if (RoundManager.instance.LocalPlayerTurn == 1)
         {
             player2FaceHp.text = "" + LifeManager.instance.EnnemiLife;
+            player2FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player2FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
             player2ProfileHp.text = "" + LifeManager.instance.EnnemiLife;
+            player2ProfileHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player2ProfileHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
         }
         else
         {
             player1FaceHp.text = "" + LifeManager.instance.EnnemiLife;
+            player1FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player1FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
             player1ProfileHp.text = "" + LifeManager.instance.EnnemiLife;
+            player1ProfileHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
+                .OnComplete(() => player1ProfileHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
         }
     }
     
@@ -387,28 +403,20 @@ public class UiManager : MonoBehaviour
         bigCart.SetActive(false);
     }
 
-    public void UpdateListCard()
-    {
-        for (int i = 0; i < content.childCount; i++)
-        {
-            content.GetChild(i).gameObject.SetActive(false);
-        }
-
-        foreach (var unit in DeckManager.instance.MonsterPossible)
-        {
-            for (int i = 0; i < content.childCount; i++)
-            {
-                if (content.GetChild(i).gameObject == unit.gameObject)
-                {
-                    content.GetChild(i).gameObject.SetActive(true);    
-                }
-            }
-        }
-    }
-
     public GameObject InitCard(GameObject go)
     {
         return Instantiate(go,content);
+    }
+
+    public void MoveCardAtEnd(GameObject card)
+    {
+        for (int i =0; i<content.childCount;i++ ) 
+        {
+            if (content.GetChild(i).gameObject.Equals(card))
+            {
+                content.GetChild(i).SetAsLastSibling();
+            }
+        }
     }
 
     void EnableDisableThrowDiceButton()
@@ -427,7 +435,7 @@ public class UiManager : MonoBehaviour
     void EnableDisableScrollView()
     {
         if (RoundManager.instance.LocalPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 && DeckManager.instance.MonsterPossible.Count!=0)
+            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 )
         {
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
         }

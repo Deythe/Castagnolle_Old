@@ -52,7 +52,6 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                UiManager.instance.UpdateListCard();
                 EffectManager.instance.CancelSelection(1);
             }
         }
