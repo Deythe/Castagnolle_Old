@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScene.unity
     guid: 80e6e2e5f08beac4c99cd9b1d6a7fed2
   - enabled: 1
-    path: Assets/LIS_Folder/_old/LIS_SceneTest.unity
-    guid: 095c4eb51247ffc46bba828018f38214
+    path: Assets/Scenes/DuelScene2.0.unity
+    guid: f8612f0c2dd0fff4eb670a74342820e0
   - enabled: 1
     path: Assets/Scenes/DecksScene.unity
     guid: fe132b58c28154544b8ad961bcc3d8ed
