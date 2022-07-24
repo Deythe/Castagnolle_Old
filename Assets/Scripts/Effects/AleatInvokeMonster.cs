@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
     [SerializeField] private List<Vector2> boardPosition = new List<Vector2>();
     [SerializeField] private int numberPoupoul=1;
     [SerializeField] private GameObject unitPivot;
+    
     private int random;
     private bool used;
     private bool here;
@@ -25,7 +27,15 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
             {
                 for (j = 0; j < numberPoupoul; j++)
                 {
-                    InitArrayOfPosition();
+                    if (RoundManager.instance.p_localPlayerTurn == 1)
+                    {
+                        InitArrayOfPositionForJ1();
+                    }
+                    else
+                    {
+                        InitArrayOfPositionForJ2();
+                    }
+
                     Action();
                     boardPosition.Clear();
                 }
@@ -62,11 +72,22 @@ public class AleatInvokeMonster : MonoBehaviour, IEffects
             boardPosition.RemoveAt(random);
         }
     }
-    void InitArrayOfPosition()
+    void InitArrayOfPositionForJ1()
     {
-        for (float x = -3.5f ; x <= 3.5f; x++)
+        for (float y = -4.5f; y <= 0; y++)
         {
-            for (float y = -4.5f ; y <= 4.5; y++)
+            for (float x = -3.5f; x <= 3.5f; x++)
+            {
+                boardPosition.Add(new Vector2(x, y));
+            }
+        }
+    }
+    
+    void InitArrayOfPositionForJ2()
+    {
+        for (float y = 4.5f; y >= 0; y--)
+        {
+            for (float x = -3.5f; x <= 3.5f; x++)
             {
                 boardPosition.Add(new Vector2(x, y));
             }

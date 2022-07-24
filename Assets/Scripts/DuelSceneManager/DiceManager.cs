@@ -239,7 +239,6 @@ public class DiceManager : MonoBehaviour
             {
                 if (i.Equals(diceChoosen[j]) || (i.Equals(4) && diceChoosen[j]!=0))
                 {
-                    Debug.Log(i);
                     diceChoosen[j] = 0;
                     if (dicesNotDisponible[j] != null)
                     {

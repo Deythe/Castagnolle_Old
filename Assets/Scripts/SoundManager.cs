@@ -8,6 +8,8 @@ public class SoundManager : MonoBehaviour
     public static SoundManager instance;
     [SerializeField] private AudioSource mainMusic;
     [SerializeField] private AudioSource ambianceTheme;
+    [SerializeField] private AudioSource voiceLine;
+    [SerializeField] private AudioSource voiceLine2;
     
     [SerializeField] private AudioSource[] sfxAudioSources;
     [SerializeField] private AudioClip[] sfxClickClips;
@@ -61,15 +63,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlaySound(AudioClip clip)
+    public void PlayVoiceLine(AudioClip clip)
     {
-        for (int i = 0; i < sfxAudioSources.Length; i++)
+        if (!voiceLine.isPlaying)
         {
-            if (!sfxAudioSources[i].isPlaying)
+            voiceLine.clip = clip;
+            voiceLine.Play();
+        }
+        else
+        {
+            if (!voiceLine2.isPlaying)
             {
-                sfxAudioSources[i].clip = clip;
-                sfxAudioSources[i].Play();
-                return;
+                voiceLine2.clip = clip;
+                voiceLine2.Play();
             }
         }
     }

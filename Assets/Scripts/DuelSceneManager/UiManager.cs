@@ -186,7 +186,7 @@ public class UiManager : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         originalScrollPositionY = scrollView.transform.localPosition.y;
         
-        if (RoundManager.instance.LocalPlayerTurn.Equals(1))
+        if (RoundManager.instance.p_localPlayerTurn.Equals(1))
         {
             shader.SetActive(true);
         }
@@ -218,7 +218,7 @@ public class UiManager : MonoBehaviour
 
     private void DisableSomeHp()
     {
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             player1ProfileHp.enabled = false;
             player2FaceHp.enabled = false;
@@ -310,7 +310,7 @@ public class UiManager : MonoBehaviour
 
     public void UpdateHp()
     {
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             player1FaceHp.text = "" + LifeManager.instance.OwnLife;
             player1FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
@@ -344,7 +344,7 @@ public class UiManager : MonoBehaviour
     
     public void UpdateHpEnnemi()
     {
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             player2FaceHp.text = "" + LifeManager.instance.EnnemiLife;
             player2FaceHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
@@ -446,7 +446,7 @@ public class UiManager : MonoBehaviour
 
     void EnableDisableThrowDiceButton()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==0)
         {
             uiPlayerTurn.SetActive(true);
@@ -459,7 +459,7 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableScrollView()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 )
         {
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
@@ -472,7 +472,7 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableMenuYesChoice()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
         {
             menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.3f, 0.5f).SetEase(Ease.Linear);
@@ -485,7 +485,7 @@ public class UiManager : MonoBehaviour
     
     void EnableDisableMenuNoChoice()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
         {
             menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.3f, 0.5f).SetEase(Ease.Linear);
@@ -498,7 +498,7 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableBattleButton()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1)
         {
             menuBattlePhase.SetActive(true);
@@ -510,7 +510,7 @@ public class UiManager : MonoBehaviour
     }
     void EnableDisableEndTurn()
     {
-        if (RoundManager.instance.LocalPlayerTurn ==
+        if (RoundManager.instance.p_localPlayerTurn ==
             RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==3)
         {
             endTurn.SetActive(true);
@@ -559,7 +559,7 @@ public class UiManager : MonoBehaviour
     
     public void UpdateLifeShaderAlly(int value)
     {
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             lifeShaderAlly.SetFloat("_Fill", value / 20f);
         }else
@@ -570,7 +570,7 @@ public class UiManager : MonoBehaviour
     
     public void UpdateLifeShaderEnemy(int value)
     {
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             lifeShaderEnemy.SetFloat("_Fill", value / 20f);
         }

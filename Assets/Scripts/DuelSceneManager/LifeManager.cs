@@ -46,6 +46,8 @@ public class LifeManager : MonoBehaviour
                {
                     UiManager.instance.PlayHitMarker(
                          new Vector3(0, 1, 7f * Math.Sign(PlayerSetup.instance.p_startCamPos.z)), life - value);
+                    PlayerSetup.instance.Shaken(0.5f);
+                    Handheld.Vibrate();
                }
                
                if ((life - value).Equals(3))
@@ -53,7 +55,7 @@ public class LifeManager : MonoBehaviour
                     Debug.Log("Prout");
                     UiManager.instance.BorderSingleFlash(255,0,0);
                }
-
+               
                life = value;
                UiManager.instance.UpdateHp();
                UiManager.instance.UpdateLifeShaderAlly(life);
@@ -84,7 +86,7 @@ public class LifeManager : MonoBehaviour
      public void TakeDamageEnnemi(float i)
      {
           int result=0;
-          if (RoundManager.instance.LocalPlayerTurn==1)
+          if (RoundManager.instance.p_localPlayerTurn==1)
           {
                if (i <= 1.5)
                {
@@ -140,13 +142,13 @@ public class LifeManager : MonoBehaviour
      public void GiveUp()
      {
           SoundManager.instance.PlaySFXSound(1, 0.07f);
-          lifeManagerView.RPC("RPC_GiveUp", RpcTarget.AllViaServer, RoundManager.instance.LocalPlayerTurn);
+          lifeManagerView.RPC("RPC_GiveUp", RpcTarget.AllViaServer, RoundManager.instance.p_localPlayerTurn);
      }
 
      [PunRPC]
      private void RPC_GiveUp(int playRef)
      {
-          if (RoundManager.instance.LocalPlayerTurn.Equals(playRef))
+          if (RoundManager.instance.p_localPlayerTurn.Equals(playRef))
           {
                OwnLife = 0;
           }

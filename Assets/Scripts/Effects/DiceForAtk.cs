@@ -26,6 +26,7 @@ public class DiceForAtk : MonoBehaviour, IEffects
                             EffectManager.instance.CancelSelection(1);
                             GetComponent<Monster>().ChangeMeshRenderer(0);
                             used = true;
+                            return;
                         }
                     }
                     else
@@ -33,72 +34,55 @@ public class DiceForAtk : MonoBehaviour, IEffects
                         if (DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length].Equals(4))
                         {
                             GetComponent<Monster>().p_attacked = false;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[HaveDiceInGauge()].GetComponent<PhotonView>().ViewID, false, 0);
+                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[j-DiceManager.instance.Gauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
                             DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length] = 0;
                             DeckManager.instance.CheckUnitWithRessources();
                             EffectManager.instance.CancelSelection(1);
                             GetComponent<Monster>().ChangeMeshRenderer(0);
                             used = true;
+                            return;
                         }
                     }
                 }
-
-                if (HaveDice() != -1)
+                
+                for (int j = 0; j < DiceManager.instance.DiceChoosen.Length + DiceManager.instance.Gauge.Length; j++)
                 {
-                    GetComponent<Monster>().p_attacked = false;
-                    DiceManager.instance.DiceObjects[HaveDice()].GetComponent<MeshRenderer>().enabled = false;
-                    DiceManager.instance.DiceChoosen[HaveDice()] = 0;
-                    DeckManager.instance.CheckUnitWithRessources();
-                    EffectManager.instance.CancelSelection(1);
-                    GetComponent<Monster>().ChangeMeshRenderer(0);
-                    used = true;
-                }else if (HaveDiceInGauge()!=-1)
-                {
-                    GetComponent<Monster>().p_attacked = false;
-                    DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[HaveDiceInGauge()].GetComponent<PhotonView>().ViewID, false, 0);
-                    DiceManager.instance.DiceChoosen[HaveDiceInGauge()] = 0;
-                    DeckManager.instance.CheckUnitWithRessources();
-                    EffectManager.instance.CancelSelection(1);
-                    GetComponent<Monster>().ChangeMeshRenderer(0);
-                    used = true;
-                }
-                else
-                {
-                    EffectManager.instance.CancelSelection(1);
-                    UiManager.instance.ShowTextFeedBackWithDelay(3);
+                    if (j < DiceManager.instance.DiceChoosen.Length)
+                    {
+                        if (DiceManager.instance.DiceChoosen[j]!=0)
+                        {
+                            GetComponent<Monster>().p_attacked = false;
+                            DiceManager.instance.DiceObjects[j].GetComponent<MeshRenderer>().enabled = false;
+                            DiceManager.instance.DiceChoosen[j] = 0;
+                            DeckManager.instance.CheckUnitWithRessources();
+                            EffectManager.instance.CancelSelection(1);
+                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            used = true;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length]!=0)
+                        {
+                            GetComponent<Monster>().p_attacked = false;
+                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[j-DiceManager.instance.Gauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
+                            DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length] = 0;
+                            DeckManager.instance.CheckUnitWithRessources();
+                            EffectManager.instance.CancelSelection(1);
+                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            used = true;
+                            return;
+                        }
+                    }
                 }
                 
+                EffectManager.instance.CancelSelection(1);
+                UiManager.instance.ShowTextFeedBackWithDelay(3);
                 GetComponent<Monster>().p_model.layer = 6;
             }
         }
     }
-
-    int HaveDice()
-    {
-        for (int i = 0; i < DiceManager.instance.DiceChoosen.Length; i++)
-        {
-            if (DiceManager.instance.DiceChoosen[i]!=0)
-            {
-                return i;
-            }
-        }
-        
-        return -1;
-    }
-
-    int HaveDiceInGauge()
-    {
-        for (int j = 0; j < DiceManager.instance.Gauge.Length; j++)
-        {
-            if (DiceManager.instance.Gauge[j]!=0)
-            {
-                return j;
-            }
-        }
-
-        return -1;
-    }
-
     public int GetPhaseActivation()
     {
         return usingPhase;

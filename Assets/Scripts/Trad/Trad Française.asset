@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35261ba13c3233d4e83849c9afc942f5, type: 3}
+  m_Name: "Trad Fran\xE7aise"
+  m_EditorClassIdentifier: 
+  visiteurBouton: 
+  "d\xE9connect\xE9": 
+  "connect\xE9": 
+  connexion: 
+  jouerBouton: 
+  constructionDeDeckBouton: 
+  boutiqueBouton: 
+  deconnexionBouton: 
+  choisirUnDeck: 
+  cestPartiBouton: 
+  tutorielBouton: 
+  tutorielP1: 
+  tutorielP2: 
+  tutorielP3: 
+  ouiBouton: 
+  nonMerciBouton: 
+  finDuTourBouton: 
+  castagnolleBouton: 
+  "lanc\xE9LesD\xE9sBouton": 
+  abandonnerBouton: 
+  retournerBouton: 
+  "gagn\xE9": 
+  perdue: 
+  aToiDeJouer: 
+  choisisLuniteCible: 
+  placeTonUnite: 
+  selectionneUniteEnnemie: 
+  selectionneUniteAllie: 
+  tuNePeuxPasPoser: 
+  tutoPage1: []
+  tutoPage2: []
+  tutoPage3: []
+  tutoPage4: []
+  tutoPage5: []
+  tutoPage6: []
+  tutoPage7: []
+  tutoPage8: []
+  tutoPage9: []
+  tutoPage10: []
+  tutoPage11: []
+  nomCreature: []
+  effetsCreature: []

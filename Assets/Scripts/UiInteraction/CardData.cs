@@ -126,13 +126,13 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
                     new Vector3(rec.localPosition.x, rec.localPosition.y + Input.GetTouch(0).deltaPosition.y,
                         rec.localPosition.z);
 
-                if (Input.GetTouch(0).deltaPosition.y > 10)
+                if (Input.GetTouch(0).deltaPosition.y > 2)
                 {
                     scrollRectParent.horizontal = false;
                 }
 
-                if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.touches[0].deltaPosition.x > 15 ||
-                    Input.touches[0].deltaPosition.x < -15)
+                if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.touches[0].deltaPosition.x > 10 ||
+                    Input.touches[0].deltaPosition.x < -10)
                 {
                     ReInit();
                 }

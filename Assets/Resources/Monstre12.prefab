@@ -116,6 +116,9 @@ MonoBehaviour:
   isPeon: 0
   isChampion: 0
   animator: {fileID: 1590622533966656376}
+  voiceLine:
+  - {fileID: 8300000, guid: f5d0b3c4aee9b0d40a562d1b5f1ff9d5, type: 3}
+  - {fileID: 8300000, guid: fbb7aa2d3760376498e92ff43d4e3ef0, type: 3}
 --- !u!65 &3531432135879127181
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -38,7 +38,6 @@ public class Commentator : MonoBehaviour, IEffects
             {
                 if (Vector3.Distance(center.position, targetCenter.position).Equals(1))
                 {
-                    Debug.Log(targetUnit.GetComponent<Monster>().p_id);
                     view.RPC("RPC_Action", RpcTarget.AllViaServer, targetUnit.GetComponent<Monster>().p_id);
                     return;
                 }

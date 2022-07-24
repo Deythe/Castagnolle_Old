@@ -237,7 +237,7 @@ public class BattlePhaseManager : MonoBehaviour
                     break;
 
                 case >0:
-                    deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
+                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
@@ -251,8 +251,8 @@ public class BattlePhaseManager : MonoBehaviour
 
                 case <0:
                     LifeManager.instance.TakeDamageHimself();
-                    deadUnitCenters = unitsSelected.GetComponent<Monster>()
-                        .GetCenters();
+                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
+
 
                     StartCoroutine(AddAllExtension(unitTarget, false));
 
@@ -275,7 +275,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 case 0:
                 case >0:
-                    deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
+                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
@@ -369,7 +369,7 @@ public class BattlePhaseManager : MonoBehaviour
         
         bool CheckBackLaneEnemy(GameObject unitSelected)
         {
-            if (RoundManager.instance.LocalPlayerTurn == 1)
+            if (RoundManager.instance.p_localPlayerTurn == 1)
             {
                 if (PlacementManager.instance.CenterMoreFar(unitSelected).Equals(4.5f))
                 {

@@ -61,7 +61,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
         set
         {
             timer = value;
-            if (timer < 0 && LocalPlayerTurn.Equals(currentPlayerNumberTurn))
+            if (timer < 0 && p_localPlayerTurn.Equals(currentPlayerNumberTurn))
             {
                 timer = 0;
                 EndRound();
@@ -72,7 +72,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             }
         }
     }
-    public int LocalPlayerTurn
+    public int p_localPlayerTurn
     {
         get => localPlayerTurn;
     }
@@ -202,8 +202,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
         BattlePhaseManager.instance.ClearUnits();
         EffectManager.instance.Cancel();
         UiManager.instance.p_throwButton.interactable = true;
-        
-        Debug.Log("Caca");
         playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
     }
 
@@ -211,7 +209,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         SoundManager.instance.PlaySFXSound(0, 0.07f);
         SoundManager.instance.PlaySFXSound(6, 0.05f);
-        DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
         StateRound = 3;
     }
     

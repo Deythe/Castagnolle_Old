@@ -274,13 +274,13 @@ public class PlacementManager : MonoBehaviour
     public bool CheckLinkWithOthers(Vector3 v)
     {
         if (Mathf.FloorToInt(v.z) == -5 &&
-            RoundManager.instance.LocalPlayerTurn==1)
+            RoundManager.instance.p_localPlayerTurn==1)
         {
             return true;
         }
 
         if ((int)v.z + 1 == 5 &&
-            RoundManager.instance.LocalPlayerTurn==2)
+            RoundManager.instance.p_localPlayerTurn==2)
         {
             return true;
         }
@@ -387,7 +387,7 @@ public class PlacementManager : MonoBehaviour
     public float CenterMoreFar(GameObject obj)
     {
         float zcenter;
-        if (RoundManager.instance.LocalPlayerTurn == 1)
+        if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             zcenter = -10;
             foreach (var center in obj.GetComponent<Monster>().GetCenters())

@@ -30,6 +30,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Image musicButton;
     [SerializeField] private Image sfxButton;
     [SerializeField] private CanvasScaler canvasScaler;
+    [SerializeField] private int numberPlayer;
     private bool find;
     private Hashtable hash = new Hashtable();
     private void Awake()
@@ -40,6 +41,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        ResetStaticVars();
+
         connexionStatus.sprite = connexionSprites[1];
         animRecherche.enabled = false;
         chooseDeckButton.interactable = false;
@@ -86,7 +89,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (find)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == numberPlayer)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.CurrentRoom.IsVisible = false;
@@ -229,5 +232,23 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             sfxButton.sprite = buttonsSprite[3];
         }
+    }
+    
+    void ResetStaticVars()
+    {
+        NeedLessRessourceForUnit.motherUnit = null;
+        NeedLessRessourceForUnit.unitOnBoard = null;
+        InvokeHimselfWithStat.motherUnit = null;
+        NeedLessRessourcesForChampions.motherUnit = null;
+        NeedLessRessourcesForChampions.originalCard = null;
+        NeedLessRessourcesForChampions.unitOnBoard = null;
+        BattlePhaseManager.instance = null;
+        DeckManager.instance = null;
+        DiceManager.instance = null;
+        EffectManager.instance = null;
+        LifeManager.instance = null;
+        PlacementManager.instance = null;
+        UiManager.instance = null;
+        RoundManager.instance = null;
     }
 }

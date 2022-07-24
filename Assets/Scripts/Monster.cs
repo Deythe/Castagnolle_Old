@@ -31,6 +31,8 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     [SerializeField] private bool isChampion;
     [SerializeField] private Animator animator;
     
+    [SerializeField] private List<AudioClip> voiceLine;
+    
     private List<IEffects> effects = new List<IEffects>();
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
@@ -120,7 +122,6 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         get => extension;
     }
 
-
     public void CheckDeath()
     {
         if (atk <= 0)
@@ -149,7 +150,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        if (model != null)
+        if (voiceLine.Count != 0)
+        {
+            SoundManager.instance.PlayVoiceLine(voiceLine[0]);
+        }
+
         {
             model.material = modelTexture;
         }
