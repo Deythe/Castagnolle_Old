@@ -119,7 +119,6 @@ public class DiceManager : MonoBehaviour
         
         DeckManager.instance.CheckUnitWithRessources();
         RoundManager.instance.StateRound = 1;
-        //UiManager.instance.UpdateListCard();
     }
     
     public bool CheckPositionDiceGauge(GameObject diceTarget)
@@ -195,27 +194,54 @@ public class DiceManager : MonoBehaviour
         DeckManager.instance.CheckUnitWithRessources();
     }
 
-    public void DeleteResource(int i)
+    void DeleteResource(int i)
     {
-        for (int j = 0; j < diceChoosen.Length+diceGauge.Length; j++)
+        for (int j = 0; j < diceChoosen.Length + diceGauge.Length; j++)
         {
-            if (j < diceChoosen.Length)
+            if (i.Equals(4))
             {
-                if (i.Equals(4))
+                if (j < diceChoosen.Length)
                 {
-                    if (diceChoosen[j] != 0)
+                    if (diceChoosen[j].Equals(i))
                     {
                         diceChoosen[j] = 0;
-                        diceDeck.Add(dicesNotDisponible[j]);
+                        if (dicesNotDisponible[j] != null)
+                        {
+                            diceDeck.Add(dicesNotDisponible[j]);
+                        }
                         dicesNotDisponible[j] = null;
                         diceObjet[j].GetComponent<MeshRenderer>().enabled = false;
                         return;
                     }
                 }
-                else if (i.Equals(diceChoosen[j]))
+                else
                 {
+                    if (i.Equals(diceGauge[j - diceGauge.Length]))
+                    {
+                        if (dicesNotDisponible[j] != null)
+                        {
+                            diceDeck.Add(dicesNotDisponible[j]);
+                        }
+
+                        diceGauge[j - diceGauge.Length] = 0;
+                        dicesNotDisponible[j] = null;
+                        view.RPC("RPC_SynchGaugeDice", RpcTarget.All,
+                            diceGaugeObjet[j - diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; j < diceChoosen.Length + diceGauge.Length; j++)
+        {
+            if (j < diceChoosen.Length)
+            {
+                if (i.Equals(diceChoosen[j]) || (i.Equals(4) && diceChoosen[j]!=0))
+                {
+                    Debug.Log(i);
                     diceChoosen[j] = 0;
-                    if (dicesNotDisponible[j]!=null)
+                    if (dicesNotDisponible[j] != null)
                     {
                         diceDeck.Add(dicesNotDisponible[j]);
                     }
@@ -227,35 +253,23 @@ public class DiceManager : MonoBehaviour
             }
             else
             {
-                if (i.Equals(4))
+                if (i.Equals(diceGauge[j - diceGauge.Length]) || (i.Equals(4) && diceGauge[j - diceGauge.Length]!=0))
                 {
-                    if (diceGauge[j-diceGauge.Length] != 0)
-                    {
-                        if (dicesNotDisponible[j]!=null)
-                        {
-                            diceDeck.Add(dicesNotDisponible[j]);
-                        }
-
-                        diceGauge[j-diceGauge.Length] = 0;
-                        dicesNotDisponible[j] = null;
-                        view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
-                        return;
-                    }
-                }
-                else if (i.Equals(diceGauge[j-diceGauge.Length]))
-                {
-                    if (dicesNotDisponible[j]!=null)
+                    diceGauge[j - diceGauge.Length] = 0;
+                    if (dicesNotDisponible[j] != null)
                     {
                         diceDeck.Add(dicesNotDisponible[j]);
                     }
+
                     
-                    diceGauge[j-diceGauge.Length] = 0;
                     dicesNotDisponible[j] = null;
-                    view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j-diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
+                    view.RPC("RPC_SynchGaugeDice", RpcTarget.All,
+                        diceGaugeObjet[j - diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
                     return;
                 }
             }
         }
+
     }
 
     private DiceScriptable PickDice(int random)

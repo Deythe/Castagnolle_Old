@@ -14,22 +14,63 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerPref;
     [SerializeField] private PhotonView playerView;
     [SerializeField] private int localPlayerTurn;
-    [SerializeField] private int currentPlayerNumberTurnNumberTurn;
+    [SerializeField] private int currentPlayerNumberTurn;
     [SerializeField] private int timerPerRound = 60;
     [SerializeField] private List<Material> listMatPlayerGlow;
+    
+    [SerializeField] private Transform board;
     private int timer;
     private int roundState; 
     private GameObject playerInstance;
     private WaitForSeconds tick= new WaitForSeconds(1);
+    private Quaternion rotate = new Quaternion(0,180,0,0);
 
     public List<Material> p_listMatPlayerGlow
     {
         get => listMatPlayerGlow;
     }
+
+    public int p_currentPlayerNumberTurn
+    {
+        get => currentPlayerNumberTurn;
+        set
+        {
+            StopAllCoroutines();
+            currentPlayerNumberTurn = value;
+            
+            if (currentPlayerNumberTurn == localPlayerTurn)
+            {
+                UiManager.instance.BannerItsYourTurnToPlay();
+                UiManager.instance.ChangeTimerColor(1);
+                UiManager.instance.EnableDisableShader(true);
+                StateRound = 0;
+            }
+            else
+            {
+                UiManager.instance.EnableDisableShader(false);
+                UiManager.instance.ChangeTimerColor(2);
+            }
+        
+            p_Timer = timerPerRound;
+        }
+    }
     
     public int p_Timer
     {
         get => timer;
+        set
+        {
+            timer = value;
+            if (timer < 0 && LocalPlayerTurn.Equals(currentPlayerNumberTurn))
+            {
+                timer = 0;
+                EndRound();
+            }
+            else
+            {
+                StartCoroutine(CoroutineTimer());
+            }
+        }
     }
     public int LocalPlayerTurn
     {
@@ -38,7 +79,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public int CurrentPlayerNumberTurn
     {
-        get => currentPlayerNumberTurnNumberTurn;
+        get => currentPlayerNumberTurn;
     }
     
     public int StateRound
@@ -49,9 +90,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
             roundState = value;
             switch (roundState)
             {
-                case 0:
-                    StartCoroutine(CoroutineTimer());
-                    break;
                 case 1:
                     UiManager.instance.DisableBorderStatus();
                     UiManager.instance.p_instanceEnemyPointer.SetActive(false);
@@ -96,7 +134,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
-        currentPlayerNumberTurnNumberTurn = 1;
+        currentPlayerNumberTurn = 1;
         if (PhotonNetwork.IsMasterClient)
         {
             localPlayerTurn = 1;
@@ -119,15 +157,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
     {
         UiManager.instance.UpdateTimer();
         yield return tick;
-        timer--;
-        if (timer < 0)
-        {
-            EndRound();
-        }
-        else
-        {
-            StartCoroutine(CoroutineTimer());
-        }
+        p_Timer--;
     }
 
     public void SpawnNewPlayer()
@@ -136,27 +166,28 @@ public class RoundManager : MonoBehaviourPunCallbacks
         {
             playerInstance =
                 PhotonNetwork.Instantiate(playerPref.name, Vector3.zero, Quaternion.identity, 0);
-            timer = timerPerRound;
             StopAllCoroutines();
-            UiManager.instance.EnableDisableTimer(true);
-            StartCoroutine(CoroutineTimer());
+            UiManager.instance.ChangeTimerColor(1);
             UiManager.instance.BannerItsYourTurnToPlay();
         }
         else
         {
             playerInstance =
-                PhotonNetwork.Instantiate(playerPref.name, Vector3.zero, new Quaternion(0,180,0,0), 0);
-            UiManager.instance.EnableDisableTimer(false);
+                PhotonNetwork.Instantiate(playerPref.name, Vector3.zero, rotate, 0);
+            UiManager.instance.ChangeTimerColor(2);
+            board.Rotate(0,0,-180);
         }
         
+        p_Timer = timerPerRound;
         playerInstance.GetComponent<PlayerSetup>().enabled = true;
         
     }
     
     public void EndRound()
     {
-        SoundManager.instance.PlaySFXSound(0, 0.07f);
         StopAllCoroutines();
+        StateRound = -1;
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
 
         if (!PlacementManager.instance.IsWaiting)
         {
@@ -172,7 +203,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
         EffectManager.instance.Cancel();
         UiManager.instance.p_throwButton.interactable = true;
         
-        playerView.RPC("RPC_EndTurn", RpcTarget.All);
+        Debug.Log("Caca");
+        playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
     }
 
     public void BattlePhase()
@@ -216,27 +248,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_EndTurn()
     {
-        if (currentPlayerNumberTurnNumberTurn == 1)
+        if (p_currentPlayerNumberTurn == 1)
         {
-            currentPlayerNumberTurnNumberTurn = 2;
+            p_currentPlayerNumberTurn = 2;
         }
         else
         {
-            currentPlayerNumberTurnNumberTurn = 1;
-        }
-
-        if (currentPlayerNumberTurnNumberTurn.Equals(localPlayerTurn))
-        {
-            timer = timerPerRound;
-            UiManager.instance.BannerItsYourTurnToPlay();
-            UiManager.instance.EnableDisableTimer(true);
-            UiManager.instance.EnableDisableShader(true);
-            StateRound = 0;
-        }
-        else
-        {
-            UiManager.instance.EnableDisableShader(false);
-            UiManager.instance.EnableDisableTimer(false);
+            p_currentPlayerNumberTurn = 1;
         }
     }
 

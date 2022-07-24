@@ -101,16 +101,16 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (enabled)
+        if (Input.touchCount > 0)
         {
-            if (Input.touchCount > 0)
+            if (Input.GetTouch(0).phase == TouchPhase.Began && !isTouching)
             {
-                if (Input.GetTouch(0).phase == TouchPhase.Began && !isTouching)
+                UiManager.instance.AbleDeckCardTouch(transform);
+                if (enabled)
                 {
                     isTouching = true;
                     initialPositionY = transform.localPosition.y;
                     UiManager.instance.Card = gameObject;
-                    UiManager.instance.AbleDeckCardTouch();
                 }
             }
         }

@@ -213,7 +213,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int id, int atk)
     { 
-        PlacementManager.instance.SearchMobWithID(id).Atk+=atk;
+        PlacementManager.instance.SearchMobWithID(id).p_atk+=atk;
     }
     
 

@@ -3242,6 +3242,7 @@ MonoBehaviour:
   listMatPlayerGlow:
   - {fileID: 2100000, guid: 441cb25835d84ac4e9e59919119ac24f, type: 2}
   - {fileID: 2100000, guid: d5e951260389f3b46971d7094bed5de8, type: 2}
+  board: {fileID: 0}
 --- !u!114 &870757666
 MonoBehaviour:
   m_ObjectHideFlags: 0

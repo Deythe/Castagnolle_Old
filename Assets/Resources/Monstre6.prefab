@@ -455,15 +455,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -471,7 +471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.21
+      value: 0.093
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -541,6 +541,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: d605d699d4396a144a1893d24f557020, type: 2}
+    - target: {fileID: -3887185075125053422, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
+      propertyPath: m_BlendShapeWeights.Array.size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5e4b570f865419b41b1e11d222290aeb, type: 3}
       propertyPath: m_Name
       value: Morphidian
@@ -573,7 +577,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3398623391534056919}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: ae575665ecfb31c44b60ac6d06e319df, type: 2}
   m_CullingMode: 0

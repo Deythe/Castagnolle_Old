@@ -21,7 +21,7 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
             {
                 if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
                 {
-                    GetComponent<Monster>().Attacked = false;
+                    GetComponent<Monster>().p_attacked = false;
                     used = true;
                     EffectManager.instance.CancelSelection(1);
                     GetComponent<Monster>().p_model.layer = 6;

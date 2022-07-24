@@ -38,8 +38,8 @@ public class Commentator : MonoBehaviour, IEffects
             {
                 if (Vector3.Distance(center.position, targetCenter.position).Equals(1))
                 {
-                    Debug.Log(targetUnit.GetComponent<Monster>().ID);
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer, targetUnit.GetComponent<Monster>().ID);
+                    Debug.Log(targetUnit.GetComponent<Monster>().p_id);
+                    view.RPC("RPC_Action", RpcTarget.AllViaServer, targetUnit.GetComponent<Monster>().p_id);
                     return;
                 }
             }
@@ -49,7 +49,7 @@ public class Commentator : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int unitID)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk++;
+        PlacementManager.instance.SearchMobWithID(unitID).p_atk++;
     }
 
     

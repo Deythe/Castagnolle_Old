@@ -52,7 +52,7 @@ public class KillWithHeroism : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int idTarget)
     {
-        PlacementManager.instance.SearchMobWithID(idTarget).Atk-= PlacementManager.instance.SearchMobWithID(idTarget).Atk;
+        PlacementManager.instance.SearchMobWithID(idTarget).p_atk-= PlacementManager.instance.SearchMobWithID(idTarget).p_atk;
     }
 
     public int GetPhaseActivation()

@@ -98,12 +98,12 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                card.monster.GetComponent<Monster>().Attacked = true;
+                card.monster.GetComponent<Monster>().p_attacked = true;
                 card.monster.GetComponent<Monster>().InitColorsTiles();
                 
                 if (card.monster.GetComponent<Monster>().p_isMovable)
                 {
-                    card.monster.GetComponent<Monster>().Attacked = false;
+                    card.monster.GetComponent<Monster>().p_attacked = false;
                 }
                 
                 card.monster.GetComponent<Monster>().ReActivadeAllEffect();
@@ -229,7 +229,7 @@ public class PlacementManager : MonoBehaviour
     {
         for (int i = 0; i < board.Count; i++)
         {
-            if (GetBoard()[i].monster.GetComponent<Monster>().ID.Equals(unitID))
+            if (GetBoard()[i].monster.GetComponent<Monster>().p_id.Equals(unitID))
             {
                 return GetBoard()[i].monster.GetComponent<Monster>();
             }
@@ -357,7 +357,7 @@ public class PlacementManager : MonoBehaviour
     {
         for (int i = 0; i < board.Count; i++)
         {
-            if (board[i].monster.GetComponent<Monster>().ID == id)
+            if (board[i].monster.GetComponent<Monster>().p_id == id)
             {
                 if (board[i].monster.GetComponent<Monster>().p_isChampion &&
                     board[i].monster.GetComponent<PhotonView>().AmOwner)

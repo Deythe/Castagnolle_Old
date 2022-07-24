@@ -30,7 +30,7 @@ public class Stun : MonoBehaviour, IEffects
         if (phase == 2)
         {
             targetUnit.GetComponent<Monster>().p_isMovable = true;
-            targetUnit.GetComponent<Monster>().Attacked = false;
+            targetUnit.GetComponent<Monster>().p_attacked = false;
         }
     }
     
@@ -39,7 +39,7 @@ public class Stun : MonoBehaviour, IEffects
     {
         targetUnit = PlacementManager.instance.SearchMobWithID(idTarget).gameObject;
         targetUnit.GetComponent<Monster>().p_isMovable = false;
-        targetUnit.GetComponent<Monster>().Attacked = true;
+        targetUnit.GetComponent<Monster>().p_attacked = true;
     }
 
     public int GetPhaseActivation()

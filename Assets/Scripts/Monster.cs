@@ -40,20 +40,20 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         get => model.gameObject;
     }
 
-    public GameObject Stats
+    public GameObject p_stats
     {
         get => card;
     }
-    public Sprite BigCard
+    public Sprite p_bigCard
     {
         get => bigCard;
     }
-    public int ID
+    public int p_id
     {
         get => id;
     }
 
-    public int Atk
+    public int p_atk
     {
         get => atk;
         set
@@ -64,18 +64,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
 
-    public void CheckDeath()
-    {
-        if (atk <= 0)
-        {
-            if (view.AmOwner)
-            {
-                PhotonNetwork.Destroy(gameObject);
-            }
-        }
-    }
-
-    public Animator Animator
+    public Animator p_animator
     {
         get => animator;
     }
@@ -117,7 +106,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
     
-    public bool Attacked
+    public bool p_attacked
     {
         get => attacked;
         set
@@ -126,7 +115,23 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
     }
 
+    public List<GameObject> p_extensions
+    {
+        get => extension;
+    }
 
+
+    public void CheckDeath()
+    {
+        if (atk <= 0)
+        {
+            if (view.AmOwner)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+        }
+    }
+    
     private void Update()
     {
         if (owner!=0)
@@ -163,13 +168,13 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         
         if (card!=null)
         {
-            Atk = card.GetComponent<CardData>().Atk;
+            p_atk = card.GetComponent<CardData>().Atk;
             isChampion = card.GetComponent<CardData>().IsChampion;
             bigCard = card.GetComponent<CardData>().BigCard;
         }
         else
         {
-            Atk = atk;
+            p_atk = atk;
             p_isChampion = isChampion;
         }
 
@@ -278,7 +283,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {
             if (view.AmOwner)
             {
-                if (!isMovable && Attacked)
+                if (!isMovable && p_attacked)
                 {
                     ms.material = PlacementManager.instance.p_listMaterial[6];
                 }
@@ -289,7 +294,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             }
             else
             {
-                if (!isMovable && Attacked)
+                if (!isMovable && p_attacked)
                 {
                     ms.material.color = PlacementManager.instance.p_listMaterial[7].color;
                 }
@@ -322,7 +327,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         {   
             if (view.AmOwner)
             {
-                if (!isMovable && Attacked)
+                if (!isMovable && p_attacked)
                 {
                     ms.material = PlacementManager.instance.p_listMaterial[4];
                 }
@@ -333,7 +338,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             }
             else
             {
-                if (!isMovable && Attacked)
+                if (!isMovable && p_attacked)
                 {
                     ms.material = PlacementManager.instance.p_listMaterial[5];
                 }

@@ -14,7 +14,7 @@ public class Berserk : MonoBehaviour, IEffects
         {
             if (view.AmOwner)
             {
-                transform.GetComponent<Monster>().Attacked = false;
+                transform.GetComponent<Monster>().p_attacked = false;
                 used = true;
                 GetComponent<Monster>().p_model.layer = 6;
             }

@@ -29,7 +29,7 @@ public class DealAmountToEnnemy : MonoBehaviour,IEffects
     [PunRPC]
     private void RPC_Action(int idTarget, int damage)
     {
-        PhotonView.Find(idTarget).gameObject.GetComponent<Monster>().Atk -= damage;
+        PhotonView.Find(idTarget).gameObject.GetComponent<Monster>().p_atk -= damage;
     }
 
 

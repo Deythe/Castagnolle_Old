@@ -49,11 +49,11 @@ public class DeckManager : MonoBehaviour
 
     public void CheckUnitWithRessources()
     {
-
         for (int i = 0; i < cardDeck.Count; i++)
         {
             InitCheck();
             ressources = cardDeck[i].GetComponent<CardData>().Ressources.ToArray();
+            
             for (int j = 0; j < ressources.Length; j++)
             {
                 if (!ressources[j].Equals(4))
@@ -91,12 +91,7 @@ public class DeckManager : MonoBehaviour
                 }
                 else
                 {
-                    check = HaveADice();
-                    if (check!=-1)
-                    {
-                        checks[check] = 0;
-                        ressources[j] = 0;    
-                    }
+                    HaveAResource(j);
                 }
             }
 
@@ -127,17 +122,17 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    private int HaveADice()
+    private void HaveAResource(int j)
     {
-        for(int j = 0; j < checks.Length; j++)
+        for(int k = 0; k < checks.Length; k++)
         {
-            if (checks[j] != 0)
+            if (checks[k] != 0)
             {
-                return j;
+                ressources[j] = 0;
+                checks[k] = 0;
+                return;
             }
         }
-
-        return -1;
     }
     
     bool AllCheckValide(int[] list)

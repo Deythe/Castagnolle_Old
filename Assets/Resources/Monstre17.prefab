@@ -455,15 +455,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.91312
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.91312
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.91312
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -471,7 +471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.15000033
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -544,6 +544,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
       propertyPath: m_Name
       value: Heros_Morpher
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32a6ccfd4e7b3dd44abcbeaaa185128a, type: 3}

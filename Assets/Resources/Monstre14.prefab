@@ -501,6 +501,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065666967160662781, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+      propertyPath: sceneViewId
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5954695072651365364, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
       propertyPath: m_Name
       value: Tile 2
@@ -552,7 +556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.432
+      value: 0.081
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -717,6 +721,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065666967160662781, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+      propertyPath: sceneViewId
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5954695072651365364, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
       propertyPath: m_Name
       value: Tile
@@ -794,6 +802,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065666967160662781, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+      propertyPath: sceneViewId
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5954695072651365364, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
       propertyPath: m_Name
       value: Tile 3
@@ -849,7 +861,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f607757f7b4eae41a76575a9b76d236, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.125
+      value: 0.068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f607757f7b4eae41a76575a9b76d236, type: 3}
       propertyPath: m_LocalPosition.z
@@ -915,6 +927,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enclos_Morpher
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2f607757f7b4eae41a76575a9b76d236, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f607757f7b4eae41a76575a9b76d236, type: 3}
 --- !u!137 &1450504539467867580 stripped
@@ -978,6 +994,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065666967160662781, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
+      propertyPath: sceneViewId
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5954695072651365364, guid: 1ea09b0f89025b9458e80f9ac8a8beb6, type: 3}
       propertyPath: m_Name
       value: Tile 4
@@ -1037,7 +1057,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.735
+      value: 0.525
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1168,7 +1188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.178
+      value: 0.152
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1176,7 +1196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.743
+      value: 0.976
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 599635cce772577468c34bf9a1b2470b, type: 3}
       propertyPath: m_LocalRotation.w

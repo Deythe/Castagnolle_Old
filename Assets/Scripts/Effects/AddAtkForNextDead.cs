@@ -32,7 +32,7 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int number)
     {
-        GetComponent<Monster>().Atk+=number;
+        GetComponent<Monster>().p_atk+=number;
     }
 
 

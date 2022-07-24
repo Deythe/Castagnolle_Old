@@ -44,7 +44,7 @@ public class Ring : MonoBehaviour,IEffects
     private void RPC_Ring(int unitID)
     {
         Debug.Log("Rpc Ring");
-        PlacementManager.instance.SearchMobWithID(unitID).Atk++;
+        PlacementManager.instance.SearchMobWithID(unitID).p_atk++;
     }
 
 

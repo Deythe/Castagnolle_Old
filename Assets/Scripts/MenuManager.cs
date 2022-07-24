@@ -131,7 +131,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
         chooseDeckButton.interactable = true;
         connexionStatus.sprite = connexionSprites[1];
         PhotonNetwork.JoinLobby();
-        Debug.Log(PhotonNetwork.CloudRegion);
     }
     
 

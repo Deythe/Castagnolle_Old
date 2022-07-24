@@ -77,6 +77,9 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private Button throwButton;
     [SerializeField] private CanvasScaler canvasScaler;
+
+    private Color allyColor = new Color(0.058f,0.57f,0.66f, 1);
+    private Color ennemyColor = new Color(0.84f,0.25f,0.15f,0.5f);
     
     private List<int> pivotResources;
     private bool settingsOnOff;
@@ -87,7 +90,7 @@ public class UiManager : MonoBehaviour
     private bool waitingCoroutine;
     private RaycastHit hit;
     private WaitForSeconds time = new WaitForSeconds(3f);
-
+    
     public Button p_throwButton
     {
         get => throwButton;
@@ -210,8 +213,22 @@ public class UiManager : MonoBehaviour
             sfxButton.sprite = buttonsSprite[3];
         }
         
+        DisableSomeHp();
     }
 
+    private void DisableSomeHp()
+    {
+        if (RoundManager.instance.LocalPlayerTurn == 1)
+        {
+            player1ProfileHp.enabled = false;
+            player2FaceHp.enabled = false;
+        }
+        else
+        {
+            player2ProfileHp.enabled = false;
+            player1FaceHp.enabled = false;
+        }
+    }
     public void InitPlayerMarkers()
     {
         listHitMarkes = new List<GameObject>();
@@ -309,14 +326,22 @@ public class UiManager : MonoBehaviour
                 .OnComplete(() => player2FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
             player2ProfileHp.text = "" + LifeManager.instance.OwnLife;
             player2ProfileHp.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.5f)
-                .OnComplete(() => player2FaceHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
+                .OnComplete(() => player2ProfileHp.transform.DOScale(new Vector3(1, 1, 1), 0.5f));
         }
     }
 
-    public void EnableDisableTimer(bool b)
+    public void ChangeTimerColor(int i)
     {
-        timer.enabled = b;
+        if (i == 1)
+        {
+            timer.color = allyColor;
+        }
+        else
+        {
+            timer.color = ennemyColor;
+        }
     }
+    
     public void UpdateHpEnnemi()
     {
         if (RoundManager.instance.LocalPlayerTurn == 1)
@@ -350,21 +375,21 @@ public class UiManager : MonoBehaviour
     {
         if (go.GetComponent<Monster>() != null)
         {
-            bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().BigCard;
-            lifeCard.text = "" + go.GetComponent<Monster>().Atk;
-            if (go.GetComponent<Monster>().Stats.GetComponent<CardData>() != null)
+            bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().p_bigCard;
+            lifeCard.text = "" + go.GetComponent<Monster>().p_atk;
+            if (go.GetComponent<Monster>().p_stats.GetComponent<CardData>() != null)
             {
-                pivotResources = go.GetComponent<Monster>().Stats.GetComponent<CardData>().Ressources;
+                pivotResources = go.GetComponent<Monster>().p_stats.GetComponent<CardData>().Ressources;
             }
         }
         else
         {
-            bigCart.GetComponent<Image>().sprite = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().BigCard;
-            lifeCard.text = "" + go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Atk;
-            if (go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Stats.GetComponent<CardData>() !=
+            bigCart.GetComponent<Image>().sprite = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_bigCard;
+            lifeCard.text = "" + go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_atk;
+            if (go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_stats.GetComponent<CardData>() !=
                 null)
             {
-                pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().Stats
+                pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_stats
                     .GetComponent<CardData>().Ressources;
             }
         }
@@ -379,14 +404,14 @@ public class UiManager : MonoBehaviour
         bigCart.SetActive(true);
     }
 
-    public void AbleDeckCardTouch()
+    public void AbleDeckCardTouch(Transform img)
     {
-        bigCart.GetComponent<Image>().sprite = card.GetComponent<CardData>().BigCard;
-        lifeCard.text = ""+card.GetComponent<CardData>().Atk;
+        bigCart.GetComponent<Image>().sprite = img.GetComponent<CardData>().BigCard;
+        lifeCard.text = ""+img.GetComponent<CardData>().Atk;
 
-        for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
+        for (int i = 0; i < img.GetComponent<CardData>().Ressources.Count; i++)
         {
-            ressourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[card.GetComponent<CardData>().Ressources[i]];
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[img.GetComponent<CardData>().Ressources[i]];
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         

@@ -19,11 +19,11 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
             if (view.AmOwner)
             {
                 PlacementManager.instance.SpecialInvocation = true;
-                PlacementManager.instance.SetGOPrefabsMonster(GetComponent<Monster>().Stats.GetComponent<CardData>().Prefabs);
+                PlacementManager.instance.SetGOPrefabsMonster(GetComponent<Monster>().p_stats.GetComponent<CardData>().Prefabs);
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
                 
-                PlacementManager.instance.RemoveMonsterBoard(GetComponent<Monster>().ID);
+                PlacementManager.instance.RemoveMonsterBoard(GetComponent<Monster>().p_id);
                 EffectManager.instance.CancelSelection(2);
                 UiManager.instance.p_textFeedBack.enabled = true;
                 UiManager.instance.SetTextFeedBack(0);
@@ -35,8 +35,8 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
             {
                 if (motherUnit != null)
                 {
-                    view.RPC("RPC_Action", RpcTarget.All, GetComponent<Monster>().ID,
-                        motherUnit.GetComponent<Monster>().Atk);
+                    view.RPC("RPC_Action", RpcTarget.All, GetComponent<Monster>().p_id,
+                        motherUnit.GetComponent<Monster>().p_atk);
                     
                     PhotonNetwork.Destroy(motherUnit);
                     GetComponent<Monster>().p_model.layer = 6;
@@ -62,7 +62,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     [PunRPC]
     private void RPC_Action(int id, int atk)
     { 
-        PlacementManager.instance.SearchMobWithID(id).Atk=atk;
+        PlacementManager.instance.SearchMobWithID(id).p_atk=atk;
     }
 
     public int GetPhaseActivation()

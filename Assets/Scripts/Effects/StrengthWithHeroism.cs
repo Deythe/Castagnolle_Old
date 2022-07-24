@@ -37,7 +37,7 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action()
     {
-        GetComponent<Monster>().Atk+=2;
+        GetComponent<Monster>().p_atk+=2;
     }
 
     public int GetPhaseActivation()

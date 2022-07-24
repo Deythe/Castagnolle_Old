@@ -21,12 +21,16 @@ public class BattlePhaseManager : MonoBehaviour
 
         private int motherUnitTiles;
         private Monster unitPivot;
+        
         private int result;
         private bool isAttacking;
-        private int numberView;
+        
+        private int numberTileUnit;
         private float sizeListCentersEnnemi;
+        
         private int targetUnitAttack;
         private bool isWaiting;
+        
         private bool pivot;
         private RaycastHit hit;
 
@@ -106,7 +110,7 @@ public class BattlePhaseManager : MonoBehaviour
                                         if (RoundManager.instance.StateRound == 3)
                                         {
                                             if (unit.monster.GetComponent<PhotonView>().AmOwner &&
-                                                (!unit.monster.GetComponent<Monster>().Attacked))
+                                                (!unit.monster.GetComponent<Monster>().p_attacked))
                                             {
                                                 unitsSelected = unit.monster;
                                                 unitsSelected.GetComponent<Monster>().BeChoosen();
@@ -164,9 +168,9 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttack()
         {
-            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            if (unitsSelected.GetComponent<Monster>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
+                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", true);
             }
             
             EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
@@ -175,16 +179,16 @@ public class BattlePhaseManager : MonoBehaviour
             SoundManager.instance.PlaySFXSound(7, 0.07f);
             yield return new WaitForSeconds(0.5f);
             
-            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            if (unitsSelected.GetComponent<Monster>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", false);
+                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", false);
             }
             
             if (unitTarget.GetComponent<Monster>().p_isMovable && !unitsSelected.GetComponent<Monster>().p_isChampion)
             {
                 playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
-                    unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().Atk,
-                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk);
+                    unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().p_atk,
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().p_atk);
                 
                 StartCoroutine(CoroutineAttackNormalUnit());
             }
@@ -192,7 +196,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
                     unitsSelected.GetComponent<PhotonView>().ViewID, 0,
-                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().Atk);
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().p_atk);
                 
                 StartCoroutine(CoroutineAttackStaticUnit());
             }
@@ -201,17 +205,17 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator CoroutineAttackPlayer()
         {
-            unitsSelected.GetComponent<Monster>().Attacked = true;
-            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            unitsSelected.GetComponent<Monster>().p_attacked = true;
+            if (unitsSelected.GetComponent<Monster>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", true);
+                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", true);
             }
 
             yield return new WaitForSeconds(0.5f);
             
-            if (unitsSelected.GetComponent<Monster>().Animator != null)
+            if (unitsSelected.GetComponent<Monster>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().Animator.SetBool("ATK", false);
+                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", false);
             }
             
             LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
@@ -220,9 +224,9 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator CoroutineAttackNormalUnit()
         {
-            targetUnitAttack = unitTarget.GetComponent<Monster>().Atk;
-            result = unitsSelected.GetComponent<Monster>().Atk - targetUnitAttack;
-            unitsSelected.GetComponent<Monster>().Attacked = true;
+            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
+            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
+            unitsSelected.GetComponent<Monster>().p_attacked = true;
 
             switch (result)
             {
@@ -263,9 +267,9 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttackStaticUnit()
         {
-            targetUnitAttack = unitTarget.GetComponent<Monster>().Atk;
-            result = unitsSelected.GetComponent<Monster>().Atk - targetUnitAttack;
-            unitsSelected.GetComponent<Monster>().Attacked = true;
+            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
+            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
+            unitsSelected.GetComponent<Monster>().p_attacked = true;
 
             switch (result)
             {
@@ -323,14 +327,16 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator AddAllExtension(GameObject unitMore, bool owner)
         {
-            motherUnitTiles = unitMore.GetComponent<Monster>().ID;
-            numberView = PhotonNetwork.ViewCount;
+            motherUnitTiles = unitMore.GetComponent<Monster>().p_id;
+            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
+
             sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
+            
             for (int i = 0; i < sizeListCentersEnnemi; i++)
             {
                 AddExtension(unitMore, owner);
-                yield return new WaitUntil((() => PhotonNetwork.ViewCount == numberView + 1));
-                numberView = PhotonNetwork.ViewCount;
+                yield return new WaitUntil((() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1));
+                numberTileUnit = numberTileUnit + 1;
             }
 
             deadUnitCenters.Clear();
@@ -452,11 +458,11 @@ public class BattlePhaseManager : MonoBehaviour
         {
             unitPivot = PlacementManager.instance.SearchMobWithID(unitSelected);
             UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage);
-            unitPivot.Atk -= Mathf.Abs(damage);
+            unitPivot.p_atk -= Mathf.Abs(damage);
             
             unitPivot = PlacementManager.instance.SearchMobWithID(unitTarget);
             UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage2);
-            unitPivot.Atk -= Mathf.Abs(damage2);
+            unitPivot.p_atk -= Mathf.Abs(damage2);
         }
     }
 

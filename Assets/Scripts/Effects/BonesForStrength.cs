@@ -34,7 +34,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
                 targetUnit = EffectManager.instance.AllieUnit;
 
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                    EffectManager.instance.AllieUnit.GetComponent<Monster>().ID);
+                    EffectManager.instance.AllieUnit.GetComponent<Monster>().p_id);
 
                 for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                 {
@@ -71,7 +71,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int unitID)
     {
-        PlacementManager.instance.SearchMobWithID(unitID).Atk+=3;
+        PlacementManager.instance.SearchMobWithID(unitID).p_atk+=3;
     }
 
     public int GetPhaseActivation()

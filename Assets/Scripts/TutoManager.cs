@@ -10,7 +10,7 @@ using UnityEngine.Video;
 
 public class TutoManager : MonoBehaviour
 {
-    [SerializeField] private GameObject nextArrow;
+    [SerializeField] private Button nextArrow;
     [SerializeField] private GameObject beforeArrow;
 
     [SerializeField] private Image currentPage;
@@ -20,13 +20,14 @@ public class TutoManager : MonoBehaviour
     [SerializeField] private Image gradient;
 
     private int currentIndexPage = 0;
-    private int maxPageCount = 9;
+    private int maxPageCount = 10;
 
 
     void Start()
     {
         PhotonNetwork.Disconnect();
         player1.Prepare();
+        
         FireBaseManager.instance.User.firstTime = false;
         if (FireBaseManager.instance.User.isConnected)
         {
@@ -36,6 +37,8 @@ public class TutoManager : MonoBehaviour
 
     public void ChangePage(bool b)
     {
+        gradient.DOFade(1, 0.2f).OnComplete(() => CheckVideoOrSprite());
+        
         if (b)
         {
             SoundManager.instance.PlaySFXSound(0, 0.07f);
@@ -48,15 +51,6 @@ public class TutoManager : MonoBehaviour
             currentIndexPage--;
         }
 
-        if (currentIndexPage == maxPageCount)
-        {
-            nextArrow.SetActive(false);
-        }
-        else
-        {
-            nextArrow.SetActive(true);
-        }
-
         if (currentIndexPage == 0)
         {
             beforeArrow.SetActive(false);
@@ -65,38 +59,80 @@ public class TutoManager : MonoBehaviour
         {
             beforeArrow.SetActive(true);
         }
-
-
-        if (currentIndexPage < 4)
-        {
-            player1.Stop();
-            currentPage.enabled = true;
-            gradient.DOFade(1, 0.2f).OnComplete(ChangePage);
-        }
-        else
-        {
-            currentPage.enabled = false;
-            player1.Stop();
-            player1.clip = listVideoClip[currentIndexPage - 4];
-            player1.Prepare();
-            gradient.DOFade(1, 0.2f).OnComplete(ChangeVideo);
-        }
     }
-
-    void ChangePage()
-    {
-        currentPage.sprite = listTutoPage[currentIndexPage];
-        gradient.DOFade(0, 0.2f);
-    }
-
-    void ChangeVideo()
-    {
-        player1.Play();
-        gradient.DOFade(0, 0.2f);
-    }
-
+    
     public void GoToMainMenu()
     {
         SceneManager.LoadScene(1);
+    }
+
+    void CheckVideoOrSprite()
+    {
+        gradient.DOFade(0, 0.2f);
+        player1.Stop();
+        switch (currentIndexPage)
+        {
+            case 0 :
+                currentPage.enabled = true;
+                currentPage.sprite = listTutoPage[0];
+                break;
+            case 1 :
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[0];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 2:
+                currentPage.enabled = true;
+                currentPage.sprite = listTutoPage[1];
+                break;
+            case 3 :
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[1];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 4:
+                currentPage.enabled = true;
+                currentPage.sprite = listTutoPage[2];
+                break;
+            case 5:
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[2];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 6:
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[3];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 7:
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[4];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 8:
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[5];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 9:
+                currentPage.enabled = false;
+                player1.clip = listVideoClip[6];
+                player1.Prepare();
+                player1.Play();
+                break;
+            case 10 :
+                currentPage.enabled = true;
+                currentPage.sprite = listTutoPage[3];
+                break;
+            case 11:
+                GoToMainMenu();
+                break;
+        }
     }
 }
