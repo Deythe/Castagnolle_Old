@@ -19,6 +19,6 @@ public class User {
         isConnected = connect;
         firstTime = firstTimeCheck;
         currentDeck = new int[8];
-        currentDiceDeck = new int[12];
+        currentDiceDeck = new int[6];
     }
 }

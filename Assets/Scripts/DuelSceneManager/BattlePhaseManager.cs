@@ -15,6 +15,7 @@ public class BattlePhaseManager : MonoBehaviour
         private GameObject unitsSelected;
 
         private List<Transform> deadUnitCenters;
+        private List<Transform> previsualisationUnitMore;
 
         private GameObject unitTarget = null;
         private GameObject unitFusion;
@@ -141,6 +142,7 @@ public class BattlePhaseManager : MonoBehaviour
                                                 }
 
                                                 unitTarget.GetComponent<Monster>().BeChoosen();
+                                                PreCaculUnit();
                                                 isAttacking = true;
                                             }
                                         }
@@ -161,6 +163,24 @@ public class BattlePhaseManager : MonoBehaviour
             }
         }
         
+        void PreCaculUnit()
+        {
+            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
+            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
+
+            switch (result)
+            {
+                case >0:
+                    deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
+                    ShowAllUnitsExtension(unitsSelected);
+                    break;
+                case <0 :
+                    deadUnitCenters = unitsSelected.GetComponent<Monster>().GetCenters();
+                    ShowUnitExtension(unitTarget);
+                    break;
+            }
+        }
+        
         public void Attack()
         {
             StartCoroutine(CoroutineAttack());
@@ -168,6 +188,8 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttack()
         {
+            unitsSelected.GetComponent<Monster>().p_attacked = true;
+            
             if (unitsSelected.GetComponent<Monster>().p_animator != null)
             {
                 unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", true);
@@ -221,13 +243,10 @@ public class BattlePhaseManager : MonoBehaviour
             LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
             CancelSelection();
         }
+        
 
         IEnumerator CoroutineAttackNormalUnit()
         {
-            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
-            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
-            unitsSelected.GetComponent<Monster>().p_attacked = true;
-
             switch (result)
             {
                 case 0:
@@ -267,15 +286,10 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttackStaticUnit()
         {
-            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
-            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
-            unitsSelected.GetComponent<Monster>().p_attacked = true;
-
             switch (result)
             {
                 case 0:
                 case >0:
-                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
@@ -284,6 +298,7 @@ public class BattlePhaseManager : MonoBehaviour
                         unitsSelected.GetComponent<Monster>().ActivateEffects(1);
                         yield return new WaitUntil(() => unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect(1));
                     }
+                    
                     EffectManager.instance.ActivateEffectWhenUnitDie();
                     break;
             }
@@ -292,8 +307,50 @@ public class BattlePhaseManager : MonoBehaviour
             isAttacking = false;
             ClearUnits();
         }
-
         
+        void ShowAllUnitsExtension(GameObject unitMore)
+        {
+            motherUnitTiles = unitMore.GetComponent<Monster>().p_id;
+            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
+            previsualisationUnitMore = new List<Transform>(unitMore.GetComponent<Monster>().GetCenters().Count);
+            sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
+            
+            for (int i = 0; i < sizeListCentersEnnemi; i++)
+            {
+                ShowUnitExtension(unitMore);
+            }
+        }
+        
+        void ShowUnitExtension(GameObject allieUnit)
+        {
+            for (int j = 0; j < allieUnit.GetComponent<Monster>().GetCenters().Count; j++)
+            {
+                for (int x = 0; x < deadUnitCenters.Count; x++)
+                {
+                    if (Vector3.Distance(deadUnitCenters[x].position,
+                        allieUnit.GetComponent<Monster>().GetCenters()[j].position).Equals(range))
+                    {
+                        deadUnitCenters[x].GetComponent<MeshRenderer>().material = PlacementManager.instance.p_listMaterial[9];
+                        previsualisationUnitMore.Add(deadUnitCenters[x]);
+                        deadUnitCenters.RemoveAt(x);
+                        return;
+                    }
+                }
+            }
+        }
+
+        IEnumerator AddAllExtension(GameObject unitMore, bool owner)
+        {
+            for (int i = 0; i < sizeListCentersEnnemi; i++)
+            {
+                AddExtension(unitMore, owner);
+                yield return new WaitUntil((() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1));
+                numberTileUnit = numberTileUnit + 1;
+            }
+
+            deadUnitCenters.Clear();
+        }
+
         
         void AddExtension(GameObject unitMore, bool owner)
         {
@@ -324,24 +381,8 @@ public class BattlePhaseManager : MonoBehaviour
                 }
             }
         }
-
-        IEnumerator AddAllExtension(GameObject unitMore, bool owner)
-        {
-            motherUnitTiles = unitMore.GetComponent<Monster>().p_id;
-            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
-
-            sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
-            
-            for (int i = 0; i < sizeListCentersEnnemi; i++)
-            {
-                AddExtension(unitMore, owner);
-                yield return new WaitUntil((() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1));
-                numberTileUnit = numberTileUnit + 1;
-            }
-
-            deadUnitCenters.Clear();
-        }
-
+        
+        
         public bool CheckInRange(GameObject unit, GameObject v)
         {
             bool unitCheck = false;

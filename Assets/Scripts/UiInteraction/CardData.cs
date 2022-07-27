@@ -126,7 +126,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
                     new Vector3(rec.localPosition.x, rec.localPosition.y + Input.GetTouch(0).deltaPosition.y,
                         rec.localPosition.z);
 
-                if (Input.GetTouch(0).deltaPosition.y > 2)
+                if (Input.GetTouch(0).deltaPosition.y > 1)
                 {
                     scrollRectParent.horizontal = false;
                 }

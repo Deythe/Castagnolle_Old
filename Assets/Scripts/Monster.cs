@@ -290,7 +290,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable && p_attacked)
                 {
-                    ms.material = PlacementManager.instance.p_listMaterial[6];
+                    ms.material = PlacementManager.instance.p_listMaterial[7];
                 }
                 else
                 {
@@ -301,7 +301,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable && p_attacked)
                 {
-                    ms.material.color = PlacementManager.instance.p_listMaterial[7].color;
+                    ms.material.color = PlacementManager.instance.p_listMaterial[8].color;
                 }
                 else
                 {
@@ -334,7 +334,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable && p_attacked)
                 {
-                    ms.material = PlacementManager.instance.p_listMaterial[4];
+                    ms.material = PlacementManager.instance.p_listMaterial[5];
                 }
                 else
                 {
@@ -345,7 +345,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             {
                 if (!isMovable && p_attacked)
                 {
-                    ms.material = PlacementManager.instance.p_listMaterial[5];
+                    ms.material = PlacementManager.instance.p_listMaterial[6];
                 }
                 else
                 {

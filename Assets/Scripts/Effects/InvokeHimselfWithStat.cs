@@ -22,7 +22,6 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
                 PlacementManager.instance.SetGOPrefabsMonster(GetComponent<Monster>().p_stats.GetComponent<CardData>().Prefabs);
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
-                
                 PlacementManager.instance.RemoveMonsterBoard(GetComponent<Monster>().p_id);
                 EffectManager.instance.CancelSelection(2);
                 UiManager.instance.p_textFeedBack.enabled = true;
@@ -36,7 +35,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
                 if (motherUnit != null)
                 {
                     view.RPC("RPC_Action", RpcTarget.All, GetComponent<Monster>().p_id,
-                        motherUnit.GetComponent<Monster>().p_atk);
+                        motherUnit.GetComponent<Monster>().p_atk, motherUnit.GetComponent<Monster>().p_isMovable);
                     
                     PhotonNetwork.Destroy(motherUnit);
                     GetComponent<Monster>().p_model.layer = 6;
@@ -60,9 +59,10 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     }
 
     [PunRPC]
-    private void RPC_Action(int id, int atk)
+    private void RPC_Action(int id, int atk, bool mov)
     { 
         PlacementManager.instance.SearchMobWithID(id).p_atk=atk;
+        PlacementManager.instance.SearchMobWithID(id).p_isMovable=mov;
     }
 
     public int GetPhaseActivation()
