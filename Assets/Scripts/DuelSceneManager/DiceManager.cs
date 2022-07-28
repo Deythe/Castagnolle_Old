@@ -275,8 +275,7 @@ public class DiceManager : MonoBehaviour
     {
         return diceDeck[random];
     }
-
-
+    
     [PunRPC]
     private void RPC_SynchGaugeDice(int id, bool b, int index)
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Photon.Pun;
 using UnityEngine;
 
@@ -14,10 +15,11 @@ public class BattlePhaseManager : MonoBehaviour
 
         private GameObject unitsSelected;
 
-        private List<Transform> deadUnitCenters;
-        private List<Transform> previsualisationUnitMore;
+        [SerializeField] private List<Vector3> deadUnitCenters = new List<Vector3>();
+        [SerializeField] private List<MeshRenderer> deadUnitMeshRenderers;
+        [SerializeField] private List<Vector3> previsualisationUnitMore = new List<Vector3>();
 
-        private GameObject unitTarget = null;
+        private GameObject  unitTarget = null;
         private GameObject unitFusion;
 
         private int motherUnitTiles;
@@ -27,7 +29,7 @@ public class BattlePhaseManager : MonoBehaviour
         private bool isAttacking;
         
         private int numberTileUnit;
-        private float sizeListCentersEnnemi;
+        private float sizeListCentersDeadUnit;
         
         private int targetUnitAttack;
         private bool isWaiting;
@@ -167,20 +169,22 @@ public class BattlePhaseManager : MonoBehaviour
         {
             targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
             result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
-
+            
             switch (result)
             {
                 case >0:
-                    deadUnitCenters = unitTarget.GetComponent<Monster>().GetCenters();
+                    TransformToVector3(unitTarget.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = new List<MeshRenderer>(unitTarget.GetComponent<Monster>().GetMeshRenderers());
                     ShowAllUnitsExtension(unitsSelected);
                     break;
                 case <0 :
-                    deadUnitCenters = unitsSelected.GetComponent<Monster>().GetCenters();
-                    ShowUnitExtension(unitTarget);
+                    TransformToVector3(unitsSelected.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = new List<MeshRenderer>(unitsSelected.GetComponent<Monster>().GetMeshRenderers());
+                    ShowAllUnitsExtension(unitTarget);
                     break;
             }
         }
-        
+
         public void Attack()
         {
             StartCoroutine(CoroutineAttack());
@@ -198,6 +202,7 @@ public class BattlePhaseManager : MonoBehaviour
             EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
                 1f,
                 PlacementManager.instance.AverageCenterZ(unitTarget)-PlayerSetup.instance.transform.forward.z, 3f);
+            
             SoundManager.instance.PlaySFXSound(7, 0.07f);
             yield return new WaitForSeconds(0.5f);
             
@@ -224,7 +229,6 @@ public class BattlePhaseManager : MonoBehaviour
             }
         }
         
-
         IEnumerator CoroutineAttackPlayer()
         {
             unitsSelected.GetComponent<Monster>().p_attacked = true;
@@ -243,7 +247,6 @@ public class BattlePhaseManager : MonoBehaviour
             LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
             CancelSelection();
         }
-        
 
         IEnumerator CoroutineAttackNormalUnit()
         {
@@ -256,7 +259,8 @@ public class BattlePhaseManager : MonoBehaviour
                     break;
 
                 case >0:
-                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
+                    TransformToVector3(unitTarget.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
@@ -269,12 +273,10 @@ public class BattlePhaseManager : MonoBehaviour
                     break;
 
                 case <0:
+                    TransformToVector3(unitsSelected.GetComponent<Monster>().GetCenters(), deadUnitCenters);
                     LifeManager.instance.TakeDamageHimself();
-                    deadUnitCenters = new List<Transform> (unitTarget.GetComponent<Monster>().GetCenters());
-
-
+                    
                     StartCoroutine(AddAllExtension(unitTarget, false));
-
                     break;
             }
             
@@ -311,26 +313,29 @@ public class BattlePhaseManager : MonoBehaviour
         void ShowAllUnitsExtension(GameObject unitMore)
         {
             motherUnitTiles = unitMore.GetComponent<Monster>().p_id;
-            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
-            previsualisationUnitMore = new List<Transform>(unitMore.GetComponent<Monster>().GetCenters().Count);
-            sizeListCentersEnnemi = Mathf.Ceil(deadUnitCenters.Count / 2f);
+            TransformToVector3(unitMore.GetComponent<Monster>().GetCenters(), previsualisationUnitMore);
             
-            for (int i = 0; i < sizeListCentersEnnemi; i++)
+            sizeListCentersDeadUnit = Mathf.Ceil(deadUnitCenters.Count / 2f);
+
+            for (int i = 0; i < sizeListCentersDeadUnit; i++)
             {
-                ShowUnitExtension(unitMore);
+                ShowUnitExtension();
             }
+            
+            previsualisationUnitMore.Clear();
         }
         
-        void ShowUnitExtension(GameObject allieUnit)
+        void ShowUnitExtension()
         {
-            for (int j = 0; j < allieUnit.GetComponent<Monster>().GetCenters().Count; j++)
+            for (int j = 0; j < previsualisationUnitMore.Count; j++)
             {
                 for (int x = 0; x < deadUnitCenters.Count; x++)
                 {
-                    if (Vector3.Distance(deadUnitCenters[x].position,
-                        allieUnit.GetComponent<Monster>().GetCenters()[j].position).Equals(range))
+                    if (Vector3.Distance(deadUnitCenters[x],
+                        previsualisationUnitMore[j]).Equals(range))
                     {
-                        deadUnitCenters[x].GetComponent<MeshRenderer>().material = PlacementManager.instance.p_listMaterial[9];
+                        ChangeColorShowUnit(x);
+
                         previsualisationUnitMore.Add(deadUnitCenters[x]);
                         deadUnitCenters.RemoveAt(x);
                         return;
@@ -339,13 +344,21 @@ public class BattlePhaseManager : MonoBehaviour
             }
         }
 
+        void ChangeColorShowUnit(int x)
+        {
+            deadUnitMeshRenderers[x].material.DOColor(Color.red, 1).OnComplete(() =>
+                deadUnitMeshRenderers[x].material.DOColor(Color.green, 1).OnComplete(()=>ChangeColorShowUnit(x)));
+        }
+
         IEnumerator AddAllExtension(GameObject unitMore, bool owner)
         {
-            for (int i = 0; i < sizeListCentersEnnemi; i++)
+            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
+            
+            for (int i = 0; i < sizeListCentersDeadUnit; i++)
             {
                 AddExtension(unitMore, owner);
-                yield return new WaitUntil((() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1));
-                numberTileUnit = numberTileUnit + 1;
+                yield return new WaitUntil(() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1);
+                numberTileUnit ++;
             }
 
             deadUnitCenters.Clear();
@@ -358,24 +371,23 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 for (int x = 0; x < deadUnitCenters.Count; x++)
                 {
-                    if (Vector3.Distance(deadUnitCenters[x].position,
+                    if (Vector3.Distance(deadUnitCenters[x],
                         unitMore.GetComponent<Monster>().GetCenters()[j].position).Equals(range))
                     {
                         if (owner)
                         {
-                            unitFusion = PhotonNetwork.Instantiate("Tile", deadUnitCenters[x].position,
+                            unitFusion = PhotonNetwork.Instantiate("Tile", deadUnitCenters[x],
                                 PlayerSetup.instance.transform.rotation, 0);
                             playerView.RPC("RPC_SyncTiles", RpcTarget.AllViaServer, unitFusion.GetComponent<PhotonView>().ViewID, motherUnitTiles);
                         }
                         else
                         {
                             playerView.RPC("RPC_InstantiateEnemyTiles", RpcTarget.Others,
-                                motherUnitTiles, deadUnitCenters[x].position.x,
-                                deadUnitCenters[x].position.z);
+                                motherUnitTiles, deadUnitCenters[x].x,
+                                deadUnitCenters[x].z);
                         }
                         
                         deadUnitCenters.RemoveAt(x);
-
                         return;
                     }
                 }
@@ -452,6 +464,10 @@ public class BattlePhaseManager : MonoBehaviour
 
         public void CancelSelection()
         {
+            for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+            {
+                deadUnitMeshRenderers[i].material.DOKill(false);
+            }
             ClearUnits();
             isAttacking = false;
             RoundManager.instance.StateRound =3;
@@ -472,6 +488,15 @@ public class BattlePhaseManager : MonoBehaviour
             }
 
             targetUnitAttack = 0;
+        }
+        
+        void TransformToVector3(List<Transform> transf, List<Vector3> vect)
+        {
+            vect.Clear();
+            for (int i = 0; i < transf.Count; i++)
+            {
+               vect.Add(transf[i].position);
+            }
         }
         
 
