@@ -9,12 +9,13 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     public static GameObject motherUnit;
     
     [SerializeField] private PhotonView view;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (phase == usingPhase)
+        if (usingPhases[0].Equals(phase))
         {
             if (view.AmOwner)
             {
@@ -23,7 +24,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
                 PlacementManager.instance.RemoveMonsterBoard(GetComponent<Monster>().p_id);
-                EffectManager.instance.CancelSelection(2);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
                 UiManager.instance.p_textFeedBack.enabled = true;
                 UiManager.instance.SetTextFeedBack(0);
                 gameObject.SetActive(false);
@@ -65,9 +66,14 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         PlacementManager.instance.SearchMobWithID(id).p_isMovable=mov;
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

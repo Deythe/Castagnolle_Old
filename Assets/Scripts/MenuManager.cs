@@ -192,6 +192,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
         SoundManager.instance.PlaySFXSound(0, 0.07f);
         SceneManager.LoadScene(4);
     }
+    
+    public void GoToDeckBuilding()
+    {
+        SoundManager.instance.PlaySFXSound(0, 0.07f);
+        SceneManager.LoadScene(3);
+    }
 
     public void CancelTuto()
     {

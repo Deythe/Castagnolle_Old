@@ -80,7 +80,8 @@ public class UiManager : MonoBehaviour
 
     private Color allyColor = new Color(0.058f,0.57f,0.66f, 1);
     private Color ennemyColor = new Color(0.84f,0.25f,0.15f,0.5f);
-    
+
+    private Coroutine currentCoroutine;
     private List<int> pivotResources;
     private bool settingsOnOff;
     private bool viewTacticsOn;
@@ -111,6 +112,7 @@ public class UiManager : MonoBehaviour
     {
         get => borderStatus;
     }
+    
     public GameObject p_instanceEnemyPointer
     {
         get => instanceEnemyPointer;
@@ -215,6 +217,39 @@ public class UiManager : MonoBehaviour
         
         DisableSomeHp();
     }
+    void Update()
+    {
+        if (RoundManager.instance != null)
+        {
+            CheckRaycast();
+            UpdateFPS();
+        }
+    }
+
+    void CheckRaycast()
+        {
+            if (RoundManager.instance.p_roundState!= RoundManager.enumRoundState.DragUnitPhase)
+            {
+                if (Input.touchCount > 0)
+                {
+                    switch (Input.GetTouch(0).phase)
+                    {
+                        case TouchPhase.Began:
+                            Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                            if(hit.collider != null && (hit.collider.GetComponent<Monster>() != null || hit.collider.GetComponent<UnitExtension>() != null))
+                            {
+                                StopCoroutine(CoroutineShowingcard(hit.collider));
+                                currentCoroutine = StartCoroutine(CoroutineShowingcard(hit.collider));
+                            }
+                            break;
+                        case TouchPhase.Ended:
+                            StopCoroutine(currentCoroutine);
+                            ShowingOffBigCard();
+                            break;
+                    }
+                }
+            }
+        }
 
     private void DisableSomeHp()
     {
@@ -240,47 +275,7 @@ public class UiManager : MonoBehaviour
         
         instanceEnemyPointer = Instantiate(prefabEnemyPointer,Vector3.zero, Quaternion.Euler(45,PlayerSetup.instance.transform.rotation.eulerAngles.y,0));
     }
-
-    void Update()
-    {
-        if (RoundManager.instance != null)
-        {
-            CheckRaycast();
-            EnableDisableThrowDiceButton();
-            EnableDisableScrollView();
-            EnableDisableEndTurn();
-            EnableDisableBattleButton();
-            EnableDisableMenuYesChoice();
-            EnableDisableMenuNoChoice();
-            UpdateFPS();
-        }
-    }
     
-    void CheckRaycast()
-        {
-            if (RoundManager.instance.StateRound!=2)
-            {
-                if (Input.touchCount > 0)
-                {
-                    switch (Input.GetTouch(0).phase)
-                    {
-                        case TouchPhase.Began:
-                            Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
-                            if(hit.collider != null && (hit.collider.GetComponent<Monster>() != null || hit.collider.GetComponent<UnitExtension>() != null))
-                            {
-                                StopCoroutine(CoroutineShowingcard(hit.collider));
-                                StartCoroutine(CoroutineShowingcard(hit.collider));
-                            }
-                            break;
-                        case TouchPhase.Ended:
-                            StopCoroutine(CoroutineShowingcard(hit.collider));
-                            ShowingOffBigCard();
-                            break;
-                    }
-                }
-            }
-        }
-
     public void SetTextFeedBack(int i)
     {
         textFeedBack.sprite = textFeedbacksList[i];
@@ -444,10 +439,9 @@ public class UiManager : MonoBehaviour
         }
     }
 
-    void EnableDisableThrowDiceButton()
+    void EnableDisableThrowDiceButton(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==0)
+        if (b)
         {
             uiPlayerTurn.SetActive(true);
         }
@@ -457,10 +451,9 @@ public class UiManager : MonoBehaviour
         }
     }
     
-    void EnableDisableScrollView()
+    public void EnableDisableScrollView(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1 )
+        if (b)
         {
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
         }
@@ -470,10 +463,9 @@ public class UiManager : MonoBehaviour
         }
     }
     
-    void EnableDisableMenuYesChoice()
+    public void EnableDisableMenuYesChoice(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && ((RoundManager.instance.StateRound==4 && BattlePhaseManager.instance.IsAttacking) || RoundManager.instance.StateRound==5))
+        if(b)
         {
             menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.3f, 0.5f).SetEase(Ease.Linear);
         }
@@ -483,11 +475,9 @@ public class UiManager : MonoBehaviour
         }
     }
     
-    void EnableDisableMenuNoChoice()
+    public void EnableDisableMenuNoChoice(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && (RoundManager.instance.StateRound==4 || RoundManager.instance.StateRound==5 || RoundManager.instance.StateRound==6 || RoundManager.instance.StateRound==7))
-        {
+        if(b){
             menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.3f, 0.5f).SetEase(Ease.Linear);
         }
         else
@@ -496,10 +486,9 @@ public class UiManager : MonoBehaviour
             menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.5f).SetEase(Ease.Linear);
         }
     }
-    void EnableDisableBattleButton()
+    public void EnableDisableBattleButton(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==1)
+        if (b)
         {
             menuBattlePhase.SetActive(true);
         }
@@ -508,10 +497,9 @@ public class UiManager : MonoBehaviour
             menuBattlePhase.SetActive(false);
         }
     }
-    void EnableDisableEndTurn()
+    void EnableDisableEndTurn(bool b)
     {
-        if (RoundManager.instance.p_localPlayerTurn ==
-            RoundManager.instance.CurrentPlayerNumberTurn && RoundManager.instance.StateRound==3)
+        if (b)
         {
             endTurn.SetActive(true);
         }

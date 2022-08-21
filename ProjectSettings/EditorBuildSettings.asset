@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/DuelScene2.0.unity
     guid: f8612f0c2dd0fff4eb670a74342820e0
   - enabled: 1
-    path: Assets/Scenes/DecksScene.unity
+    path: Assets/Scenes/DeckBuildingScene.unity
     guid: fe132b58c28154544b8ad961bcc3d8ed
   - enabled: 1
     path: Assets/Scenes/TutoScene.unity

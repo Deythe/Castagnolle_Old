@@ -6,26 +6,27 @@ using UnityEngine;
 public class StrengthWithHeroism : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     [SerializeField] private List<GameObject> mobNextTo;
     [SerializeField] private int heroism;
     private bool used;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
         if (view.AmOwner)
         {
-            if (phase==usingPhase)
+            if (usingPhases[0].Equals(0))
             {
                 if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
                 {
                     view.RPC("RPC_Action", RpcTarget.AllViaServer);
                     used = true;
-                    EffectManager.instance.CancelSelection(1);
+                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
                 } else
                 {
-                    EffectManager.instance.CancelSelection(1);
+                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
                     UiManager.instance.ShowTextFeedBackWithDelay(3);
                 }
                 
@@ -40,10 +41,16 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
         GetComponent<Monster>().p_atk+=2;
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
     }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
+    }
+
 
     public bool GetUsed()
     {

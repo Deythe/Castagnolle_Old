@@ -3,39 +3,35 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class AddAtkForNextDead : MonoBehaviour, IEffects
+public class AttackXTime : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
     [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private int numberAttack;
+    private int currentAttack;
     private bool used;
-    
+
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (usingPhases[0]==phase)
+        if (usingPhases[0].Equals(phase))
         {
-            switch (BattlePhaseManager.instance.Result)
+            if (view.AmOwner)
             {
-                case 0:
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                        2);
-                    break;
-                case <0:
-                case >0:
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                        1);
-                    break;
+                if (currentAttack < numberAttack)
+                {
+                    transform.GetComponent<Monster>().p_attacked = false;
+                }
+                else
+                {
+                    used = true;
+                    GetComponent<Monster>().p_model.layer = 6;
+                }
             }
         }
     }
     
-    [PunRPC]
-    private void RPC_Action(int number)
-    {
-        GetComponent<Monster>().p_atk+=number;
-    }
-
-    public List<EffectManager.enumEffectPhaseActivation> GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhases;
     }

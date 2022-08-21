@@ -12,14 +12,16 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     
     [SerializeField] private PhotonView view;
     [SerializeField] private bool used;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private int numberUnitCurrent;
-    private int usingPhase = 0;
     private int[] pivotRessourceList;
     private int pivot;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (usingPhase == phase)
+        if (usingPhases[0].Equals(phase))
         {
             if (view.AmOwner)
             {
@@ -68,9 +70,9 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CancelSelection(1);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
             }
-        }else if (phase == 2)
+        }else if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
         {
             if (view.AmOwner)
             {
@@ -165,50 +167,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             }
         }
     }
-
-    private void OnDestroy()
-    {/*
-        if (view.AmOwner)
-        {
-            if (gameObject.Equals(motherUnit))
-            {
-                //Debug.Log("WasMotherUnit");
-                if (unitOnBoard.Count > 1)
-                {
-                    //Debug.Log("New Mother UNit");
-                    motherUnit = unitOnBoard[1];
-                    degatMore--;
-                }
-                else
-                {
-                    degatMore = 0;
-                    motherUnit = null;
-                    ResetUnit();
-                    return;
-                }
-            }
-            
-            //Debug.Log("Destroy");
-            foreach (var card in DeckManager.instance.CardDeck)
-            {
-                if (card != null)
-                {
-                    if (originalCard.ContainsKey(card.GetComponent<CardData>().Prefabs))
-                    {
-                        if (!originalCard[card.GetComponent<CardData>().Prefabs].Length
-                            .Equals(card.GetComponent<CardData>().Ressources.Count))
-                        {
-                            card.GetComponent<CardData>().Ressources
-                                .Add(originalCard[card.GetComponent<CardData>().Prefabs][
-                                    card.GetComponent<CardData>().Ressources.Count]);
-                        }
-                    }
-                }
-            }
-
-            unitOnBoard.Remove(gameObject);
-        }*/
-    }
+    
 
     [PunRPC]
     private void RPC_Action(int id, int atk)
@@ -217,10 +176,16 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     }
     
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
     }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
+    }
+
 
     public bool GetUsed()
     {

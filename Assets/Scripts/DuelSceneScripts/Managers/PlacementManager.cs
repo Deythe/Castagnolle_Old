@@ -39,7 +39,7 @@ public class PlacementManager : MonoBehaviour
         get => listMaterial;
     }
 
-    public bool IsWaiting
+    public bool p_isWaiting
     {
         get => isWaiting;
     }
@@ -80,7 +80,7 @@ public class PlacementManager : MonoBehaviour
     {
         if (RoundManager.instance != null)
         {
-            ShowMonsterEmplacement();
+            DragMonsterEmplacement();
         }
     }
 
@@ -92,7 +92,7 @@ public class PlacementManager : MonoBehaviour
         isPlacing = true;
     }
     
-    public void ReInitMonster()
+    public void ReInitMonsters()
     {
         foreach (var card in board)
         {
@@ -111,9 +111,9 @@ public class PlacementManager : MonoBehaviour
         }
     }
 
-    void ShowMonsterEmplacement()
+    void DragMonsterEmplacement()
     {
-        if (RoundManager.instance.StateRound == 2)
+        if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.DragUnitPhase)
         {
             if (Input.touchCount > 0)
             {
@@ -192,9 +192,9 @@ public class PlacementManager : MonoBehaviour
         Destroy(currentUnit);
         currentUnit = null;
 
-        if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisTurn(0))
+        if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisPhase(0))
         {
-            RoundManager.instance.StateRound = 1;
+            RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
         }
         
         currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0);
@@ -241,7 +241,7 @@ public class PlacementManager : MonoBehaviour
     public void CancelSelection()
     {
         ReInitPlacement();
-        RoundManager.instance.StateRound =1 ;
+        RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase ;
     }
 
     public void ReInitPlacement()
@@ -348,7 +348,6 @@ public class PlacementManager : MonoBehaviour
         board.Add(data);
         if (obj.GetComponent<Monster>().p_isChampion && obj.GetComponent<PhotonView>().AmOwner)
         {
-            Debug.Log("HAve a Champion");
             haveAChampionOnBoard = true;
         }
     }
@@ -362,7 +361,6 @@ public class PlacementManager : MonoBehaviour
                 if (board[i].monster.GetComponent<Monster>().p_isChampion &&
                     board[i].monster.GetComponent<PhotonView>().AmOwner)
                 {
-                    Debug.Log("Not Have A Champion");
                     haveAChampionOnBoard = false;
                 }
                 

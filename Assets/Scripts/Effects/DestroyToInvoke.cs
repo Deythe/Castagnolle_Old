@@ -7,24 +7,27 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
 {
     [SerializeField] private GameObject prefabs;
     [SerializeField] private PhotonView view;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private bool used;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == 3)
             {
-                RoundManager.instance.StateRound = 7;
+                RoundManager.instance.p_roundState = 7;
                 EffectManager.instance.CurrentUnit = gameObject;
             }
             else if (phase == 7)
             {
-                if (!EffectManager.instance.AllieUnit.Equals(gameObject))
+                if (!EffectManager.instance.p_unitTarget1.Equals(gameObject))
                 {
-                    PhotonNetwork.Destroy(EffectManager.instance.AllieUnit);
+                    PhotonNetwork.Destroy(EffectManager.instance.p_unitTarget1);
                     PlacementManager.instance.SpecialInvocation = true;
                     PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
                     UiManager.instance.ShowingOffBigCard();
@@ -37,16 +40,21 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
                 }
                 else
                 {
-                    RoundManager.instance.StateRound = 7;
+                    RoundManager.instance.p_roundState = 7;
                     EffectManager.instance.CurrentUnit = gameObject;
                 }
             }
-        }
+        }*/
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

@@ -9,14 +9,14 @@ public class DiceManager : MonoBehaviour
     public static DiceManager instance;
     [SerializeField] private PhotonView view;
     
-    [SerializeField] private List<DiceScriptable> diceDeck = new List<DiceScriptable>();
     [SerializeField] private DiceListScriptable diceListDeck;
     
+    [SerializeField] private List<DiceScriptable> diceDeck = new List<DiceScriptable>();
+    [SerializeField] private DiceScriptable[] dicesNotDisponible = new DiceScriptable[6];
+
     [SerializeField] private GameObject[] diceObjet = new GameObject[3];
     [SerializeField] private GameObject[] diceGaugeObjet = new GameObject[3];
-
-    [SerializeField] private DiceScriptable[] dicesNotDisponible = new DiceScriptable[6];
-        
+    
     [SerializeField] private int[] diceChoosen = new int[3];
     [SerializeField] private int[] diceGauge = new int[3];
 
@@ -118,7 +118,7 @@ public class DiceManager : MonoBehaviour
         }
         
         DeckManager.instance.CheckUnitWithRessources();
-        RoundManager.instance.StateRound = 1;
+        RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
     }
     
     public bool CheckPositionDiceGauge(GameObject diceTarget)
@@ -164,6 +164,7 @@ public class DiceManager : MonoBehaviour
                 
                 view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[index].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
                 diceGauge[index] = diceChoosen[i];
+                diceDeck.Add(dicesNotDisponible[diceGauge.Length + index]);
                 dicesNotDisponible[diceGauge.Length + index] = dicesNotDisponible[i];
                 dicesNotDisponible[i] = null;
                 diceChoosen[i] = 0;

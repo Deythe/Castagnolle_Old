@@ -761,7 +761,7 @@ MonoBehaviour:
   enabled: 0
   bigCard: {fileID: 21300000, guid: 6d223ee3fa47b704a95d21e19ed8da54, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: 1f3796858314cf34aa318a5acec9ea07, type: 3}
-  atk: 3
+  atk: 2
   resources: 02000000
   isChampion: 0
   lifeCard: {fileID: 6955208013640325506}

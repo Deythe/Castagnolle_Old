@@ -7,19 +7,20 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject cardInstance;
-    [SerializeField] private int usingPhase = 0;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (phase == usingPhase)
+        if (usingPhase[0].Equals(phase))
         {
             if (view.AmOwner)
             {
                 PlacementManager.instance.SpecialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().Prefabs);
                 UiManager.instance.ShowingOffBigCard();
-                EffectManager.instance.CancelSelection(2);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DragUnitPhase);
                 UiManager.instance.p_textFeedBack.enabled = true;
                 UiManager.instance.SetTextFeedBack(0);
                 UiManager.instance.EnableBorderStatus(68,168,254);
@@ -28,9 +29,14 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
         }
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

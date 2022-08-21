@@ -1,14 +1,18 @@
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
 public class DiceForAtk : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private bool used;
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == usingPhase)
@@ -81,11 +85,16 @@ public class DiceForAtk : MonoBehaviour, IEffects
                 UiManager.instance.ShowTextFeedBackWithDelay(3);
                 GetComponent<Monster>().p_model.layer = 6;
             }
-        }
+        }*/
     }
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

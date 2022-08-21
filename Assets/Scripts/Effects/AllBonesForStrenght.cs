@@ -6,16 +6,17 @@ using UnityEngine;
 public class AllBonesForStrenght : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    private int check;
-    private int usingPhase = 0;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
+    private int check;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
         if (view.AmOwner)
         {
-            if (phase == usingPhase)
+            if (usingPhases[0].Equals(phase))
             {
                 check = 0;
                 
@@ -34,7 +35,7 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
                 check = 0; 
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CancelSelection(1);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
                 GetComponent<Monster>().p_model.layer = 6;
                 used = true;
             }
@@ -47,9 +48,14 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
         GetComponent<Monster>().p_atk+=(2*checks);
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

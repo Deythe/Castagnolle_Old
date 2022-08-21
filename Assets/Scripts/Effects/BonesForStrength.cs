@@ -7,19 +7,21 @@ public class BonesForStrength : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject targetUnit;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == 3)
             {
                 if (HaveABoneInGauge())
                 {
-                    RoundManager.instance.StateRound = 7;
+                    RoundManager.instance.p_roundState = 7;
                     EffectManager.instance.CurrentUnit = gameObject;
                 }
                 else
@@ -31,10 +33,10 @@ public class BonesForStrength : MonoBehaviour, IEffects
             else if (phase == 7)
             {
                 Debug.Log("CACA");
-                targetUnit = EffectManager.instance.AllieUnit;
+                targetUnit = EffectManager.instance.p_unitTarget1;
 
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                    EffectManager.instance.AllieUnit.GetComponent<Monster>().p_id);
+                    EffectManager.instance.p_unitTarget1.GetComponent<Monster>().p_id);
 
                 for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                 {
@@ -52,6 +54,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
                 }
             }
         }
+        */
     }
 
     public bool HaveABoneInGauge()
@@ -74,9 +77,14 @@ public class BonesForStrength : MonoBehaviour, IEffects
         PlacementManager.instance.SearchMobWithID(unitID).p_atk+=3;
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

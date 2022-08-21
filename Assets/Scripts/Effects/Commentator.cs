@@ -6,14 +6,16 @@ using UnityEngine;
 public class Commentator : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private int usingPhase = 0;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private bool used;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
         if (view.AmOwner)
         {
-            if (phase == usingPhase)
+            if (usingPhase[0].Equals(phase))
             {
                 foreach (var unit in PlacementManager.instance.GetBoard())
                 {
@@ -23,7 +25,7 @@ public class Commentator : MonoBehaviour, IEffects
                     }
                 }
                 
-                EffectManager.instance.CancelSelection(1);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
                 GetComponent<Monster>().p_model.layer = 6;
                 used = true;
             }
@@ -52,10 +54,16 @@ public class Commentator : MonoBehaviour, IEffects
     }
 
     
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
     }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
+    }
+
 
     public bool GetUsed()
     {

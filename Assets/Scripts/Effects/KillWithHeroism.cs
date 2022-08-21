@@ -8,7 +8,8 @@ public class KillWithHeroism : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject targetUnit;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     [SerializeField] private List<GameObject> mobNextTo;
     [SerializeField] private int heroism;
     private bool used;
@@ -18,15 +19,16 @@ public class KillWithHeroism : MonoBehaviour, IEffects
         mobNextTo = new List<GameObject>();
     }
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == usingPhase)
             {
                 if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
                 {
-                    RoundManager.instance.StateRound = 6;
+                    RoundManager.instance.p_roundState = 6;
                     EffectManager.instance.CurrentUnit = gameObject;
                 }
                 else
@@ -40,13 +42,13 @@ public class KillWithHeroism : MonoBehaviour, IEffects
             else if (phase == 6)
             {
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                    EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
+                    EffectManager.instance.p_unitTarget2.GetComponent<PhotonView>().ViewID);
 
                 used = true;
                 GetComponent<Monster>().p_model.layer = 6;
                 EffectManager.instance.CancelSelection(1);
             }
-        }
+        }*/
     }
 
     [PunRPC]
@@ -55,9 +57,14 @@ public class KillWithHeroism : MonoBehaviour, IEffects
         PlacementManager.instance.SearchMobWithID(idTarget).p_atk-= PlacementManager.instance.SearchMobWithID(idTarget).p_atk;
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

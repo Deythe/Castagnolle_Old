@@ -15,7 +15,7 @@ public class Gauge : MonoBehaviour
     {
         if (Input.touchCount > 0)
         {
-            if (RoundManager.instance.StateRound != 2)
+            if (RoundManager.instance.p_roundState != RoundManager.enumRoundState.DragUnitPhase)
             {
                 ray = PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position);
                 Physics.Raycast(ray, out hit);

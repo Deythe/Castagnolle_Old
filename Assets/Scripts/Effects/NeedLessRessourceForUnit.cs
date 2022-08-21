@@ -13,16 +13,16 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     
     [SerializeField] private PhotonView view;
     [SerializeField] private bool used;
-    
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private int numberUnitCurrent;
-    [SerializeField] private int usingPhase = 0;
-    
     private int[] pivotRessourceList;
     private int pivot;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (usingPhase == phase)
+        if (usingPhase[0].Equals(phase))
         {
             if (view.AmOwner)
             {
@@ -53,7 +53,7 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CancelSelection(1);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
             }
         }
     }
@@ -137,10 +137,16 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
         }
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
     }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
+    }
+
 
     public bool GetUsed()
     {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
@@ -5,11 +6,13 @@ public class BonesInGauge : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private Texture2D bones;
-    [SerializeField] private int usingPhase = 2;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
     
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == usingPhase)
@@ -34,12 +37,17 @@ public class BonesInGauge : MonoBehaviour, IEffects
                     }
                 }
             }
-        }
+        }*/
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,9 +17,11 @@ public class Evolve : MonoBehaviour, IEffects
     [SerializeField] private GameObject unit1;
     [SerializeField] private GameObject unit2;
     
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    
     private RectTransform cardListEvolve;
     private GameObject unitPivot;
-    [SerializeField] private int usingPhase = 1;
     private bool used;
     private int kill = 0;
 
@@ -28,8 +31,9 @@ public class Evolve : MonoBehaviour, IEffects
     }
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (usingPhase == phase)
@@ -61,7 +65,7 @@ public class Evolve : MonoBehaviour, IEffects
                         }
                     }
                     
-                    RoundManager.instance.StateRound = 8;
+                    RoundManager.instance.p_roundState = 8;
                 }
                 else
                 {
@@ -76,7 +80,7 @@ public class Evolve : MonoBehaviour, IEffects
                     cardListEvolve.GetChild(i).gameObject.SetActive(false);
                 }
                 
-                PhotonNetwork.Instantiate(EffectManager.instance.AllieUnit.name, transform.position,
+                PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
                     transform.rotation, 0);
                 
                 EffectManager.instance.CancelSelection(1);
@@ -85,12 +89,17 @@ public class Evolve : MonoBehaviour, IEffects
                 GetComponent<Monster>().p_isChampion = false;
                 PhotonNetwork.Destroy(gameObject);
             }
-        }
+        }*/
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
         return usingPhase;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

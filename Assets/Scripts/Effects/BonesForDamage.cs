@@ -5,28 +5,31 @@ using UnityEngine;
 
 public class BonesForDamage : MonoBehaviour, IEffects
 {
+    
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject targetUnit;
-    [SerializeField] private int usingPhase = 3;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
     private bool used;
     private int dmg=0;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (HaveABoneInGauge())
             {
                 if (phase == 3)
                 {
-                    RoundManager.instance.StateRound = 6;
+                    RoundManager.instance.p_roundState = 6;
                     EffectManager.instance.CurrentUnit = gameObject;
                 }
                 else if (phase == 6)
                 {
                     dmg = 0;
-                    targetUnit = EffectManager.instance.TargetUnit;
+                    targetUnit = EffectManager.instance.p_unitTarget2;
                     
                     for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
                     {
@@ -54,7 +57,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
                 UiManager.instance.ShowTextFeedBackWithDelay(3);
                 GetComponent<Monster>().p_model.layer = 6;
             }
-        }
+        }*/
     }
 
 
@@ -78,9 +81,14 @@ public class BonesForDamage : MonoBehaviour, IEffects
         return false;
     }
     
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
+    }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
     }
 
     public bool GetUsed()

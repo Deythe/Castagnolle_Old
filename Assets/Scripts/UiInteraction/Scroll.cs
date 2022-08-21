@@ -24,7 +24,7 @@ public class Scroll : MonoBehaviour, IPointerExitHandler
                 PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
                 PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
                 UiManager.instance.ShowingOffBigCard();
-                RoundManager.instance.StateRound = 2;
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.DragUnitPhase;
                 UiManager.instance.Card.GetComponent<CardData>().ReInit();
                 UiManager.instance.Card = null;
             }

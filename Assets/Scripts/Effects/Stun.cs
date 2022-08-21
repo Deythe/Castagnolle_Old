@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
@@ -5,22 +6,25 @@ public class Stun : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private GameObject targetUnit;
-    [SerializeField] private int usingPhase = 0;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+
     private bool used;
 
 
-    public void OnCast(int phase)
+    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
+        /*
         if (view.AmOwner)
         {
             if (phase == usingPhase)
             {
-                RoundManager.instance.StateRound = 6;
+                RoundManager.instance.p_roundState = 6;
                 EffectManager.instance.CurrentUnit = gameObject;
             }
             else if (phase == 6)
             {
-                view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.TargetUnit.GetComponent<PhotonView>().ViewID);
+                view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.p_unitTarget2.GetComponent<PhotonView>().ViewID);
                 used = true;
                 EffectManager.instance.CancelSelection(1);
                 GetComponent<Monster>().p_model.layer = 6;
@@ -30,8 +34,9 @@ public class Stun : MonoBehaviour, IEffects
         if (phase == 2)
         {
             targetUnit.GetComponent<Monster>().p_isMovable = true;
+          
             targetUnit.GetComponent<Monster>().p_attacked = false;
-        }
+        }*/
     }
     
     [PunRPC]
@@ -42,10 +47,16 @@ public class Stun : MonoBehaviour, IEffects
         targetUnit.GetComponent<Monster>().p_attacked = true;
     }
 
-    public int GetPhaseActivation()
+    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
     {
-        return usingPhase;
+        return usingPhases;
     }
+
+    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    {
+        return conditions;
+    }
+
 
     public bool GetUsed()
     {
