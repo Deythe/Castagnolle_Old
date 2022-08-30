@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Create New Dice", fileName = "Dice")]
 public class DiceScriptable : ScriptableObject
 {
-    public int[] faces = new int[6];
+    public DiceListScriptable.enumRessources[] faces = new DiceListScriptable.enumRessources[6];
 }

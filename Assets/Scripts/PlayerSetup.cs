@@ -36,7 +36,7 @@ public class PlayerSetup : MonoBehaviour
         
         if (RoundManager.instance.p_localPlayerTurn.Equals(2))
         {
-            DiceManager.instance.Gauge[0] = 4;
+            DiceManager.instance.p_diceGauge[0] = DiceListScriptable.enumRessources.Neutral;
             DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
                 DiceManager.instance.DiceGaugeObjet[0].GetComponent<PhotonView>().ViewID, true, 4);
         }

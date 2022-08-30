@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,9 +7,9 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
     [SerializeField] private CardListScriptable cardListDeck;
     
-    [SerializeField] private int[] checks = new int[6];
+    [SerializeField] private DiceListScriptable.enumRessources[] checks = new DiceListScriptable.enumRessources[6];
     
-    private int[] ressources;
+    private DiceListScriptable.enumRessources[] ressources;
     private int check;
     public List<GameObject> CardDeck
     {
@@ -51,38 +50,38 @@ public class DeckManager : MonoBehaviour
         for (int i = 0; i < cardDeck.Count; i++)
         {
             InitCheck();
-            ressources = cardDeck[i].GetComponent<CardData>().Ressources.ToArray();
+            ressources = cardDeck[i].GetComponent<CardData>().p_ressources.ToArray();
             
             for (int j = 0; j < ressources.Length; j++)
             {
                 if (!ressources[j].Equals(4))
                 {
-                    if (ressources[j] == checks[0])
+                    if (ressources[j].Equals(checks[0]))
                     {
                         checks[0] = 0;
                         ressources[j] = 0;
                     }
-                    else if (ressources[j] == checks[1])
+                    else if (ressources[j].Equals(checks[1]))
                     {
                         checks[1] = 0;
                         ressources[j] = 0;
                     }
-                    else if (ressources[j] == checks[2])
+                    else if (ressources[j].Equals(checks[2]))
                     {
                         checks[2] = 0;
                         ressources[j] = 0;
                     }
-                    else if (ressources[j] == checks[3])
+                    else if (ressources[j].Equals(checks[3]))
                     {
                         checks[3] = 0;
                         ressources[j] = 0;
                     }
-                    else if (ressources[j] == checks[4])
+                    else if (ressources[j].Equals(checks[4]))
                     {
                         checks[4] = 0;
                         ressources[j] = 0;
                     }
-                    else if (ressources[j] == checks[5])
+                    else if (ressources[j].Equals(checks[5]))
                     {
                         checks[5] = 0;
                         ressources[j] = 0;
@@ -108,15 +107,15 @@ public class DeckManager : MonoBehaviour
 
     private void InitCheck()
     {
-        for (int j = 0; j < DiceManager.instance.DiceChoosen.Length+DiceManager.instance.Gauge.Length; j++)
+        for (int j = 0; j < DiceManager.instance.p_diceChoosen.Length+DiceManager.instance.p_diceGauge.Length; j++)
         {
-            if (j < DiceManager.instance.DiceChoosen.Length)
+            if (j < DiceManager.instance.p_diceChoosen.Length)
             {
-                checks[j] = DiceManager.instance.DiceChoosen[j];
+                checks[j] = DiceManager.instance.p_diceChoosen[j];
             }
             else
             {
-                checks[j] = DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length];
+                checks[j] = DiceManager.instance.p_diceGauge[j-DiceManager.instance.p_diceGauge.Length];
             }
         }
     }
@@ -134,7 +133,7 @@ public class DeckManager : MonoBehaviour
         }
     }
     
-    bool AllCheckValide(int[] list)
+    bool AllCheckValide(DiceListScriptable.enumRessources[] list)
     {
         for (int i = 0; i < list.Length; i++)
         {

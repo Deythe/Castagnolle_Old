@@ -340,7 +340,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171}
-  usingPhase: 0
+  usingPhase: 
+  conditions: 
 --- !u!1 &5826484469872378818
 GameObject:
   m_ObjectHideFlags: 0

@@ -96,9 +96,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
             switch (roundState)
             {
                 case enumRoundState.ThrowPhase:
-                    UiManager.instance.EnableDisableScrollView(false);
+                    UiManager.instance.EnableDisableBattleButton(false);
+                    UiManager.instance.EnableDisableEndTurn(false);
+                    UiManager.instance.EnableDisableThrowDiceButton(true);
                     break;
                 case enumRoundState.DrawPhase:
+                    UiManager.instance.EnableDisableThrowDiceButton(false);
+                    UiManager.instance.EnableDisableBattleButton(true);
                     UiManager.instance.EnableDisableScrollView(true);
                     UiManager.instance.DisableBorderStatus();
                     UiManager.instance.p_instanceEnemyPointer.SetActive(false);
@@ -106,8 +110,12 @@ public class RoundManager : MonoBehaviourPunCallbacks
                     break;
                 case enumRoundState.DragUnitPhase:
                     UiManager.instance.EnableDisableScrollView(false);
+                    UiManager.instance.EnableDisableBattleButton(false);
                     break;
                 case enumRoundState.CastagnePhase:
+                    UiManager.instance.EnableDisableEndTurn(true);
+                    UiManager.instance.EnableDisableBattleButton(false);
+                    UiManager.instance.EnableDisableScrollView(false);
                     UiManager.instance.DisableBorderStatus();
                     UiManager.instance.p_instanceEnemyPointer.SetActive(false);
                     UiManager.instance.p_textFeedBack.enabled = false;
@@ -120,6 +128,9 @@ public class RoundManager : MonoBehaviourPunCallbacks
                 case enumRoundState.WaitPhase :
                     UiManager.instance.EnableDisableMenuYesChoice(false);
                     UiManager.instance.EnableDisableMenuNoChoice(false);
+                    UiManager.instance.EnableDisableEndTurn(false);
+                    UiManager.instance.DisableBorderStatus();
+                    UiManager.instance.EnableDisableShader(false);
                     break;
             }
         }
@@ -149,7 +160,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
     void Start()
     {
         SoundManager.instance.StarGameMusic();
-        roundState = 0;
         SpawnNewPlayer();
     }
 
@@ -167,6 +177,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             playerInstance =
                 PhotonNetwork.Instantiate(playerPref.name, Vector3.zero, Quaternion.identity, 0);
             StopAllCoroutines();
+            p_roundState = 0;
             UiManager.instance.ChangeTimerColor(1);
             UiManager.instance.BannerItsYourTurnToPlay();
         }
@@ -199,9 +210,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => !PlacementManager.instance.p_isWaiting);
         
         PlacementManager.instance.ReInitPlacement();
-        UiManager.instance.DisableBorderStatus();
         UiManager.instance.p_instanceEnemyPointer.SetActive(false);
-        DiceManager.instance.DeleteAllResources(DiceManager.instance.DiceChoosen);
+        DiceManager.instance.DeleteAllResources(DiceManager.instance.p_diceChoosen);
         UiManager.instance.p_textFeedBack.enabled = false;
         PlacementManager.instance.ReInitMonsters();
         BattlePhaseManager.instance.ClearUnits();

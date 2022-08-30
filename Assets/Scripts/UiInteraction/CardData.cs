@@ -14,7 +14,8 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private Sprite bigCard;
     [SerializeField] private GameObject prefabs;
     [SerializeField] private int atk;
-    [SerializeField] private List<int> resources;
+    [SerializeField] private List<DiceListScriptable.enumRessources> resources;
+    
     [SerializeField] private bool isChampion;
     [SerializeField] private TMP_Text lifeCard;
     [SerializeField] private RectTransform resourceCard;
@@ -72,7 +73,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
         }
     }
     
-    public List<int> Ressources
+    public List<DiceListScriptable.enumRessources> p_ressources
     {
         get => resources;
         set
@@ -94,9 +95,26 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
         
         for (int i = 0; i < resources.Count; i++)
         {
-            resourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[resources[i]];
+            resourceCard.GetChild(i).GetComponent<Image>().sprite = ChooseGoodSprite(i);
             resourceCard.GetChild(i).gameObject.SetActive(true);
         }
+    }
+
+    private Sprite ChooseGoodSprite(int index)
+    {
+        switch (resources[index])
+        {
+            case DiceListScriptable.enumRessources.Whatever:
+                return DiceManager.instance.DiceListScriptable.symbolsList[0];
+            case DiceListScriptable.enumRessources.Blue:
+                return DiceManager.instance.DiceListScriptable.symbolsList[1];
+            case DiceListScriptable.enumRessources.Purple:
+                return DiceManager.instance.DiceListScriptable.symbolsList[2];
+            case DiceListScriptable.enumRessources.Red:
+                return DiceManager.instance.DiceListScriptable.symbolsList[3];
+        }
+
+        return null;
     }
     
     public void OnPointerEnter(PointerEventData eventData)

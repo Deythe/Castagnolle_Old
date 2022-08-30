@@ -183,7 +183,7 @@ public class PlacementManager : MonoBehaviour
         
         if (!specialInvocation)
         {
-            DiceManager.instance.DeleteAllResources(currentCardSelection.Ressources);
+            DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
         }
         
         specialInvocation = false;

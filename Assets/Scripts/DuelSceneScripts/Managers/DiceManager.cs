@@ -17,8 +17,8 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private GameObject[] diceObjet = new GameObject[3];
     [SerializeField] private GameObject[] diceGaugeObjet = new GameObject[3];
     
-    [SerializeField] private int[] diceChoosen = new int[3];
-    [SerializeField] private int[] diceGauge = new int[3];
+    [SerializeField] private DiceListScriptable.enumRessources[] diceChoosen = new DiceListScriptable.enumRessources[3];
+    [SerializeField] private DiceListScriptable.enumRessources[] diceGauge = new DiceListScriptable.enumRessources[3];
 
     [SerializeField] private Vector3 spawner;
     private int random;
@@ -42,7 +42,7 @@ public class DiceManager : MonoBehaviour
     {
         get => diceGaugeObjet;
     }
-    public int[] Gauge
+    public DiceListScriptable.enumRessources[] p_diceGauge
     {
         get => diceGauge;
         set
@@ -51,7 +51,7 @@ public class DiceManager : MonoBehaviour
         }
     }
     
-    public int[] DiceChoosen
+    public DiceListScriptable.enumRessources[] p_diceChoosen
     {
         get => diceChoosen;
         set
@@ -113,12 +113,25 @@ public class DiceManager : MonoBehaviour
             diceDeck.Remove(PickDice(random));
 
             diceObjet[i].GetComponent<MeshRenderer>().material.mainTexture =
-                diceListDeck.textureList[diceChoosen[i]];
+                ChooseTextureDice(i);
             diceObjet[i].GetComponent<MeshRenderer>().enabled = true;
         }
         
         DeckManager.instance.CheckUnitWithRessources();
         RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
+    }
+
+    public Texture2D ChooseTextureDice(int index)
+    {
+        for (int i = 0; i < diceListDeck.textureIndex.Count; i++)
+        {
+            if (diceChoosen[index].Equals(diceListDeck.textureIndex[i]))
+            {
+                return diceListDeck.textureList[i];
+            }
+        }
+
+        return null;
     }
     
     public bool CheckPositionDiceGauge(GameObject diceTarget)
@@ -175,7 +188,7 @@ public class DiceManager : MonoBehaviour
         }
     }
 
-    public void DeleteAllResources(List<int> resource)
+    public void DeleteAllResources(List<DiceListScriptable.enumRessources> resource)
     {
         for (int i = 0; i < resource.Count; i++)
         {
@@ -185,7 +198,7 @@ public class DiceManager : MonoBehaviour
         DeckManager.instance.CheckUnitWithRessources();
     }
     
-    public void DeleteAllResources(int[] resource)
+    public void DeleteAllResources(DiceListScriptable.enumRessources[] resource)
     {
         for (int i = 0; i < resource.Length; i++)
         {
@@ -195,7 +208,7 @@ public class DiceManager : MonoBehaviour
         DeckManager.instance.CheckUnitWithRessources();
     }
 
-    void DeleteResource(int i)
+    void DeleteResource(DiceListScriptable.enumRessources i)
     {
         for (int j = 0; j < diceChoosen.Length + diceGauge.Length; j++)
         {

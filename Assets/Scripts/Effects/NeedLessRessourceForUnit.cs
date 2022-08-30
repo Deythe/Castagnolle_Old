@@ -44,10 +44,10 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 {
                     if (card.GetComponent<CardData>().Prefabs.Equals(originalCard.GetComponent<CardData>().Prefabs))
                     {
-                        if (card.GetComponent<CardData>().Ressources.Count > 0)
+                        if (card.GetComponent<CardData>().p_ressources.Count > 0)
                         {
-                            card.GetComponent<CardData>().Ressources
-                                .RemoveAt(card.GetComponent<CardData>().Ressources.Count - 1);
+                            card.GetComponent<CardData>().p_ressources
+                                .RemoveAt(card.GetComponent<CardData>().p_ressources.Count - 1);
                         }
                     }
                 }
@@ -90,8 +90,8 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
         {
             if (card.GetComponent<CardData>().Prefabs.Equals(originalCard.GetComponent<CardData>().Prefabs))
             {
-                card.GetComponent<CardData>().Ressources.Clear();
-                card.GetComponent<CardData>().Ressources = originalCard.GetComponent<CardData>().Ressources;
+                card.GetComponent<CardData>().p_ressources.Clear();
+                card.GetComponent<CardData>().p_ressources = originalCard.GetComponent<CardData>().p_ressources;
             }
         }
     }
@@ -125,9 +125,9 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 {
                     if (card.GetComponent<CardData>().Prefabs.Equals(originalCard.GetComponent<CardData>().Prefabs))
                     {
-                        if (!card.GetComponent<CardData>().Ressources.Count.Equals(originalCard.GetComponent<CardData>().Ressources.Count))
+                        if (!card.GetComponent<CardData>().p_ressources.Count.Equals(originalCard.GetComponent<CardData>().p_ressources.Count))
                         {
-                            card.GetComponent<CardData>().Ressources.Add(originalCard.GetComponent<CardData>().Ressources[ card.GetComponent<CardData>().Ressources.Count]);
+                            card.GetComponent<CardData>().p_ressources.Add(originalCard.GetComponent<CardData>().p_ressources[ card.GetComponent<CardData>().p_ressources.Count]);
                         }
                     }
                 }

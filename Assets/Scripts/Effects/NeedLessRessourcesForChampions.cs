@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 {
-    public static Dictionary<GameObject, int[]> originalCard;
+    public static Dictionary<GameObject, DiceListScriptable.enumRessources[]> originalCard;
     public static List<GameObject> unitOnBoard;
     public static GameObject motherUnit;
     public static int degatMore=0;
@@ -16,7 +16,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
 
     private int numberUnitCurrent;
-    private int[] pivotRessourceList;
+    private DiceListScriptable.enumRessources[] pivotRessourceList;
     private int pivot;
     
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
@@ -29,16 +29,16 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 
                 if (originalCard == null)
                 {
-                    originalCard = new Dictionary<GameObject, int[]>();
+                    originalCard = new Dictionary<GameObject, DiceListScriptable.enumRessources[]>();
 
                     foreach (var card in DeckManager.instance.CardDeck)
                     {
                         if (card.GetComponent<CardData>().IsChampion)
                         {
-                            pivotRessourceList = new int[card.GetComponent<CardData>().Ressources.Count];
-                            for (int i = 0; i < card.GetComponent<CardData>().Ressources.Count; i++)
+                            pivotRessourceList = new DiceListScriptable.enumRessources[card.GetComponent<CardData>().p_ressources.Count];
+                            for (int i = 0; i < card.GetComponent<CardData>().p_ressources.Count; i++)
                             {
-                                pivotRessourceList[i] = card.GetComponent<CardData>().Ressources[i];
+                                pivotRessourceList[i] = card.GetComponent<CardData>().p_ressources[i];
                             }
 
                             originalCard.Add(card.GetComponent<CardData>().Prefabs, pivotRessourceList);
@@ -62,10 +62,10 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 
                 foreach (var card in DeckManager.instance.CardDeck)
                 {
-                    if (card.GetComponent<CardData>().IsChampion && card.GetComponent<CardData>().Ressources.Count > 0)
+                    if (card.GetComponent<CardData>().IsChampion && card.GetComponent<CardData>().p_ressources.Count > 0)
                     {
-                        card.GetComponent<CardData>().Ressources
-                            .RemoveAt(card.GetComponent<CardData>().Ressources.Count - 1);
+                        card.GetComponent<CardData>().p_ressources
+                            .RemoveAt(card.GetComponent<CardData>().p_ressources.Count - 1);
                     }
                 }
                 
@@ -102,11 +102,11 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                         if (originalCard.ContainsKey(card.GetComponent<CardData>().Prefabs))
                         {
                             if (!originalCard[card.GetComponent<CardData>().Prefabs].Length
-                                .Equals(card.GetComponent<CardData>().Ressources.Count))
+                                .Equals(card.GetComponent<CardData>().p_ressources.Count))
                             {
-                                card.GetComponent<CardData>().Ressources
+                                card.GetComponent<CardData>().p_ressources
                                     .Add(originalCard[card.GetComponent<CardData>().Prefabs][
-                                        card.GetComponent<CardData>().Ressources.Count]);
+                                        card.GetComponent<CardData>().p_ressources.Count]);
                             }
                         }
                     }
@@ -160,9 +160,9 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             {
                 if (card.GetComponent<CardData>().IsChampion)
                 {
-                    card.GetComponent<CardData>().Ressources.Clear();
-                    card.GetComponent<CardData>().Ressources =
-                        new List<int>(originalCard[card.GetComponent<CardData>().Prefabs]);
+                    card.GetComponent<CardData>().p_ressources.Clear();
+                    card.GetComponent<CardData>().p_ressources =
+                        new List<DiceListScriptable.enumRessources>(originalCard[card.GetComponent<CardData>().Prefabs]);
                 }
             }
         }

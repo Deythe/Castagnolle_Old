@@ -20,11 +20,11 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
             {
                 check = 0;
                 
-                for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
+                for (int i = 0; i < DiceManager.instance.p_diceGauge.Length; i++)
                 {
-                    if (DiceManager.instance.Gauge[i].Equals(5))
+                    if (DiceManager.instance.p_diceGauge[i].Equals(5))
                     {
-                        DiceManager.instance.Gauge[i] = 0;
+                        DiceManager.instance.p_diceGauge[i] = 0;
                         DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
                             DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
                         check++;

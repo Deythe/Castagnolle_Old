@@ -26,11 +26,11 @@ public class UiManager : MonoBehaviour
     [SerializeField] private TMP_Text player2FaceHp;
     [SerializeField] private TMP_Text player2ProfileHp;
     
-    [SerializeField] private GameObject uiPlayerTurn;
-    [SerializeField] private GameObject endTurn;
+    [SerializeField] private GameObject buttonThrowDice;
+    [SerializeField] private GameObject buttonEndTurn;
+    [SerializeField] private GameObject buttonBattlePhase;
     [SerializeField] private GameObject scrollView;
-    [SerializeField] private GameObject menuBattlePhase;
-    
+
     [SerializeField] private GameObject menuYesChoice;
     [SerializeField] private GameObject menuNoChoice;
     
@@ -82,7 +82,7 @@ public class UiManager : MonoBehaviour
     private Color ennemyColor = new Color(0.84f,0.25f,0.15f,0.5f);
 
     private Coroutine currentCoroutine;
-    private List<int> pivotResources;
+    private List<DiceListScriptable.enumRessources> pivotResources;
     private bool settingsOnOff;
     private bool viewTacticsOn;
     private float originalScrollPositionY;
@@ -238,12 +238,19 @@ public class UiManager : MonoBehaviour
                             Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                             if(hit.collider != null && (hit.collider.GetComponent<Monster>() != null || hit.collider.GetComponent<UnitExtension>() != null))
                             {
-                                StopCoroutine(CoroutineShowingcard(hit.collider));
+                                if (currentCoroutine != null)
+                                {
+                                    StopCoroutine(currentCoroutine);
+                                }
                                 currentCoroutine = StartCoroutine(CoroutineShowingcard(hit.collider));
                             }
                             break;
+                        
                         case TouchPhase.Ended:
-                            StopCoroutine(currentCoroutine);
+                            if (currentCoroutine != null)
+                            {
+                                StopCoroutine(currentCoroutine);
+                            }
                             ShowingOffBigCard();
                             break;
                     }
@@ -374,7 +381,7 @@ public class UiManager : MonoBehaviour
             lifeCard.text = "" + go.GetComponent<Monster>().p_atk;
             if (go.GetComponent<Monster>().p_stats.GetComponent<CardData>() != null)
             {
-                pivotResources = go.GetComponent<Monster>().p_stats.GetComponent<CardData>().Ressources;
+                pivotResources = go.GetComponent<Monster>().p_stats.GetComponent<CardData>().p_ressources;
             }
         }
         else
@@ -385,18 +392,34 @@ public class UiManager : MonoBehaviour
                 null)
             {
                 pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_stats
-                    .GetComponent<CardData>().Ressources;
+                    .GetComponent<CardData>().p_ressources;
             }
         }
 
         for (int i = 0; i <  pivotResources.Count; i++)
         {
-            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
-                DiceManager.instance.DiceListScriptable.symbolsList[pivotResources[i]];
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite = ChooseGoodSprite(pivotResources, i);
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         
         bigCart.SetActive(true);
+    }
+    
+    public Sprite ChooseGoodSprite(List<DiceListScriptable.enumRessources> resources,int index)
+    {
+        switch (resources[index])
+        {
+            case DiceListScriptable.enumRessources.Whatever:
+                return DiceManager.instance.DiceListScriptable.symbolsList[0];
+            case DiceListScriptable.enumRessources.Blue:
+                return DiceManager.instance.DiceListScriptable.symbolsList[1];
+            case DiceListScriptable.enumRessources.Purple:
+                return DiceManager.instance.DiceListScriptable.symbolsList[2];
+            case DiceListScriptable.enumRessources.Red:
+                return DiceManager.instance.DiceListScriptable.symbolsList[3];
+        }
+
+        return null;
     }
 
     public void AbleDeckCardTouch(Transform img)
@@ -404,9 +427,10 @@ public class UiManager : MonoBehaviour
         bigCart.GetComponent<Image>().sprite = img.GetComponent<CardData>().BigCard;
         lifeCard.text = ""+img.GetComponent<CardData>().Atk;
 
-        for (int i = 0; i < img.GetComponent<CardData>().Ressources.Count; i++)
+        for (int i = 0; i < img.GetComponent<CardData>().p_ressources.Count; i++)
         {
-            ressourceCard.GetChild(i).GetComponent<Image>().sprite = DiceManager.instance.DiceListScriptable.symbolsList[img.GetComponent<CardData>().Ressources[i]];
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =
+                ChooseGoodSprite(img.GetComponent<CardData>().p_ressources, i);
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         
@@ -439,15 +463,15 @@ public class UiManager : MonoBehaviour
         }
     }
 
-    void EnableDisableThrowDiceButton(bool b)
+    public void EnableDisableThrowDiceButton(bool b)
     {
         if (b)
         {
-            uiPlayerTurn.SetActive(true);
+            buttonThrowDice.SetActive(true);
         }
         else
         {
-            uiPlayerTurn.SetActive(false);
+            buttonThrowDice.SetActive(false);
         }
     }
     
@@ -455,6 +479,7 @@ public class UiManager : MonoBehaviour
     {
         if (b)
         {
+            Debug.Log("Caca");
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
         }
         else
@@ -490,22 +515,23 @@ public class UiManager : MonoBehaviour
     {
         if (b)
         {
-            menuBattlePhase.SetActive(true);
+            buttonBattlePhase.SetActive(true);
         }
         else
         {
-            menuBattlePhase.SetActive(false);
+            buttonBattlePhase.SetActive(false);
         }
     }
-    void EnableDisableEndTurn(bool b)
+    
+    public void EnableDisableEndTurn(bool b)
     {
         if (b)
         {
-            endTurn.SetActive(true);
+            buttonEndTurn.SetActive(true);
         }
         else
         {
-            endTurn.SetActive(false);
+            buttonEndTurn.SetActive(false);
         }
     }
 

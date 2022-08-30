@@ -59,7 +59,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
 
     public bool HaveABoneInGauge()
     {
-        foreach (var gaugedice in DiceManager.instance.Gauge)
+        foreach (var gaugedice in DiceManager.instance.p_diceGauge)
         {
             if (gaugedice.Equals(5))
             {
