@@ -4,9 +4,9 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
-public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
+public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
-    [SerializeField] private GameObject card;
+    [SerializeField] private CardData card;
     [SerializeField] private Sprite bigCard;
     
     [SerializeField] private SkinnedMeshRenderer model;
@@ -33,9 +33,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     [SerializeField] private List<AudioClip> voiceLine;
     
-    private List<IEffects> effects = new List<IEffects>();
-    private IEffects currentEffectUtilisation;
-    
+    private IEffects effect;
     private List<GameObject> extension = new List<GameObject>();
     private RaycastHit hit;
 
@@ -44,7 +42,7 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         get => model.gameObject;
     }
 
-    public GameObject p_stats
+    public CardData p_stats
     {
         get => card;
     }
@@ -89,7 +87,6 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         set
         {
             isMovable = value;
-            Debug.Log(isMovable);
             if (isMovable)
             {
                 ChangeMeshRenderer(0);
@@ -99,6 +96,11 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 ChangeMeshRenderer(4);
             }
         }
+    }
+
+    public IEffects p_effect
+    {
+        get => effect;
     }
     
     public bool p_isChampion
@@ -152,9 +154,21 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        AddAllEffects();
-        CheckEffectCondition();
+        card.PutEffect();
         
+        p_atk = card.p_atk;
+        isChampion = card.p_isChampion;
+        bigCard = card.p_fullCard;
+        
+        if (card.p_effetCard != null)
+        {
+            effect = gameObject.AddComponent(card.p_effetCard.GetType()) as IEffects;
+            effect.TransferEffect(card.p_effetCard);
+            CheckEffectCondition();
+        }
+
+        PlacementManager.instance.AddMonsterBoard(gameObject);
+
         if (voiceLine.Count != 0)
         {
             SoundManager.instance.PlayVoiceLine(voiceLine[0]);
@@ -172,28 +186,17 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
             glow.material = RoundManager.instance.p_listMatPlayerGlow[1];
         }
         
-        if (card!=null)
-        {
-            p_atk = card.GetComponent<CardData>().Atk;
-            isChampion = card.GetComponent<CardData>().IsChampion;
-            bigCard = card.GetComponent<CardData>().BigCard;
-        }
-        else
-        {
-            p_atk = atk;
-            p_isChampion = isChampion;
-        }
 
         id = view.ViewID;
 
         InitColorsTiles();
         hpPackage.SetActive(true);
         hpPackage.transform.rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
-        PlacementManager.instance.AddMonsterBoard(gameObject);
-        
-        foreach (IEffects effet in effects)
+
+        if (HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && effect.GetIsActivable())
         {
-            effet.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
+            EffectManager.instance.p_currentUnit = gameObject;
+            EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
         }
     }
     
@@ -206,14 +209,14 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 1, transform.position.x,
                     0.6f,
                     transform.position.z, 3f);
+                
+                if (effect != null)
+                {
+                    effect.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
+                }
             }
         }
 
-        foreach (IEffects effet in effects)
-        {
-            effet.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
-        }
-        
         for (int i = extension.Count - 1; i >= 0; i--)
         {
             if (view.AmOwner)
@@ -300,27 +303,32 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
      
     //---------------------------------------------------------------- Effect Part -----------------------------------------------------------------------------
-    private void AddAllEffects()
-    {
-        foreach (IEffects effet in gameObject.GetComponents(typeof(IEffects)))
-        {
-            effects.Add(effet);
-        }
-    }
 
     private void CheckEffectCondition()
     {
-        model.gameObject.layer = 7;
+        if (effect != null)
+        {
+            if (view.AmOwner && (!effect.GetUsingPhases().Count.Equals(0)
+                                 && !effect.GetConditions()
+                                     .Contains(EffectManager.enumConditionEffect.Heroism)
+                                 && !effect.GetConditions()
+                                     .Contains(EffectManager.enumConditionEffect.HaveABoneInGauge)))
+            {
+                model.gameObject.layer = 7;
+            }
+        }
     }
     
     public bool HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation phase)
     {
-        foreach (var effet in effects)
+        if (effect != null)
         {
-            if (effet.GetPhaseActivation().Contains(phase) && !effet.GetUsed())
+            if (effect.GetUsingPhases().Contains(phase) && !effect.GetUsed())
             {
                 return true;
             }
+
+            return false;
         }
 
         return false;
@@ -328,46 +336,52 @@ public class Monster : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     public void ActivateEffects(EffectManager.enumEffectPhaseActivation phase)
     {
-        foreach (var effet in effects)
+        if (effect != null)
         {
-            if (!effet.GetUsed())
+            if (!effect.GetUsed())
             {
-                currentEffectUtilisation = effet;
-                currentEffectUtilisation.OnCast(phase);
+                effect.OnCast(phase);
             }
         }
     }
 
-    public bool ReturnUsedOfAnEffect()
+    public bool ReturnUsedEffect()
     {
-        return currentEffectUtilisation.GetUsed();
+        if (effect != null)
+        {
+            return effect.GetUsed();
+        }
+
+        return false;
     }
 
     public void ReActivadeAllEffect()
     {
-        foreach (var effet in effects)
+        if (effect != null)
         {
-            if (effet.GetPhaseActivation().Contains(EffectManager.enumEffectPhaseActivation.WhenItsDrawPhase) && view.AmOwner)
+            if (effect.GetUsingPhases().Contains(EffectManager.enumEffectPhaseActivation.WhenItsDrawPhase) &&
+                view.AmOwner && effect.GetIsActivable())
             {
-                effet.SetUsed(false);
+                effect.SetUsed(false);
                 model.gameObject.layer = 7;
             }
         }
     }
 
-    public List<EffectManager.enumConditionEffect> GetConditionsListFromEffect(EffectManager.enumEffectPhaseActivation phase)
+    public List<EffectManager.enumConditionEffect> GetConditionsListFromEffect()
     {
-        foreach (var effet in effects)
+        if (effect != null)
         {
-            if (effet.GetPhaseActivation().Contains(phase) && view.AmOwner)
+            if (view.AmOwner)
             {
-                return effet.GetConditionsForActivation();
+                return effect.GetConditions();
             }
+
+            return null;
         }
 
         return null;
     }
-
     // -------------------------------------------------------------- End of effect zone -----------------------------------------------------------------
 
     public List<Transform> GetCenters()

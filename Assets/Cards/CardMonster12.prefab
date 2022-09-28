@@ -603,6 +603,7 @@ GameObject:
   - component: {fileID: 7236249880086410057}
   - component: {fileID: 7236249880086410054}
   - component: {fileID: 5933185828017948179}
+  - component: {fileID: 5699379419744249570}
   m_Layer: 5
   m_Name: CardMonster12
   m_TagString: Card
@@ -686,11 +687,26 @@ MonoBehaviour:
   bigCard: {fileID: 21300000, guid: b218f6ed38a4cf5418ce2bf14a83f96c, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: 4ed18f55abc783d4ea1f57a058154766, type: 3}
   atk: 4
-  resources: 020000000200000005000000
+  resources: 
   isChampion: 0
   lifeCard: {fileID: 897585000786059904}
   resourceCard: {fileID: 2013773750964529744}
   image: {fileID: 7236249880086410054}
+--- !u!114 &5699379419744249570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7236249880086410052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb806ea38b801624b9c9e6e9f8a8271a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 5347874786083823171, guid: 4ed18f55abc783d4ea1f57a058154766, type: 3}
+  usingPhases: 
+  conditions: 
 --- !u!1 &7735244063599728063
 GameObject:
   m_ObjectHideFlags: 0

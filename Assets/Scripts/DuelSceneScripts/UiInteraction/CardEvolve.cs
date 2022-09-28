@@ -8,6 +8,6 @@ public class CardEvolve : MonoBehaviour, IPointerEnterHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         EffectManager.instance.p_unitTarget1 = unit;
-        EffectManager.instance.CurrentUnit.GetComponent<Monster>().ActivateEffects(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
+        EffectManager.instance.p_currentUnit.GetComponent<MonstreData>().ActivateEffects(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
     }
 }

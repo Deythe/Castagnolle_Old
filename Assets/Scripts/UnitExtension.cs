@@ -18,7 +18,7 @@ public class UnitExtension : MonoBehaviour
         
         if (view.AmOwner)
         {
-            if (unitParent.GetComponent<Monster>().p_isMovable)
+            if (unitParent.GetComponent<MonstreData>().p_isMovable)
             {
                 ms.material = PlacementManager.instance.p_listMaterial[0];
             }
@@ -29,7 +29,7 @@ public class UnitExtension : MonoBehaviour
         }
         else
         {
-            if (unitParent.GetComponent<Monster>().p_isMovable)
+            if (unitParent.GetComponent<MonstreData>().p_isMovable)
             {
                 ms.material = PlacementManager.instance.p_listMaterial[1];
             }
@@ -39,9 +39,9 @@ public class UnitExtension : MonoBehaviour
             }
         }
         
-        unitParent.GetComponent<Monster>().GetExtention().Add(gameObject);
-        unitParent.GetComponent<Monster>().GetCenters().Add(center);
-        unitParent.GetComponent<Monster>().GetMeshRenderers().Add(ms);
+        unitParent.GetComponent<MonstreData>().GetExtention().Add(gameObject);
+        unitParent.GetComponent<MonstreData>().GetCenters().Add(center);
+        unitParent.GetComponent<MonstreData>().GetMeshRenderers().Add(ms);
         PlacementManager.instance.AddExtentionMonsterBoard(gameObject,unitParent);
     }
 }

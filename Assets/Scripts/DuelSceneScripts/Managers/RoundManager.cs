@@ -52,6 +52,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                
                 UiManager.instance.EnableDisableShader(false);
                 UiManager.instance.ChangeTimerColor(2);
             }
@@ -66,10 +67,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
         set
         {
             timer = value;
-            if (timer < 0 && p_localPlayerTurn.Equals(currentPlayerNumberTurn))
+            if (timer < 0)
             {
                 timer = 0;
-                EndRound();
+                if(p_localPlayerTurn.Equals(currentPlayerNumberTurn))
+                {
+                    EndRound();
+                }
             }
             else
             {
@@ -122,6 +126,7 @@ public class RoundManager : MonoBehaviourPunCallbacks
                     UiManager.instance.EnableBorderStatus(255,0,0);
                     break;
                 case enumRoundState.EffectPhase:
+                    UiManager.instance.EnableDisableMenuNoChoice(true);
                     UiManager.instance.EnableDisableScrollView(false);
                     UiManager.instance.EnableBorderStatus(68,168,254);
                     break;
@@ -129,8 +134,12 @@ public class RoundManager : MonoBehaviourPunCallbacks
                     UiManager.instance.EnableDisableMenuYesChoice(false);
                     UiManager.instance.EnableDisableMenuNoChoice(false);
                     UiManager.instance.EnableDisableEndTurn(false);
+                    UiManager.instance.EnableDisableBattleButton(false);
+                    UiManager.instance.EnableDisableEndTurn(false);
+                    UiManager.instance.EnableDisableThrowDiceButton(false);
                     UiManager.instance.DisableBorderStatus();
                     UiManager.instance.EnableDisableShader(false);
+                    UiManager.instance.p_instanceEnemyPointer.SetActive(false);
                     break;
             }
         }
@@ -203,18 +212,15 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     IEnumerator CoroutineEndRound()
     {
-        StopAllCoroutines();
-        p_roundState = enumRoundState.WaitPhase;
         SoundManager.instance.PlaySFXSound(0, 0.07f);
 
         yield return new WaitUntil(() => !PlacementManager.instance.p_isWaiting);
         
         PlacementManager.instance.ReInitPlacement();
-        UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         DiceManager.instance.DeleteAllResources(DiceManager.instance.p_diceChoosen);
         UiManager.instance.p_textFeedBack.enabled = false;
         PlacementManager.instance.ReInitMonsters();
-        BattlePhaseManager.instance.ClearUnits();
+        CastagneManager.instance.ClearUnits();
         EffectManager.instance.ClearUnits();
         UiManager.instance.p_throwButton.interactable = true;
         playerView.RPC("RPC_EndTurn", RpcTarget.AllViaServer);
@@ -233,13 +239,13 @@ public class RoundManager : MonoBehaviourPunCallbacks
         switch (roundState)
         {
             case enumRoundState.DrawPhase:
-                EffectManager.instance.UnitSelected();
+                EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenItsDrawPhase);
                 break;
             case enumRoundState.EffectPhase:
                 EffectManager.instance.ActiveEffect();
                 break;
             case enumRoundState.CastagnePhase:
-                BattlePhaseManager.instance.Attack();
+                CastagneManager.instance.Attack();
                 break;
         }
     }
@@ -250,9 +256,11 @@ public class RoundManager : MonoBehaviourPunCallbacks
         switch (roundState)
         {
             case enumRoundState.CastagnePhase:
-                BattlePhaseManager.instance.CancelSelection();
+                CastagneManager.instance.CancelSelection();
                 break;
+            case enumRoundState.DrawPhase:
             case enumRoundState.EffectPhase:
+                UiManager.instance.EnableDisableScrollView(true);
                 EffectManager.instance.CancelSelection(enumRoundState.DrawPhase);
                 break;
         }

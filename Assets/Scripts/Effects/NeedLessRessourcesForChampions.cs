@@ -5,27 +5,33 @@ using UnityEngine;
 
 public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 {
+    [SerializeField] private PhotonView view;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
+    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private bool isEffectAuto;
+    [SerializeField] private bool used;
+    [SerializeField] private bool isActivable;
+
     public static Dictionary<GameObject, DiceListScriptable.enumRessources[]> originalCard;
     public static List<GameObject> unitOnBoard;
     public static GameObject motherUnit;
     public static int degatMore=0;
     
-    [SerializeField] private PhotonView view;
-    [SerializeField] private bool used;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
-
+    
     private int numberUnitCurrent;
     private DiceListScriptable.enumRessources[] pivotRessourceList;
     private int pivot;
-    
+    private void Awake()
+    {
+        isActivable = true;
+    }
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (usingPhases[0].Equals(phase))
+        if (view.AmOwner)
         {
-            if (view.AmOwner)
+            if (usingPhases.Contains(phase))
             {
-                numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
+                numberUnitCurrent = PlacementManager.instance.p_board.Count;
 
                 if (originalCard == null)
                 {
@@ -33,7 +39,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 
                     foreach (var card in DeckManager.instance.CardDeck)
                     {
-                        if (card.GetComponent<CardData>().IsChampion)
+                        if (card.GetComponent<CardData>().p_isChampion)
                         {
                             pivotRessourceList = new DiceListScriptable.enumRessources[card.GetComponent<CardData>().p_ressources.Count];
                             for (int i = 0; i < card.GetComponent<CardData>().p_ressources.Count; i++)
@@ -41,7 +47,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                                 pivotRessourceList[i] = card.GetComponent<CardData>().p_ressources[i];
                             }
 
-                            originalCard.Add(card.GetComponent<CardData>().Prefabs, pivotRessourceList);
+                            originalCard.Add(card.GetComponent<CardData>().p_prefabs, pivotRessourceList);
                         }
                     }
                 }
@@ -62,7 +68,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 
                 foreach (var card in DeckManager.instance.CardDeck)
                 {
-                    if (card.GetComponent<CardData>().IsChampion && card.GetComponent<CardData>().p_ressources.Count > 0)
+                    if (card.GetComponent<CardData>().p_isChampion && card.GetComponent<CardData>().p_ressources.Count > 0)
                     {
                         card.GetComponent<CardData>().p_ressources
                             .RemoveAt(card.GetComponent<CardData>().p_ressources.Count - 1);
@@ -72,7 +78,9 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
             }
-        }else if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
+        }
+        
+        if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
         {
             if (view.AmOwner)
             {
@@ -99,13 +107,13 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 {
                     if (card != null)
                     {
-                        if (originalCard.ContainsKey(card.GetComponent<CardData>().Prefabs))
+                        if (originalCard.ContainsKey(card.GetComponent<CardData>().p_prefabs))
                         {
-                            if (!originalCard[card.GetComponent<CardData>().Prefabs].Length
+                            if (!originalCard[card.GetComponent<CardData>().p_prefabs].Length
                                 .Equals(card.GetComponent<CardData>().p_ressources.Count))
                             {
                                 card.GetComponent<CardData>().p_ressources
-                                    .Add(originalCard[card.GetComponent<CardData>().Prefabs][
+                                    .Add(originalCard[card.GetComponent<CardData>().p_prefabs][
                                         card.GetComponent<CardData>().p_ressources.Count]);
                             }
                         }
@@ -121,30 +129,30 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (numberUnitCurrent > PlacementManager.instance.GetBoard().Count)
+            if (numberUnitCurrent > PlacementManager.instance.p_board.Count)
             {
-                numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
-            } else if (numberUnitCurrent < PlacementManager.instance.GetBoard().Count)
+                numberUnitCurrent = PlacementManager.instance.p_board.Count;
+            } else if (numberUnitCurrent < PlacementManager.instance.p_board.Count)
             {
-                numberUnitCurrent = PlacementManager.instance.GetBoard().Count;
+                numberUnitCurrent = PlacementManager.instance.p_board.Count;
                 
                 if (gameObject.Equals(motherUnit))
                 {
-                    if (PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster.GetComponent<PhotonView>()
+                    if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<PhotonView>()
                         .AmOwner)
                     {
-                        if (PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster.GetComponent<Monster>()
+                        if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<MonstreData>()
                             .p_isChampion)
                         {
                             view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                                PlacementManager.instance.GetBoard()[numberUnitCurrent - 1].monster
+                                PlacementManager.instance.p_board[numberUnitCurrent - 1].monster
                                     .GetComponent<PhotonView>().ViewID, degatMore);
                             
-                            //degatMore = 0;
-                            //ResetUnit();
+                            degatMore = 0;
+                            ResetUnit();
                             DeckManager.instance.CheckUnitWithRessources();
-                            //motherUnit = null;
-                            //unitOnBoard.Clear();
+                            motherUnit = null;
+                            unitOnBoard.Clear();
                         }
                     }
                 }
@@ -158,11 +166,11 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
         {
             if (card != null)
             {
-                if (card.GetComponent<CardData>().IsChampion)
+                if (card.GetComponent<CardData>().p_isChampion)
                 {
                     card.GetComponent<CardData>().p_ressources.Clear();
                     card.GetComponent<CardData>().p_ressources =
-                        new List<DiceListScriptable.enumRessources>(originalCard[card.GetComponent<CardData>().Prefabs]);
+                        new List<DiceListScriptable.enumRessources>(originalCard[card.GetComponent<CardData>().p_prefabs]);
                 }
             }
         }
@@ -175,25 +183,58 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
         PlacementManager.instance.SearchMobWithID(id).p_atk+=atk;
     }
     
-
-    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
+    public void TransferEffect(IEffects effectMother)
+    {
+        view = effectMother.GetView();
+        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
+        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        isEffectAuto = effectMother.GetIsEffectAuto();
+        used = effectMother.GetUsed();
+        isActivable = effectMother.GetIsActivable();
+    }
+    
+    public PhotonView GetView()
+    {
+        return view;
+    }
+    
+    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
     {
         return usingPhases;
     }
-
-    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    
+    public List<EffectManager.enumConditionEffect> GetConditions()
     {
         return conditions;
     }
+    
+    public bool GetIsActivable()
+    {
+        return isActivable;
+    }
 
+    public void SetIsActivable(bool b)
+    {
+        isActivable = b;
+    }
 
     public bool GetUsed()
     {
         return used;
     }
-    
+
     public void SetUsed(bool b)
     {
         used = b;
+    }
+
+    public bool GetIsEffectAuto()
+    {
+        return isEffectAuto;
+    }
+
+    public void SetIsEffectAuto(bool b)
+    {
+        isEffectAuto = b;
     }
 }

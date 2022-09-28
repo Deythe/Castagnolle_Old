@@ -934,7 +934,7 @@ MonoBehaviour:
   musicButton: {fileID: 1067248085}
   sfxButton: {fileID: 122991271}
   canvasScaler: {fileID: 191722858}
-  numberPlayer: 1
+  numberPlayer: 2
 --- !u!4 &440616031
 Transform:
   m_ObjectHideFlags: 0

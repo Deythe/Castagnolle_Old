@@ -6,16 +6,15 @@ using Photon.Pun;
 using UnityEngine;
 
 
-public class BattlePhaseManager : MonoBehaviour
+public class CastagneManager : MonoBehaviour
     {
-        public static BattlePhaseManager instance;
+        public static CastagneManager instance;
 
         [SerializeField] private PhotonView playerView;
         [SerializeField] private float range = 1;
 
-        private GameObject unitsSelected;
-        private GameObject  unitTarget = null;
-        
+        [SerializeField] private GameObject unitsSelected, unitTarget;
+
         [SerializeField] private List<Vector3> deadUnitCenters = new List<Vector3>();
         [SerializeField] private List<MeshRenderer> deadUnitMeshRenderers;
         [SerializeField] private List<Vector3> previsualisationUnitMore = new List<Vector3>();
@@ -23,7 +22,7 @@ public class BattlePhaseManager : MonoBehaviour
         private GameObject unitFusion;
 
         private int motherUnitTiles;
-        private Monster unitPivot;
+        private MonstreData unitPivot;
         
         private int result;
 
@@ -44,24 +43,32 @@ public class BattlePhaseManager : MonoBehaviour
                 isWaiting = value;
             }
         }
-        public int TargetUnitAttack
+        public int p_targetUnitAttack
         {
             get => targetUnitAttack;
         }
 
-        public int Result
+        public int p_result
         {
             get => result;
         }
         
-        public GameObject TargetUnit
+        public GameObject p_unitTarget
         {
             get => unitTarget;
+            set
+            {
+                unitTarget = value;
+            }
         }
 
-        public GameObject UnitSelected
+        public GameObject p_unitSelected
         {
             get => unitsSelected;
+            set
+            {
+                unitsSelected = value;
+            }
         }
 
         private void Awake()
@@ -94,21 +101,23 @@ public class BattlePhaseManager : MonoBehaviour
                         Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                         if (hit.collider != null)
                         {
-                            foreach (var unit in PlacementManager.instance.GetBoard())
+                            foreach (var unit in PlacementManager.instance.p_board)
                             {
                                 foreach (var cases in unit.emplacement)
                                 {
                                     if (cases == new Vector2(Mathf.FloorToInt(hit.point.x) + 0.5f,
                                         Mathf.FloorToInt(hit.point.z) + 0.5f))
                                     {
-                                        if (unitsSelected!=null)
+                                        if (unitsSelected==null)
                                         {
                                             if (unit.monster.GetComponent<PhotonView>().AmOwner &&
-                                                (!unit.monster.GetComponent<Monster>().p_attacked))
+                                                (!unit.monster.GetComponent<MonstreData>().p_attacked))
                                             {
                                                 unitsSelected = unit.monster;
-                                                unitsSelected.GetComponent<Monster>().BeChoosen();
-
+                                                unitsSelected.GetComponent<MonstreData>().BeChoosen();
+                                                
+                                                UiManager.instance.EnableDisableMenuNoChoice(true);
+                                                
                                                 if (CheckBackLaneEnemy(unitsSelected))
                                                 {
                                                     StartCoroutine(CoroutineAttackPlayer());
@@ -122,7 +131,7 @@ public class BattlePhaseManager : MonoBehaviour
                                             {
                                                 if (unitTarget != null)
                                                 {
-                                                    unitTarget.GetComponent<Monster>().InitColorsTiles();
+                                                    unitTarget.GetComponent<MonstreData>().InitColorsTiles();
                                                 }
                                                 
                                                 unitTarget = unit.monster;
@@ -134,8 +143,9 @@ public class BattlePhaseManager : MonoBehaviour
                                                     UiManager.instance.p_instanceEnemyPointer.SetActive(true);
                                                 }
 
-                                                unitTarget.GetComponent<Monster>().BeChoosen();
+                                                unitTarget.GetComponent<MonstreData>().BeChoosen();
                                                 PreCaculUnit();
+                                                UiManager.instance.EnableDisableMenuYesChoice(true);
                                             }
                                         }
                                     }
@@ -149,19 +159,19 @@ public class BattlePhaseManager : MonoBehaviour
         
         void PreCaculUnit()
         {
-            targetUnitAttack = unitTarget.GetComponent<Monster>().p_atk;
-            result = unitsSelected.GetComponent<Monster>().p_atk - targetUnitAttack;
+            targetUnitAttack = unitTarget.GetComponent<MonstreData>().p_atk;
+            result = unitsSelected.GetComponent<MonstreData>().p_atk - targetUnitAttack;
             
             switch (result)
             {
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<Monster>().GetCenters(), deadUnitCenters);
-                    deadUnitMeshRenderers = new List<MeshRenderer>(unitTarget.GetComponent<Monster>().GetMeshRenderers());
+                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = new List<MeshRenderer>(unitTarget.GetComponent<MonstreData>().GetMeshRenderers());
                     ShowAllUnitsExtension(unitsSelected);
                     break;
                 case <0 :
-                    TransformToVector3(unitsSelected.GetComponent<Monster>().GetCenters(), deadUnitCenters);
-                    deadUnitMeshRenderers = new List<MeshRenderer>(unitsSelected.GetComponent<Monster>().GetMeshRenderers());
+                    TransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = new List<MeshRenderer>(unitsSelected.GetComponent<MonstreData>().GetMeshRenderers());
                     ShowAllUnitsExtension(unitTarget);
                     break;
             }
@@ -174,11 +184,11 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttack()
         {
-            unitsSelected.GetComponent<Monster>().p_attacked = true;
+            unitsSelected.GetComponent<MonstreData>().p_attacked = true;
             
-            if (unitsSelected.GetComponent<Monster>().p_animator != null)
+            if (unitsSelected.GetComponent<MonstreData>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", true);
+                unitsSelected.GetComponent<MonstreData>().p_animator.SetBool("ATK", true);
             }
             
             EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 2, PlacementManager.instance.AverageCenterX(unitTarget),
@@ -188,16 +198,16 @@ public class BattlePhaseManager : MonoBehaviour
             SoundManager.instance.PlaySFXSound(7, 0.07f);
             yield return new WaitForSeconds(0.5f);
             
-            if (unitsSelected.GetComponent<Monster>().p_animator != null)
+            if (unitsSelected.GetComponent<MonstreData>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", false);
+                unitsSelected.GetComponent<MonstreData>().p_animator.SetBool("ATK", false);
             }
             
-            if (unitTarget.GetComponent<Monster>().p_isMovable && !unitsSelected.GetComponent<Monster>().p_isChampion)
+            if (unitTarget.GetComponent<MonstreData>().p_isMovable && !unitsSelected.GetComponent<MonstreData>().p_isChampion)
             {
                 playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
-                    unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<Monster>().p_atk,
-                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().p_atk);
+                    unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<MonstreData>().p_atk,
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<MonstreData>().p_atk);
                 
                 StartCoroutine(CoroutineAttackNormalUnit());
             }
@@ -205,7 +215,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
                     unitsSelected.GetComponent<PhotonView>().ViewID, 0,
-                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<Monster>().p_atk);
+                    unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<MonstreData>().p_atk);
 
                 StartCoroutine(CoroutineAttackStaticUnit());
             }
@@ -213,17 +223,17 @@ public class BattlePhaseManager : MonoBehaviour
         
         IEnumerator CoroutineAttackPlayer()
         {
-            unitsSelected.GetComponent<Monster>().p_attacked = true;
-            if (unitsSelected.GetComponent<Monster>().p_animator != null)
+            unitsSelected.GetComponent<MonstreData>().p_attacked = true;
+            if (unitsSelected.GetComponent<MonstreData>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", true);
+                unitsSelected.GetComponent<MonstreData>().p_animator.SetBool("ATK", true);
             }
 
             yield return new WaitForSeconds(0.5f);
             
-            if (unitsSelected.GetComponent<Monster>().p_animator != null)
+            if (unitsSelected.GetComponent<MonstreData>().p_animator != null)
             {
-                unitsSelected.GetComponent<Monster>().p_animator.SetBool("ATK", false);
+                unitsSelected.GetComponent<MonstreData>().p_animator.SetBool("ATK", false);
             }
             
             LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
@@ -241,21 +251,22 @@ public class BattlePhaseManager : MonoBehaviour
                     break;
 
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
-                    if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill))
+                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().ReturnUsedEffect())
                     {
-                        unitsSelected.GetComponent<Monster>().ActivateEffects(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
-                        yield return new WaitUntil(() => unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect());
+                        EffectManager.instance.p_currentUnit = unitsSelected;
+                        EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
+                        yield return new WaitUntil(() => EffectManager.instance.EffectFinished());
                     }
                     
                     break;
 
                 case <0:
-                    TransformToVector3(unitsSelected.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    TransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     LifeManager.instance.TakeDamageHimself();
                     
                     StartCoroutine(AddAllExtension(unitTarget, false));
@@ -272,26 +283,28 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 case 0:
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<Monster>().GetCenters(), deadUnitCenters);
+                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
-                    if (unitsSelected.GetComponent<Monster>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill))
+                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().ReturnUsedEffect())
                     {
-                        unitsSelected.GetComponent<Monster>().ActivateEffects(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
-                        yield return new WaitUntil(() => unitsSelected.GetComponent<Monster>().ReturnUsedOfAnEffect());
+                        EffectManager.instance.p_currentUnit = unitsSelected;
+                        EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
+                        yield return new WaitUntil(() => EffectManager.instance.EffectFinished());
                     }
                     
                     EffectManager.instance.ActivateEffectWhenUnitDie();
                     break;
             }
+            
             ClearUnits();
         }
         
         void ShowAllUnitsExtension(GameObject unitMore)
         {
-            motherUnitTiles = unitMore.GetComponent<Monster>().p_id;
-            TransformToVector3(unitMore.GetComponent<Monster>().GetCenters(), previsualisationUnitMore);
+            motherUnitTiles = unitMore.GetComponent<MonstreData>().p_id;
+            TransformToVector3(unitMore.GetComponent<MonstreData>().GetCenters(), previsualisationUnitMore);
             
             sizeListCentersDeadUnit = Mathf.Ceil(deadUnitCenters.Count / 2f);
 
@@ -330,12 +343,12 @@ public class BattlePhaseManager : MonoBehaviour
 
         IEnumerator AddAllExtension(GameObject unitMore, bool owner)
         {
-            numberTileUnit = unitMore.GetComponent<Monster>().p_extensions.Count;
+            numberTileUnit = unitMore.GetComponent<MonstreData>().p_extensions.Count;
             
             for (int i = 0; i < sizeListCentersDeadUnit; i++)
             {
                 AddExtension(unitMore, owner);
-                yield return new WaitUntil(() => unitMore.GetComponent<Monster>().p_extensions.Count == numberTileUnit + 1);
+                yield return new WaitUntil(() => unitMore.GetComponent<MonstreData>().p_extensions.Count == numberTileUnit + 1);
                 numberTileUnit ++;
             }
 
@@ -344,12 +357,12 @@ public class BattlePhaseManager : MonoBehaviour
         
         void AddExtension(GameObject unitMore, bool owner)
         {
-            for (int j = 0; j < unitMore.GetComponent<Monster>().GetCenters().Count; j++)
+            for (int j = 0; j < unitMore.GetComponent<MonstreData>().GetCenters().Count; j++)
             {
                 for (int x = 0; x < deadUnitCenters.Count; x++)
                 {
                     if (Vector3.Distance(deadUnitCenters[x],
-                        unitMore.GetComponent<Monster>().GetCenters()[j].position).Equals(range))
+                        unitMore.GetComponent<MonstreData>().GetCenters()[j].position).Equals(range))
                     {
                         if (owner)
                         {
@@ -375,9 +388,9 @@ public class BattlePhaseManager : MonoBehaviour
         {
             bool unitCheck = false;
 
-            foreach (var center in unit.GetComponent<Monster>().GetCenters())
+            foreach (var center in unit.GetComponent<MonstreData>().GetCenters())
             {
-                foreach (var targetCenter in v.GetComponent<Monster>().GetCenters())
+                foreach (var targetCenter in v.GetComponent<MonstreData>().GetCenters())
                 {
                     if (Vector2.Distance(new Vector2(center.position.x, center.position.z), new Vector2(targetCenter.position.x, targetCenter.position.z)).Equals(range))
                     {
@@ -401,7 +414,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 if (PlacementManager.instance.CenterMoreFar(unitSelected).Equals(4.5f))
                 {
-                    foreach (var unit in PlacementManager.instance.GetBoard())
+                    foreach (var unit in PlacementManager.instance.p_board)
                     {
                         if (!unit.monster.GetComponent<PhotonView>().AmOwner)
                         {
@@ -419,7 +432,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 if (PlacementManager.instance.CenterMoreFar(unitsSelected).Equals(-4.5f))
                 {
-                    foreach (var unit in PlacementManager.instance.GetBoard())
+                    foreach (var unit in PlacementManager.instance.p_board)
                     {
                         if (!unit.monster.GetComponent<PhotonView>().AmOwner)
                         {
@@ -443,6 +456,7 @@ public class BattlePhaseManager : MonoBehaviour
             {
                 deadUnitMeshRenderers[i].material.DOKill(false);
             }
+            
             ClearUnits();
         }
 
@@ -450,17 +464,22 @@ public class BattlePhaseManager : MonoBehaviour
         {
             if (unitsSelected != null)
             {
-                unitsSelected.GetComponent<Monster>().InitColorsTiles();
+                unitsSelected.GetComponent<MonstreData>().InitColorsTiles();
                 unitsSelected = null;
             }
 
             if (unitTarget != null)
             {
-                unitTarget.GetComponent<Monster>().InitColorsTiles();
+                unitTarget.GetComponent<MonstreData>().InitColorsTiles();
                 unitTarget = null;
             }
 
             targetUnitAttack = 0;
+            
+            UiManager.instance.EnableDisableMenuNoChoice(false);
+            UiManager.instance.EnableDisableMenuYesChoice(false);
+            EffectManager.instance.CheckAllHeroism();
+            UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         }
         
         void TransformToVector3(List<Transform> transf, List<Vector3> vect)

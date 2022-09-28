@@ -6,7 +6,7 @@ public class DiceListScriptable : ScriptableObject
 {
     public enum enumRessources
     {
-        Whatever,Red, Purple, Blue, Neutral, DoubleRed, DoublePurple, DoubleBlue, DoubleNeutral, TripleRed, TriplePurple, TripleBlue, TripleNeutral
+        Whatever,Red, Purple, Blue, Neutral, Milk, DoubleRed, DoublePurple, DoubleBlue, DoubleNeutral, TripleRed, TriplePurple, TripleBlue, TripleNeutral
     }
 
     public List<DiceScriptable> diceDeck;

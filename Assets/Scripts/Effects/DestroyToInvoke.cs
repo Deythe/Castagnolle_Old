@@ -5,65 +5,87 @@ using UnityEngine;
 
 public class DestroyToInvoke : MonoBehaviour, IEffects
 {
-    [SerializeField] private GameObject prefabs;
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhase;
+    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
     [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
-
-    private bool used;
-
+    [SerializeField] private bool isEffectAuto;
+    [SerializeField] private bool used;
+    [SerializeField] private bool isActivable;
 
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
         /*
-        if (view.AmOwner)
+        if (usingPhase[0].Equals(phase))
         {
-            if (phase == 3)
+            if (view.AmOwner)
             {
-                RoundManager.instance.p_roundState = 7;
-                EffectManager.instance.CurrentUnit = gameObject;
+                PhotonNetwork.Destroy(EffectManager.instance.p_unitTarget1);
+                PlacementManager.instance.p_specialInvocation = true;
+                PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().p_prefabs);
+                UiManager.instance.ShowingOffBigCard();
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DragUnitPhase);
+                UiManager.instance.p_textFeedBack.enabled = true;
+                UiManager.instance.SetTextFeedBack(0);
+                UiManager.instance.EnableBorderStatus(68, 168, 254);
+                GetComponent<MonstreData>().p_model.layer = 6;
+                used = true;
             }
-            else if (phase == 7)
-            {
-                if (!EffectManager.instance.p_unitTarget1.Equals(gameObject))
-                {
-                    PhotonNetwork.Destroy(EffectManager.instance.p_unitTarget1);
-                    PlacementManager.instance.SpecialInvocation = true;
-                    PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().Prefabs);
-                    UiManager.instance.ShowingOffBigCard();
-                    EffectManager.instance.CancelSelection(2);
-                    UiManager.instance.p_textFeedBack.enabled = true;
-                    UiManager.instance.SetTextFeedBack(0);
-                    UiManager.instance.EnableBorderStatus(68,168,254);
-                    GetComponent<Monster>().p_model.layer = 6;
-                    used = true;
-                }
-                else
-                {
-                    RoundManager.instance.p_roundState = 7;
-                    EffectManager.instance.CurrentUnit = gameObject;
-                }
-            }
-        }*/
+        }
+        */
     }
-
-    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
+    
+    public void TransferEffect(IEffects effectMother)
     {
-        return usingPhase;
+        view = effectMother.GetView();
+        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
+        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        isEffectAuto = effectMother.GetIsEffectAuto();
+        used = effectMother.GetUsed();
+        isActivable = effectMother.GetIsActivable();
     }
-
-    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    
+    public PhotonView GetView()
+    {
+        return view;
+    }
+    
+    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
+    {
+        return usingPhases;
+    }
+    
+    public List<EffectManager.enumConditionEffect> GetConditions()
     {
         return conditions;
+    }
+    
+    public bool GetIsActivable()
+    {
+        return isActivable;
+    }
+
+    public void SetIsActivable(bool b)
+    {
+        isActivable = b;
     }
 
     public bool GetUsed()
     {
         return used;
     }
-    
+
     public void SetUsed(bool b)
     {
         used = b;
+    }
+
+    public bool GetIsEffectAuto()
+    {
+        return isEffectAuto;
+    }
+
+    public void SetIsEffectAuto(bool b)
+    {
+        isEffectAuto = b;
     }
 }

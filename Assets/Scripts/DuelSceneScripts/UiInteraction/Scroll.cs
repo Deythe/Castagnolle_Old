@@ -21,8 +21,8 @@ public class Scroll : MonoBehaviour, IPointerExitHandler
             if (UiManager.instance.Card != null && Input.GetTouch(0).phase != TouchPhase.Ended)
             {
                 scrollRect.horizontal = true;
-                PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().Prefabs);
-                PlacementManager.instance.CurrentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
+                PlacementManager.instance.SetGOPrefabsMonster(UiManager.instance.Card.GetComponent<CardData>().p_prefabs);
+                PlacementManager.instance.p_currentCardSelection = UiManager.instance.Card.GetComponent<CardData>();
                 UiManager.instance.ShowingOffBigCard();
                 RoundManager.instance.p_roundState = RoundManager.enumRoundState.DragUnitPhase;
                 UiManager.instance.Card.GetComponent<CardData>().ReInit();

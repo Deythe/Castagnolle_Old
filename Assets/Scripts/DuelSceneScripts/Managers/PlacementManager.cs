@@ -22,7 +22,7 @@ public class PlacementManager : MonoBehaviour
     
     private float xAveragePosition, zAveragePosition;
     private bool isWaiting;
-    
+
     [Serializable]
     public class Case{
         public GameObject monster;
@@ -32,6 +32,11 @@ public class PlacementManager : MonoBehaviour
     public PhotonView p_view
     {
         get => view;
+    }
+    
+    public List<Case> p_board
+    {
+        get => board;
     }
 
     public List<Material> p_listMaterial
@@ -44,7 +49,7 @@ public class PlacementManager : MonoBehaviour
         get => isWaiting;
     }
     
-    public bool SpecialInvocation
+    public bool p_specialInvocation
     {
         get => specialInvocation;
         set
@@ -53,11 +58,11 @@ public class PlacementManager : MonoBehaviour
         }
     }
 
-    public bool HaveAChampionOnBoard
+    public bool p_haveAChampionOnBoard
     {
         get => haveAChampionOnBoard;
     }
-    public CardData CurrentCardSelection
+    public CardData p_currentCardSelection
     {
         get => currentCardSelection;
         set 
@@ -98,15 +103,15 @@ public class PlacementManager : MonoBehaviour
         {
             if (card.monster.GetComponent<PhotonView>().AmOwner)
             {
-                card.monster.GetComponent<Monster>().p_attacked = true;
-                card.monster.GetComponent<Monster>().InitColorsTiles();
+                card.monster.GetComponent<MonstreData>().p_attacked = true;
+                card.monster.GetComponent<MonstreData>().InitColorsTiles();
                 
-                if (card.monster.GetComponent<Monster>().p_isMovable)
+                if (card.monster.GetComponent<MonstreData>().p_isMovable)
                 {
-                    card.monster.GetComponent<Monster>().p_attacked = false;
+                    card.monster.GetComponent<MonstreData>().p_attacked = false;
                 }
                 
-                card.monster.GetComponent<Monster>().ReActivadeAllEffect();
+                card.monster.GetComponent<MonstreData>().ReActivadeAllEffect();
             }
         }
     }
@@ -178,26 +183,28 @@ public class PlacementManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
 
-        currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
-            PlayerSetup.instance.transform.rotation, 0);
-        
         if (!specialInvocation)
         {
             DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
         }
-        
-        specialInvocation = false;
-        currentCardSelection = null;
-        goPrefabMonster = null;
-        Destroy(currentUnit);
-        currentUnit = null;
 
-        if (!currentUnitPhoton.GetComponent<Monster>().HaveAnEffectThisPhase(0))
+        currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
+            PlayerSetup.instance.transform.rotation, 0);
+        
+        Destroy(currentUnit);
+        
+        if (!specialInvocation)
+        {
+            currentUnit = null;
+            goPrefabMonster = null;
+        }
+        
+        currentCardSelection = null;
+
+        if (!currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
         {
             RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
         }
-        
-        currentUnitPhoton.GetComponent<Monster>().ActivateEffects(0);
         
         currentUnitPhoton = null;
         isWaiting = false;
@@ -206,32 +213,32 @@ public class PlacementManager : MonoBehaviour
     public float AverageCenterX(GameObject unit)
     {
         xAveragePosition = 0;
-        foreach (var center in unit.GetComponent<Monster>().GetCenters())
+        foreach (var center in unit.GetComponent<MonstreData>().GetCenters())
         {
             xAveragePosition += center.position.x;
         }
         
-        return xAveragePosition / unit.GetComponent<Monster>().GetCenters().Count;
+        return xAveragePosition / unit.GetComponent<MonstreData>().GetCenters().Count;
     }
 
     public float AverageCenterZ(GameObject unit)
     {
         zAveragePosition = 0;
-        foreach (var center in unit.GetComponent<Monster>().GetCenters())
+        foreach (var center in unit.GetComponent<MonstreData>().GetCenters())
         {
             zAveragePosition += center.position.z;
         }
         
-        return zAveragePosition / unit.GetComponent<Monster>().GetCenters().Count;
+        return zAveragePosition / unit.GetComponent<MonstreData>().GetCenters().Count;
     }
 
-    public Monster SearchMobWithID(int unitID)
+    public MonstreData SearchMobWithID(int unitID)
     {
         for (int i = 0; i < board.Count; i++)
         {
-            if (GetBoard()[i].monster.GetComponent<Monster>().p_id.Equals(unitID))
+            if (board[i].monster.GetComponent<MonstreData>().p_id.Equals(unitID))
             {
-                return GetBoard()[i].monster.GetComponent<Monster>();
+                return board[i].monster.GetComponent<MonstreData>();
             }
         }
 
@@ -251,11 +258,10 @@ public class PlacementManager : MonoBehaviour
         currentUnit = null;
         isPlacing = false;
     }
-    
-    
+
     public bool CheckAllPosition(GameObject obj)
     {
-        foreach (var center in obj.GetComponent<Monster>().GetCenters())
+        foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
         {
             if (CheckLinkWithOthers(center.position))
             {
@@ -313,7 +319,7 @@ public class PlacementManager : MonoBehaviour
 
     bool CheckAlreadyHere(GameObject obj)
     {
-        foreach (var tiles in obj.GetComponent<Monster>().GetCenters())
+        foreach (var tiles in obj.GetComponent<MonstreData>().GetCenters())
         {
             if ((int)Mathf.Abs(tiles.position.x) > 3.5 || (int)Mathf.Abs(tiles.position.z) > 4.5)
             {
@@ -341,33 +347,35 @@ public class PlacementManager : MonoBehaviour
         Case data = new Case();
         data.monster = obj;
         data.emplacement = new List<Vector2>();
-        foreach (var center in obj.GetComponent<Monster>().GetCenters())
+        foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
         {
             data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
         }
         board.Add(data);
-        if (obj.GetComponent<Monster>().p_isChampion && obj.GetComponent<PhotonView>().AmOwner)
+        if (obj.GetComponent<MonstreData>().p_isChampion && obj.GetComponent<PhotonView>().AmOwner)
         {
             haveAChampionOnBoard = true;
         }
+        EffectManager.instance.CheckAllHeroism();
     }
 
     public void RemoveMonsterBoard(int id)
     {
         for (int i = 0; i < board.Count; i++)
         {
-            if (board[i].monster.GetComponent<Monster>().p_id == id)
+            if (board[i].monster.GetComponent<MonstreData>().p_id == id)
             {
-                if (board[i].monster.GetComponent<Monster>().p_isChampion &&
+                if (board[i].monster.GetComponent<MonstreData>().p_isChampion &&
                     board[i].monster.GetComponent<PhotonView>().AmOwner)
                 {
                     haveAChampionOnBoard = false;
                 }
                 
-                board.Remove(GetBoard()[i]);
+                board.Remove(board[i]);
                 return;
             }
         }
+        EffectManager.instance.CheckAllHeroism();
     }
     
     public void AddExtentionMonsterBoard(GameObject exten, GameObject mother)
@@ -388,7 +396,7 @@ public class PlacementManager : MonoBehaviour
         if (RoundManager.instance.p_localPlayerTurn == 1)
         {
             zcenter = -10;
-            foreach (var center in obj.GetComponent<Monster>().GetCenters())
+            foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
             {
                 if (center.position.z > zcenter)
                 {
@@ -400,7 +408,7 @@ public class PlacementManager : MonoBehaviour
         else
         {
             zcenter = 10;
-            foreach (var center in obj.GetComponent<Monster>().GetCenters())
+            foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
             {
                 if (center.position.z < zcenter)
                 {
@@ -416,12 +424,7 @@ public class PlacementManager : MonoBehaviour
     [PunRPC]
     private void RPC_ActivateEffect(int idUnit)
     {
-        SearchMobWithID(idUnit).GetComponent<Monster>().ActivateEffects(0);
-    }
-
-    public List<Case> GetBoard()
-    {
-        return board;
+        SearchMobWithID(idUnit).GetComponent<MonstreData>().ActivateEffects(0);
     }
 
     public GameObject GetPrefabUnit()

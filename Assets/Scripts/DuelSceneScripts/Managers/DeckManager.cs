@@ -93,7 +93,7 @@ public class DeckManager : MonoBehaviour
                 }
             }
 
-            if (AllCheckValide(ressources) && !(PlacementManager.instance.HaveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().IsChampion))
+            if (AllCheckValide(ressources) && !(PlacementManager.instance.p_haveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().p_isChampion))
             {
                 cardDeck[i].GetComponent<CardData>().p_enabled = true;
             }

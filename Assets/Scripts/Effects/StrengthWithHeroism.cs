@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
@@ -8,29 +9,20 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
     [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
-    [SerializeField] private List<GameObject> mobNextTo;
-    [SerializeField] private int heroism;
-    private bool used;
-
-
+    [SerializeField] private bool isEffectAuto;
+    [SerializeField] private bool used;
+    [SerializeField] private bool isActivable;
+    
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
         if (view.AmOwner)
         {
-            if (usingPhases[0].Equals(0))
+            if (usingPhases[0]== phase)
             {
-                if (EffectManager.instance.CheckHeroism(transform, mobNextTo, heroism))
-                {
-                    view.RPC("RPC_Action", RpcTarget.AllViaServer);
-                    used = true;
-                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
-                } else
-                {
-                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
-                    UiManager.instance.ShowTextFeedBackWithDelay(3);
-                }
-                
-                GetComponent<Monster>().p_model.layer = 6;
+                view.RPC("RPC_Action", RpcTarget.AllViaServer);
+                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                GetComponent<MonstreData>().p_model.layer = 6;
+                used = true;
             }
         }
     }
@@ -38,27 +30,61 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action()
     {
-        GetComponent<Monster>().p_atk+=2;
+        GetComponent<MonstreData>().p_atk+=2;
     }
-
-    List<EffectManager.enumEffectPhaseActivation> IEffects.GetPhaseActivation()
+    
+    public void TransferEffect(IEffects effectMother)
+    {
+        view = effectMother.GetView();
+        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
+        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        isEffectAuto = effectMother.GetIsEffectAuto();
+        used = effectMother.GetUsed();
+        isActivable = effectMother.GetIsActivable();
+    }
+    
+    public PhotonView GetView()
+    {
+        return view;
+    }
+    
+    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
     {
         return usingPhases;
     }
-
-    public List<EffectManager.enumConditionEffect> GetConditionsForActivation()
+    
+    public List<EffectManager.enumConditionEffect> GetConditions()
     {
         return conditions;
     }
+    
+    public bool GetIsActivable()
+    {
+        return isActivable;
+    }
 
+    public void SetIsActivable(bool b)
+    {
+        isActivable = b;
+    }
 
     public bool GetUsed()
     {
         return used;
     }
-    
+
     public void SetUsed(bool b)
     {
         used = b;
+    }
+
+    public bool GetIsEffectAuto()
+    {
+        return isEffectAuto;
+    }
+
+    public void SetIsEffectAuto(bool b)
+    {
+        isEffectAuto = b;
     }
 }

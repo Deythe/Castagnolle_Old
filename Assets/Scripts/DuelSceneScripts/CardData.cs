@@ -21,11 +21,16 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     [SerializeField] private RectTransform resourceCard;
     [SerializeField] private Image image;
 
+    private IEffects effetCard;
     private Color transparent = new Color(1, 1, 1, 0.1f);
     private ScrollRect scrollRectParent;
     private RectTransform rec;
     private float initialPositionY;
 
+    public IEffects p_effetCard
+    {
+        get => effetCard;
+    }
     public bool p_enabled
     {
         get => enabled;
@@ -42,11 +47,11 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
             }
         }
     }
-    public Sprite BigCard
+    public Sprite p_fullCard
     {
         get => bigCard;
     }
-    public int Atk
+    public int p_atk
     {
         get => atk;
         set
@@ -54,8 +59,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
             atk = value;
         }
     }
-    
-    public GameObject Prefabs
+    public GameObject p_prefabs
     {
         get => prefabs;
         set
@@ -63,8 +67,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
             prefabs = value;
         }
     }
-    
-    public bool IsChampion
+    public bool p_isChampion
     {
         get => isChampion;
         set
@@ -89,34 +92,22 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
         scrollRectParent = GetComponentInParent<ScrollRect>();
     }
 
+    public void PutEffect()
+    {
+        effetCard = GetComponent<IEffects>();
+    }
+
     private void OnEnable()
     {
         lifeCard.text = "" + atk;
         
         for (int i = 0; i < resources.Count; i++)
         {
-            resourceCard.GetChild(i).GetComponent<Image>().sprite = ChooseGoodSprite(i);
+            resourceCard.GetChild(i).GetComponent<Image>().sprite = UiManager.instance.ChooseGoodSprite(resources, i);
             resourceCard.GetChild(i).gameObject.SetActive(true);
         }
     }
 
-    private Sprite ChooseGoodSprite(int index)
-    {
-        switch (resources[index])
-        {
-            case DiceListScriptable.enumRessources.Whatever:
-                return DiceManager.instance.DiceListScriptable.symbolsList[0];
-            case DiceListScriptable.enumRessources.Blue:
-                return DiceManager.instance.DiceListScriptable.symbolsList[1];
-            case DiceListScriptable.enumRessources.Purple:
-                return DiceManager.instance.DiceListScriptable.symbolsList[2];
-            case DiceListScriptable.enumRessources.Red:
-                return DiceManager.instance.DiceListScriptable.symbolsList[3];
-        }
-
-        return null;
-    }
-    
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (Input.touchCount > 0)

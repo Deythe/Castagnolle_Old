@@ -31,8 +31,8 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject buttonBattlePhase;
     [SerializeField] private GameObject scrollView;
 
-    [SerializeField] private GameObject menuYesChoice;
-    [SerializeField] private GameObject menuNoChoice;
+    [SerializeField] private Button menuYesChoice;
+    [SerializeField] private Button menuNoChoice;
     
     [SerializeField] private RectTransform content;
     
@@ -236,7 +236,7 @@ public class UiManager : MonoBehaviour
                     {
                         case TouchPhase.Began:
                             Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
-                            if(hit.collider != null && (hit.collider.GetComponent<Monster>() != null || hit.collider.GetComponent<UnitExtension>() != null))
+                            if(hit.collider != null && (hit.collider.GetComponent<MonstreData>() != null || hit.collider.GetComponent<UnitExtension>() != null))
                             {
                                 if (currentCoroutine != null)
                                 {
@@ -375,23 +375,23 @@ public class UiManager : MonoBehaviour
     
     public void AbleBoardMonsterCard(Collider go)
     {
-        if (go.GetComponent<Monster>() != null)
+        if (go.GetComponent<MonstreData>() != null)
         {
-            bigCart.GetComponent<Image>().sprite = go.GetComponent<Monster>().p_bigCard;
-            lifeCard.text = "" + go.GetComponent<Monster>().p_atk;
-            if (go.GetComponent<Monster>().p_stats.GetComponent<CardData>() != null)
+            bigCart.GetComponent<Image>().sprite = go.GetComponent<MonstreData>().p_bigCard;
+            lifeCard.text = "" + go.GetComponent<MonstreData>().p_atk;
+            if (go.GetComponent<MonstreData>().p_stats.GetComponent<CardData>() != null)
             {
-                pivotResources = go.GetComponent<Monster>().p_stats.GetComponent<CardData>().p_ressources;
+                pivotResources = go.GetComponent<MonstreData>().p_stats.GetComponent<CardData>().p_ressources;
             }
         }
         else
         {
-            bigCart.GetComponent<Image>().sprite = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_bigCard;
-            lifeCard.text = "" + go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_atk;
-            if (go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_stats.GetComponent<CardData>() !=
+            bigCart.GetComponent<Image>().sprite = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<MonstreData>().p_bigCard;
+            lifeCard.text = "" + go.GetComponent<UnitExtension>().p_unitParent.GetComponent<MonstreData>().p_atk;
+            if (go.GetComponent<UnitExtension>().p_unitParent.GetComponent<MonstreData>().p_stats.GetComponent<CardData>() !=
                 null)
             {
-                pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<Monster>().p_stats
+                pivotResources = go.GetComponent<UnitExtension>().p_unitParent.GetComponent<MonstreData>().p_stats
                     .GetComponent<CardData>().p_ressources;
             }
         }
@@ -411,12 +411,14 @@ public class UiManager : MonoBehaviour
         {
             case DiceListScriptable.enumRessources.Whatever:
                 return DiceManager.instance.DiceListScriptable.symbolsList[0];
-            case DiceListScriptable.enumRessources.Blue:
+            case DiceListScriptable.enumRessources.Red:
                 return DiceManager.instance.DiceListScriptable.symbolsList[1];
             case DiceListScriptable.enumRessources.Purple:
                 return DiceManager.instance.DiceListScriptable.symbolsList[2];
-            case DiceListScriptable.enumRessources.Red:
+            case DiceListScriptable.enumRessources.Blue:
                 return DiceManager.instance.DiceListScriptable.symbolsList[3];
+            case DiceListScriptable.enumRessources.Milk:
+                return DiceManager.instance.DiceListScriptable.symbolsList[4];
         }
 
         return null;
@@ -424,8 +426,8 @@ public class UiManager : MonoBehaviour
 
     public void AbleDeckCardTouch(Transform img)
     {
-        bigCart.GetComponent<Image>().sprite = img.GetComponent<CardData>().BigCard;
-        lifeCard.text = ""+img.GetComponent<CardData>().Atk;
+        bigCart.GetComponent<Image>().sprite = img.GetComponent<CardData>().p_fullCard;
+        lifeCard.text = ""+img.GetComponent<CardData>().p_atk;
 
         for (int i = 0; i < img.GetComponent<CardData>().p_ressources.Count; i++)
         {
@@ -479,12 +481,11 @@ public class UiManager : MonoBehaviour
     {
         if (b)
         {
-            Debug.Log("Caca");
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.5f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.4f).SetEase(Ease.OutBack);
         }
         else
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.1f).SetEase(Ease.Linear);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.2f).SetEase(Ease.InBack);
         }
     }
     
@@ -492,23 +493,24 @@ public class UiManager : MonoBehaviour
     {
         if(b)
         {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.3f, 0.5f).SetEase(Ease.Linear);
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.375f, 0.6f).SetEase(Ease.OutBack).OnComplete(()=> menuYesChoice.enabled=true);
         }
         else
         {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.5f).SetEase(Ease.Linear);
+            menuYesChoice.enabled = false;
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.2f).SetEase(Ease.Linear);
         }
     }
     
     public void EnableDisableMenuNoChoice(bool b)
     {
         if(b){
-            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.3f, 0.5f).SetEase(Ease.Linear);
+            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.375f, 0.6f).SetEase(Ease.OutBack).OnComplete(()=> menuNoChoice.enabled=true);
         }
         else
         {
-            
-            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.5f).SetEase(Ease.Linear);
+            menuNoChoice.enabled = false;
+            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.2f).SetEase(Ease.Linear);
         }
     }
     public void EnableDisableBattleButton(bool b)

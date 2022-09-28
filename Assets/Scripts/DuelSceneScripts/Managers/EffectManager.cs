@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using UnityEngine;
 
@@ -10,12 +11,12 @@ public class EffectManager : MonoBehaviour
     
     public enum enumEffectPhaseActivation
     {
-        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie
+        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie, WhenItsSpecialTime 
     }
     
     public enum enumConditionEffect
     {
-        SelectAllyUnit, SelectEnemyUnit, Heroism, HaveABoneInGauge, SelectACard
+        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveABoneInGauge, SelectACard, Spectacle
     }
     
     [SerializeField] private PhotonView view;
@@ -23,23 +24,27 @@ public class EffectManager : MonoBehaviour
     [SerializeField] private List<GameObject> instantiateEffect;
 
     [SerializeField] private List<enumConditionEffect> copyCurentUnitCondition;
+    [SerializeField] private List<GameObject> heroismListMobCheck;
     
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject unitTarget1;
     [SerializeField] private GameObject unitTarget2;
-    [SerializeField] private Transform pooler;
     
-    private bool unitSelected;
+    [SerializeField] private Transform pooler;
+    private MonstreData currentClick;
+    
+    private enumEffectPhaseActivation currentEffectPhaseActivation;
+
     private RaycastHit hit;
     private int numberIdAll = 0;
-    private int i, j;
+    private int i, j, numberCheckHeroism;
 
     public PhotonView View
     {
         get => view;
     }
 
-    public GameObject CurrentUnit
+    public GameObject p_currentUnit
     {
         get => currentUnit;
         set
@@ -106,30 +111,81 @@ public class EffectManager : MonoBehaviour
                         Physics.Raycast(PlayerSetup.instance.GetCam().ScreenPointToRay(Input.GetTouch(0).position), out hit);
                         if (hit.collider != null)
                         {
-                            if (hit.collider.GetComponent<Monster>() != null)
+                            if (hit.collider.GetComponent<MonstreData>() != null)
                             {
+                                currentClick = hit.collider.GetComponent<MonstreData>();
                                 switch (RoundManager.instance.p_roundState)
                                 {
                                     case RoundManager.enumRoundState.DrawPhase:
-                                        if (hit.collider.GetComponent<PhotonView>().AmOwner)
+                                        if (currentClick.p_effect != null)
                                         {
-                                            if (hit.collider.GetComponent<Monster>()
-                                                .HaveAnEffectThisPhase(enumEffectPhaseActivation.WhenItsDrawPhase))
+                                            if (currentClick.photonView.AmOwner)
                                             {
-                                                currentUnit = hit.collider.gameObject;
-                                                UiManager.instance.EnableDisableMenuNoChoice(true);
-                                                UiManager.instance.EnableDisableMenuYesChoice(true);
+                                                if (currentClick
+                                                        .HaveAnEffectThisPhase(enumEffectPhaseActivation
+                                                            .WhenItsDrawPhase)
+                                                    && currentClick.p_effect.GetIsActivable()
+                                                    && !currentClick.p_effect.GetUsed()
+                                                    && !currentClick.p_effect.GetIsEffectAuto())
+                                                {
+                                                    currentUnit = currentClick.gameObject;
+                                                    UiManager.instance.EnableDisableScrollView(false);
+                                                    UiManager.instance.EnableDisableBattleButton(false);
+                                                    UiManager.instance.EnableDisableMenuNoChoice(true);
+                                                    UiManager.instance.EnableDisableMenuYesChoice(true);
+                                                }
                                             }
                                         }
                                         break;
-                                    
+                                        
+
                                     case RoundManager.enumRoundState.EffectPhase:
-                                        switch (copyCurentUnitCondition[0])
+                                        if (copyCurentUnitCondition.Count > 0)
                                         {
-                                            case enumConditionEffect.SelectAllyUnit:
-                                                if (hit.collider.GetComponent<PhotonView>().AmOwner)
-                                                {
-                                                    if (!hit.collider.gameObject.Equals(currentUnit))
+                                            switch (copyCurentUnitCondition[0])
+                                            {
+                                                case enumConditionEffect.SelectAllyUnityButNotThisOne:
+                                                    if (hit.collider.GetComponent<PhotonView>().AmOwner)
+                                                    {
+                                                        if (!hit.collider.gameObject.Equals(currentUnit))
+                                                        {
+                                                            if (unitTarget1 == null)
+                                                            {
+                                                                unitTarget1 = hit.collider.gameObject;
+                                                            }
+                                                            else
+                                                            {
+                                                                unitTarget2 = hit.collider.gameObject;
+                                                            }
+
+                                                            copyCurentUnitCondition.RemoveAt(0);
+                                                            CheckCondition();
+                                                        }
+                                                    }
+
+                                                    break;
+
+                                                case enumConditionEffect.SelectAllyUnit:
+                                                    if (hit.collider.GetComponent<PhotonView>().AmOwner)
+                                                    {
+                                                        if (unitTarget1 == null)
+                                                        {
+                                                            unitTarget1 = hit.collider.gameObject;
+                                                        }
+                                                        else
+                                                        {
+                                                            unitTarget2 = hit.collider.gameObject;
+                                                        }
+
+                                                        copyCurentUnitCondition.RemoveAt(0);
+                                                        CheckCondition();
+
+                                                    }
+
+                                                    break;
+
+                                                case enumConditionEffect.SelectEnemyUnit:
+                                                    if (!hit.collider.GetComponent<PhotonView>().AmOwner)
                                                     {
                                                         if (unitTarget1 == null)
                                                         {
@@ -143,27 +199,11 @@ public class EffectManager : MonoBehaviour
                                                         copyCurentUnitCondition.RemoveAt(0);
                                                         CheckCondition();
                                                     }
-                                                }
-                                                break;
-                                            
-                                            case enumConditionEffect.SelectEnemyUnit:
-                                                if (!hit.collider.GetComponent<PhotonView>().AmOwner)
-                                                {
-                                                    if (unitTarget1 == null)
-                                                    {
-                                                        unitTarget1 = hit.collider.gameObject;
-                                                    }
-                                                    else
-                                                    {
-                                                        unitTarget2 = hit.collider.gameObject;
-                                                    }
 
-                                                    copyCurentUnitCondition.RemoveAt(0);
-                                                    CheckCondition();
-                                                }
-                                                break;
-
+                                                    break;
+                                            }
                                         }
+
                                         break;
                                 }
                             }
@@ -174,42 +214,13 @@ public class EffectManager : MonoBehaviour
             }
         }
     }
-
-    private void CheckCondition()
-    {
-        switch (copyCurentUnitCondition[0])
-        {
-            case enumConditionEffect.SelectAllyUnit:
-                UiManager.instance.SetTextFeedBack(0);
-                UiManager.instance.p_textFeedBack.enabled = true;
-                break;
-            case enumConditionEffect.SelectEnemyUnit:
-                UiManager.instance.SetTextFeedBack(0);
-                UiManager.instance.p_textFeedBack.enabled = true;
-                break;
-        }
-        
-        if (copyCurentUnitCondition.Count == 0)
-        {
-            UiManager.instance.EnableDisableMenuYesChoice(true);
-        }
-        else
-        {
-            UiManager.instance.EnableDisableMenuYesChoice(false); 
-        }
-    }
-    
-    public void ActiveEffect()
-    {
-        currentUnit.GetComponent<Monster>().ActivateEffects(enumEffectPhaseActivation.WhenItsDrawPhase);
-    }
-
-    public void UnitSelected()
+    public void UnitSelected(enumEffectPhaseActivation phase)
     {
         RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
+        currentEffectPhaseActivation = phase;
         copyCurentUnitCondition =
-            new List<enumConditionEffect>(currentUnit.GetComponent<Monster>()
-                .GetConditionsListFromEffect(enumEffectPhaseActivation.WhenItsDrawPhase));
+            new List<enumConditionEffect>(currentUnit.GetComponent<MonstreData>()
+                .GetConditionsListFromEffect());
 
         if (copyCurentUnitCondition.Count.Equals(0))
         {
@@ -220,43 +231,137 @@ public class EffectManager : MonoBehaviour
             CheckCondition();
         }
     }
+    
+    public void ActiveEffect()
+    {
+        Debug.Log("Effet activated");
+        UiManager.instance.EnableDisableMenuYesChoice(false);
+        UiManager.instance.EnableDisableMenuNoChoice(false);
+        currentUnit.GetComponent<MonstreData>().ActivateEffects(currentEffectPhaseActivation);
+    }
+
+    private void CheckCondition()
+    {
+        if (copyCurentUnitCondition.Count == 0)
+        {
+            UiManager.instance.EnableDisableMenuYesChoice(true);
+            return;
+        }
+      
+        UiManager.instance.EnableDisableMenuYesChoice(false); 
+        
+        switch (copyCurentUnitCondition[0])
+        {
+            case enumConditionEffect.SelectAllyUnityButNotThisOne:
+            case enumConditionEffect.SelectAllyUnit:
+                UiManager.instance.SetTextFeedBack(1);
+                UiManager.instance.p_textFeedBack.enabled = true;
+                break;
+            case enumConditionEffect.SelectEnemyUnit:
+                UiManager.instance.SetTextFeedBack(2);
+                UiManager.instance.p_textFeedBack.enabled = true;
+                break;
+            case enumConditionEffect.Heroism:
+                for (i = copyCurentUnitCondition.Count-1; i >= 0; i--)
+                {
+                    if (copyCurentUnitCondition[i] == enumConditionEffect.Heroism)
+                    {
+                        copyCurentUnitCondition.RemoveAt(i);
+                    }
+                }
+                
+                if (copyCurentUnitCondition.Count == 0)
+                {
+                    ActiveEffect();
+                    return;
+                }
+                
+                CheckCondition();
+                break;
+            case enumConditionEffect.Spectacle:
+                currentUnit.GetComponent<MonstreData>().p_effect.GetConditions().RemoveAt(0);
+                copyCurentUnitCondition.RemoveAt(0);
+                if (copyCurentUnitCondition[0] != enumConditionEffect.Spectacle)
+                {
+                    ActiveEffect();
+                    CheckCondition();
+                }
+                else
+                {
+                    copyCurentUnitCondition.Clear();
+                    ActiveEffect();
+                }
+                break;
+        }
+    }
+
+    public bool EffectFinished()
+    {
+        return copyCurentUnitCondition.Count.Equals(0);
+    }
 
     public void CancelSelection(RoundManager.enumRoundState state)
     {
         ClearUnits();
+        UiManager.instance.EnableDisableMenuNoChoice(false);
+        UiManager.instance.EnableDisableMenuYesChoice(false);
+        UiManager.instance.EnableDisableBattleButton(true);
         RoundManager.instance.p_roundState = state;
     }
 
     public void ClearUnits()
     {
         copyCurentUnitCondition = null;
-        UiManager.instance.EnableDisableMenuNoChoice(false);
-        UiManager.instance.EnableDisableMenuYesChoice(false);
         UiManager.instance.p_textFeedBack.enabled = false;
         unitTarget1 = null;
         unitTarget2 = null;
         currentUnit = null;
     }
-    
-    public bool CheckHeroism(Transform go, List<GameObject> mobNextTo, int numberCheck)
+
+    public void CheckAllHeroism()
     {
+        for (int j = 0; j < PlacementManager.instance.p_board.Count; j++)
+        {
+            
+            if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().GetConditionsListFromEffect()
+                    .Contains(enumConditionEffect.Heroism))
+            {
+                CheckHeroism(PlacementManager.instance.p_board[j].monster.transform);
+            }   
+        }
+    }
+    
+    public bool CheckHeroism(Transform go)
+    {
+        int numberCheck = 0;
+        heroismListMobCheck.Clear();
+        
+        foreach (var check in go.GetComponent<MonstreData>().GetConditionsListFromEffect())
+        {
+            if (check == enumConditionEffect.Heroism)
+            {
+                numberCheck++;
+            }
+        }
+        
         for (i = 0; i < numberCheck; i++)
         {
-            for (j = 0; j < PlacementManager.instance.GetBoard().Count; j++)
+            for (j = 0; j < PlacementManager.instance.p_board.Count; j++)
             {
-                foreach (var unitAlly in go.GetComponent<Monster>().GetCenters())
+                foreach (var unitAlly in go.GetComponent<MonstreData>().GetCenters())
                 {
-                    if (!PlacementManager.instance.GetBoard()[j].monster.GetComponent<PhotonView>().AmOwner)
+                    if (!PlacementManager.instance.p_board[j].monster.GetComponent<PhotonView>().AmOwner)
                     {
-                        foreach (var center in PlacementManager.instance.GetBoard()[j].emplacement)
+                        foreach (var center in PlacementManager.instance.p_board[j].emplacement)
                         {
                             if (Vector2.Distance(center, new Vector2(unitAlly.position.x, unitAlly.position.z))
                                 .Equals(1))
                             {
-                                if (!mobNextTo.Contains(PlacementManager.instance.GetBoard()[j].monster))
+                                if (!heroismListMobCheck.Contains(PlacementManager.instance.p_board[j].monster))
                                 {
-                                    Debug.Log("oui");
-                                    mobNextTo.Add(PlacementManager.instance.GetBoard()[j].monster);
+                                    heroismListMobCheck.Add(PlacementManager.instance.p_board[j].monster);
                                 }
                             }
                         }
@@ -265,23 +370,30 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        if (mobNextTo.Count>=numberCheck)
+        if (heroismListMobCheck.Count>=numberCheck)
         {
-            mobNextTo.Clear();
+            heroismListMobCheck.Clear();
+            go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
+            go.GetComponent<MonstreData>().p_model.layer = 7;
             return true;
         }
         
+        go.GetComponent<MonstreData>().p_effect.SetIsActivable(false);
+        go.GetComponent<MonstreData>().p_model.layer = 6;
         return false;   
         
     }
 
     public void ActivateEffectWhenUnitDie()
     {
-        foreach (var cases in PlacementManager.instance.GetBoard())
+        foreach (var cases in PlacementManager.instance.p_board)
         {
-            if (cases.monster.GetComponent<Monster>().HaveAnEffectThisPhase(enumEffectPhaseActivation.WhenAUnitDie))
+            if (cases.monster.GetComponent<MonstreData>().HaveAnEffectThisPhase(enumEffectPhaseActivation.WhenAUnitDie) 
+                && cases.monster.GetComponent<MonstreData>().p_effect.GetIsActivable()
+                && !cases.monster.GetComponent<MonstreData>().p_effect.GetUsed())
             {
-                cases.monster.GetComponent<Monster>().ActivateEffects(enumEffectPhaseActivation.WhenAUnitDie);
+                currentUnit = cases.monster;
+                UnitSelected(enumEffectPhaseActivation.WhenAUnitDie);
             }
         }
     }

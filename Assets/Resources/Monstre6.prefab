@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5173444060119363847}
   - component: {fileID: -4557785253544110790}
   - component: {fileID: 3531432135879127181}
-  - component: {fileID: -676836905992719483}
   m_Layer: 0
   m_Name: Monstre6
   m_TagString: Monster
@@ -93,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d48545e25a61f1438cfbba4d9859bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 7236249880086410052, guid: 6ea2c27475845d64b827d175bab6192a, type: 3}
+  card: {fileID: 5933185828017948179, guid: 6ea2c27475845d64b827d175bab6192a, type: 3}
   bigCard: {fileID: 0}
   model: {fileID: 7631012992817897620}
   modelTexture: {fileID: 2100000, guid: a4a2d9a96e4767244a99f9c678bbe84f, type: 2}
@@ -133,21 +132,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 0.3, z: 1}
   m_Center: {x: 1, y: 0, z: 0}
---- !u!114 &-676836905992719483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1764594795200175919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55a14ba33c7202049aecd9a7a14e87ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  view: {fileID: 5347874786083823171}
-  targetUnit: {fileID: 0}
-  usingPhase: 0
 --- !u!1 &2898296019858275230
 GameObject:
   m_ObjectHideFlags: 0
