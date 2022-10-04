@@ -173,59 +173,35 @@ public class PlacementManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
 
-        /*
+        EffectManager.instance.ClearUnits();
+
         if (!EffectManager.instance.p_specialInvocation)
         {
-            EffectManager.instance.ClearUnits();
-            
             DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
-            currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
-                new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
-                PlayerSetup.instance.transform.rotation, 0);
-
-            Destroy(currentUnit);
-            
-            currentUnit = null;
-            goPrefabMonster = null;
-            currentCardSelection = null;
-
-            if (!currentUnitPhoton.GetComponent<MonstreData>()
-                .HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
-            {
-                RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
-            }
         }
-        else
-        {
-            EffectManager.instance.ClearUnits();
-            currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
+        
+        currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
                 new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
                 PlayerSetup.instance.transform.rotation, 0);
-            
-            Destroy(currentUnit);
-            
-            currentUnit = null;
-            goPrefabMonster = null;
-            currentCardSelection = null;
 
-            if (!currentUnitPhoton.GetComponent<MonstreData>()
-                .HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
-            {
-                RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
-            }
-            
-            if (obj.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && obj.GetComponent<MonstreData>().p_effect.GetIsActivable())
+        Destroy(currentUnit);
+        currentUnit = null;
+        goPrefabMonster = null;
+        currentCardSelection = null;
+
+        if (currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && currentUnitPhoton.GetComponent<MonstreData>().p_effect.GetIsActivable())
         {
-            EffectManager.instance.p_currentUnit = obj;
+            EffectManager.instance.p_currentUnit = currentUnitPhoton;
             EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
+        }else
+        {
+            RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
         }
-            
-        }
-        */
+        
         currentUnitPhoton = null;
         isWaiting = false;
     }
-    
+
     public void AddMonsterBoard(GameObject obj)
     {
         Case data = new Case();
