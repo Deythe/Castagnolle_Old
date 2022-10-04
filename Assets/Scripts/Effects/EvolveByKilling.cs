@@ -82,7 +82,7 @@ public class EvolveByKilling : MonoBehaviour, IEffects
                 PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
                     transform.rotation, 0);
                 
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.CastagnePhase);
+                EffectManager.instance.CancelSelection();
                 used = true;
                 GetComponent<MonstreData>().p_isChampion = false;
                 PhotonNetwork.Destroy(gameObject);
@@ -96,7 +96,6 @@ public class EvolveByKilling : MonoBehaviour, IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
         

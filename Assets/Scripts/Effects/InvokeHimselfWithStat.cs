@@ -22,12 +22,12 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         {
             if (usingPhases.Contains(phase))
             {
-                PlacementManager.instance.p_specialInvocation = true;
+                EffectManager.instance.p_specialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(GetComponent<MonstreData>().p_stats.GetComponent<CardData>().p_prefabs);
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
                 PlacementManager.instance.RemoveMonsterBoard(GetComponent<MonstreData>().p_id);
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
                 UiManager.instance.p_textFeedBack.enabled = true;
                 UiManager.instance.SetTextFeedBack(0);
                 gameObject.SetActive(false);
@@ -76,7 +76,6 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

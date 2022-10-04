@@ -52,7 +52,6 @@ public class LifeManager : MonoBehaviour
                
                if ((life - value).Equals(3))
                {
-                    Debug.Log("Prout");
                     UiManager.instance.BorderSingleFlash(255,0,0);
                }
                

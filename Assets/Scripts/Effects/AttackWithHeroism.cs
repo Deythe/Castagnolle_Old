@@ -18,6 +18,7 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
+            /*
             if (usingPhases[0].Equals(phase))
             {
                 if (EffectManager.instance.CheckHeroism(transform))
@@ -35,6 +36,7 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
                     GetComponent<MonstreData>().p_model.layer = 6;
                 }
             }
+            */
         }
     }
     
@@ -43,7 +45,6 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

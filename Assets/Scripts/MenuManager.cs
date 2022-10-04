@@ -246,7 +246,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         NeedLessRessourceForUnit.unitOnBoard = null;
         InvokeHimselfWithStat.motherUnit = null;
         NeedLessRessourcesForChampions.motherUnit = null;
-        NeedLessRessourcesForChampions.originalCard = null;
+        NeedLessRessourcesForChampions.originalCardResources = null;
+        NeedLessRessourcesForChampions.originalCardAtk = null;
         NeedLessRessourcesForChampions.unitOnBoard = null;
         CastagneManager.instance = null;
         DeckManager.instance = null;

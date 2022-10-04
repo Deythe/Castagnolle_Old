@@ -60,7 +60,7 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
             }
         }
         
@@ -150,7 +150,6 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

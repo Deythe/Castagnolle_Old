@@ -6,11 +6,11 @@ public class DiceListScriptable : ScriptableObject
 {
     public enum enumRessources
     {
-        Whatever,Red, Purple, Blue, Neutral, Milk, DoubleRed, DoublePurple, DoubleBlue, DoubleNeutral, TripleRed, TriplePurple, TripleBlue, TripleNeutral
+        Nothing,Whatever,Red, Purple, Blue, Neutral, Milk, DoubleRed, DoublePurple, DoubleBlue, DoubleNeutral, TripleRed, TriplePurple, TripleBlue, TripleNeutral
     }
 
     public List<DiceScriptable> diceDeck;
-    public List<enumRessources> textureIndex;
+    //public List<enumRessources> textureIndex;
     public List<Texture2D> textureList;
     public List<Sprite> symbolsList;
 }

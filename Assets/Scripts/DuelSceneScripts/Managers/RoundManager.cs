@@ -261,7 +261,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
             case enumRoundState.DrawPhase:
             case enumRoundState.EffectPhase:
                 UiManager.instance.EnableDisableScrollView(true);
-                EffectManager.instance.CancelSelection(enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
+                p_roundState = enumRoundState.DrawPhase;
                 break;
         }
     }

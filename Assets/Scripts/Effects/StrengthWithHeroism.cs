@@ -20,7 +20,7 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
             if (usingPhases[0]== phase)
             {
                 view.RPC("RPC_Action", RpcTarget.AllViaServer);
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
                 used = true;
             }
@@ -37,8 +37,7 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     {
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
+        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions()); 
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

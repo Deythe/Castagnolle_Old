@@ -17,8 +17,5 @@ public interface IEffects
     
     public bool GetUsed();
     public void SetUsed(bool b);
-    
-    public bool GetIsEffectAuto();
-    public void SetIsEffectAuto(bool b);
     public void TransferEffect(IEffects effectMother);
 }

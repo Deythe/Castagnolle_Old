@@ -23,7 +23,7 @@ public class KillWithHeroism : MonoBehaviour, IEffects
                     EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID);
                 
                 GetComponent<MonstreData>().p_model.layer = 6;
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
                 used = true;
             }
         }
@@ -40,7 +40,6 @@ public class KillWithHeroism : MonoBehaviour, IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

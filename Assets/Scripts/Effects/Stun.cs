@@ -27,7 +27,7 @@ public class Stun : MonoBehaviour, IEffects
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
                     EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID);
                 used = true;
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
             }
             else if (usingPhases[1] == phase)
@@ -54,7 +54,6 @@ public class Stun : MonoBehaviour, IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

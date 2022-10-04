@@ -45,7 +45,7 @@ public class Ring : MonoBehaviour,IEffects
 
                     break;
             }
-            EffectManager.instance.CancelSelection(RoundManager.enumRoundState.CastagnePhase);
+            EffectManager.instance.CancelSelection();
         }
     }
     
@@ -61,7 +61,6 @@ public class Ring : MonoBehaviour,IEffects
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

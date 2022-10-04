@@ -38,7 +38,7 @@ public class PlayerSetup : MonoBehaviour
         {
             DiceManager.instance.p_diceGauge[0] = DiceListScriptable.enumRessources.Neutral;
             DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
-                DiceManager.instance.DiceGaugeObjet[0].GetComponent<PhotonView>().ViewID, true, 4);
+                DiceManager.instance.DiceGaugeObjet[0].GetComponent<PhotonView>().ViewID, true, DiceListScriptable.enumRessources.Neutral);
         }
     }
 

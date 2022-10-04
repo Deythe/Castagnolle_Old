@@ -13,8 +13,7 @@ public class PlacementManager : MonoBehaviour
     private bool isPlacing;
     private RaycastHit hit;
     private CardData currentCardSelection;
-    private bool specialInvocation;
-    
+
     [SerializeField] private PhotonView view;
     [SerializeField] private List<Case> board;
     [SerializeField] private bool haveAChampionOnBoard;
@@ -47,15 +46,6 @@ public class PlacementManager : MonoBehaviour
     public bool p_isWaiting
     {
         get => isWaiting;
-    }
-    
-    public bool p_specialInvocation
-    {
-        get => specialInvocation;
-        set
-        {
-            specialInvocation = value;
-        }
     }
 
     public bool p_haveAChampionOnBoard
@@ -111,14 +101,15 @@ public class PlacementManager : MonoBehaviour
                     card.monster.GetComponent<MonstreData>().p_attacked = false;
                 }
                 
-                card.monster.GetComponent<MonstreData>().ReActivadeAllEffect();
+                card.monster.GetComponent<MonstreData>().ReloadEffect();
             }
         }
     }
 
     void DragMonsterEmplacement()
     {
-        if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.DragUnitPhase)
+        if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.DragUnitPhase || (RoundManager.instance.p_roundState == RoundManager.enumRoundState.EffectPhase &&
+            EffectManager.instance.p_specialInvocation))
         {
             if (Input.touchCount > 0)
             {
@@ -161,8 +152,7 @@ public class PlacementManager : MonoBehaviour
                                 else
                                 {
                                     Destroy(currentUnit);
-                                    
-                                    if (!specialInvocation)
+                                    if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.EffectPhase && EffectManager.instance.p_specialInvocation)
                                     {
                                         CancelSelection();
                                     }
@@ -183,31 +173,94 @@ public class PlacementManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
 
-        if (!specialInvocation)
+        /*
+        if (!EffectManager.instance.p_specialInvocation)
         {
+            EffectManager.instance.ClearUnits();
+            
             DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
-        }
+            currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
+                new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
+                PlayerSetup.instance.transform.rotation, 0);
 
-        currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name, new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
-            PlayerSetup.instance.transform.rotation, 0);
-        
-        Destroy(currentUnit);
-        
-        if (!specialInvocation)
-        {
+            Destroy(currentUnit);
+            
             currentUnit = null;
             goPrefabMonster = null;
-        }
-        
-        currentCardSelection = null;
+            currentCardSelection = null;
 
-        if (!currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
-        {
-            RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
+            if (!currentUnitPhoton.GetComponent<MonstreData>()
+                .HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
+            {
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
+            }
         }
-        
+        else
+        {
+            EffectManager.instance.ClearUnits();
+            currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
+                new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
+                PlayerSetup.instance.transform.rotation, 0);
+            
+            Destroy(currentUnit);
+            
+            currentUnit = null;
+            goPrefabMonster = null;
+            currentCardSelection = null;
+
+            if (!currentUnitPhoton.GetComponent<MonstreData>()
+                .HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke))
+            {
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
+            }
+            
+            if (obj.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && obj.GetComponent<MonstreData>().p_effect.GetIsActivable())
+        {
+            EffectManager.instance.p_currentUnit = obj;
+            EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
+        }
+            
+        }
+        */
         currentUnitPhoton = null;
         isWaiting = false;
+    }
+    
+    public void AddMonsterBoard(GameObject obj)
+    {
+        Case data = new Case();
+        data.monster = obj;
+        data.emplacement = new List<Vector2>();
+        foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
+        {
+            data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
+        }
+        board.Add(data);
+        if (obj.GetComponent<MonstreData>().p_isChampion && obj.GetComponent<PhotonView>().AmOwner)
+        {
+            haveAChampionOnBoard = true;
+        }
+
+        EffectManager.instance.CheckAllHeroism();
+    }
+
+    public void RemoveMonsterBoard(int id)
+    {
+        for (int i = 0; i < board.Count; i++)
+        {
+            if (board[i].monster.GetComponent<MonstreData>().p_id == id)
+            {
+                if (board[i].monster.GetComponent<MonstreData>().p_isChampion &&
+                    board[i].monster.GetComponent<PhotonView>().AmOwner)
+                {
+                    haveAChampionOnBoard = false;
+                }
+                
+                board.Remove(board[i]);
+                return;
+            }
+        }
+        EffectManager.instance.CheckAllHeroism();
     }
 
     public float AverageCenterX(GameObject unit)
@@ -248,7 +301,7 @@ public class PlacementManager : MonoBehaviour
     public void CancelSelection()
     {
         ReInitPlacement();
-        RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase ;
+        RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
     }
 
     public void ReInitPlacement()
@@ -342,41 +395,6 @@ public class PlacementManager : MonoBehaviour
         return false;
     }
     
-    public void AddMonsterBoard(GameObject obj)
-    {
-        Case data = new Case();
-        data.monster = obj;
-        data.emplacement = new List<Vector2>();
-        foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
-        {
-            data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
-        }
-        board.Add(data);
-        if (obj.GetComponent<MonstreData>().p_isChampion && obj.GetComponent<PhotonView>().AmOwner)
-        {
-            haveAChampionOnBoard = true;
-        }
-        EffectManager.instance.CheckAllHeroism();
-    }
-
-    public void RemoveMonsterBoard(int id)
-    {
-        for (int i = 0; i < board.Count; i++)
-        {
-            if (board[i].monster.GetComponent<MonstreData>().p_id == id)
-            {
-                if (board[i].monster.GetComponent<MonstreData>().p_isChampion &&
-                    board[i].monster.GetComponent<PhotonView>().AmOwner)
-                {
-                    haveAChampionOnBoard = false;
-                }
-                
-                board.Remove(board[i]);
-                return;
-            }
-        }
-        EffectManager.instance.CheckAllHeroism();
-    }
     
     public void AddExtentionMonsterBoard(GameObject exten, GameObject mother)
     {

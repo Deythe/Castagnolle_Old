@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
 {
+    [SerializeField] private GameObject cardInstance;
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
     [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
@@ -14,30 +15,24 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
 
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        /*
-        if (usingPhase[0].Equals(phase))
+        if (view.AmOwner)
         {
-            if (view.AmOwner)
+            if (usingPhases.Contains(phase))
             {
-                PlacementManager.instance.p_specialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().p_prefabs);
                 UiManager.instance.ShowingOffBigCard();
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DragUnitPhase);
-                UiManager.instance.p_textFeedBack.enabled = true;
-                UiManager.instance.SetTextFeedBack(0);
-                UiManager.instance.EnableBorderStatus(68,168,254);
                 GetComponent<MonstreData>().p_model.layer = 6;
             }
         }
-        */
     }
-    
+
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        ChooseWhereInvokeMonster pivotCard = effectMother as ChooseWhereInvokeMonster;
+        cardInstance = pivotCard.cardInstance;
+        view = gameObject.GetPhotonView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

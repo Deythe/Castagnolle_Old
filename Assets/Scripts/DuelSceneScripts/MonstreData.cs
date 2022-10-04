@@ -192,12 +192,6 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         InitColorsTiles();
         hpPackage.SetActive(true);
         hpPackage.transform.rotation = Quaternion.Euler(90, PlayerSetup.instance.transform.rotation.eulerAngles.y, 0);
-
-        if (HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && effect.GetIsActivable())
-        {
-            EffectManager.instance.p_currentUnit = gameObject;
-            EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
-        }
     }
     
     private void OnDestroy()
@@ -210,9 +204,11 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                     0.6f,
                     transform.position.z, 3f);
                 
-                if (effect != null)
+                if (effect != null && !effect.GetUsed() && effect.GetIsActivable())
                 {
-                    effect.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
+                    EffectManager.instance.p_currentUnit = gameObject;
+                    //effect.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
+                    EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
                 }
             }
         }
@@ -312,7 +308,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                                  && !effect.GetConditions()
                                      .Contains(EffectManager.enumConditionEffect.Heroism)
                                  && !effect.GetConditions()
-                                     .Contains(EffectManager.enumConditionEffect.HaveABoneInGauge)))
+                                     .Contains(EffectManager.enumConditionEffect.HaveAMilkInGauge)))
             {
                 model.gameObject.layer = 7;
             }
@@ -323,7 +319,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
     {
         if (effect != null)
         {
-            if (effect.GetUsingPhases().Contains(phase) && !effect.GetUsed())
+            if (effect.GetUsingPhases().Contains(phase) && !effect.GetUsed() && effect.GetIsActivable())
             {
                 return true;
             }
@@ -345,17 +341,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         }
     }
 
-    public bool ReturnUsedEffect()
-    {
-        if (effect != null)
-        {
-            return effect.GetUsed();
-        }
-
-        return false;
-    }
-
-    public void ReActivadeAllEffect()
+    public void ReloadEffect()
     {
         if (effect != null)
         {
@@ -367,21 +353,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
             }
         }
     }
-
-    public List<EffectManager.enumConditionEffect> GetConditionsListFromEffect()
-    {
-        if (effect != null)
-        {
-            if (view.AmOwner)
-            {
-                return effect.GetConditions();
-            }
-
-            return null;
-        }
-
-        return null;
-    }
+    
     // -------------------------------------------------------------- End of effect zone -----------------------------------------------------------------
 
     public List<Transform> GetCenters()

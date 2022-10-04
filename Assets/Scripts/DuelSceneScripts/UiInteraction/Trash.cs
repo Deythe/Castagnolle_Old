@@ -13,7 +13,7 @@ public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
     {
         if (Input.touchCount > 0)
         {
-            if(RoundManager.instance.p_roundState== RoundManager.enumRoundState.DragUnitPhase && !PlacementManager.instance.p_isWaiting  && PlacementManager.instance.p_specialInvocation)
+            if(RoundManager.instance.p_roundState== RoundManager.enumRoundState.DragUnitPhase && !PlacementManager.instance.p_isWaiting  && EffectManager.instance.p_specialInvocation)
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(0).phase == TouchPhase.Moved)
                 {
@@ -29,7 +29,7 @@ public class Trash : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Ended)
             {
-                if(RoundManager.instance.p_roundState== RoundManager.enumRoundState.DragUnitPhase && !PlacementManager.instance.p_isWaiting && PlacementManager.instance.p_specialInvocation)
+                if(RoundManager.instance.p_roundState== RoundManager.enumRoundState.DragUnitPhase && !PlacementManager.instance.p_isWaiting && EffectManager.instance.p_specialInvocation)
                 {
                     UiManager.instance.p_textFeedBack.enabled = false;
                     PlacementManager.instance.CancelSelection();

@@ -12,7 +12,9 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
 
-    public static Dictionary<GameObject, DiceListScriptable.enumRessources[]> originalCard;
+    public static Dictionary<GameObject, DiceListScriptable.enumRessources[]> originalCardResources;
+    public static Dictionary<GameObject, int> originalCardAtk;
+    
     public static List<GameObject> unitOnBoard;
     public static GameObject motherUnit;
     public static int degatMore=0;
@@ -33,10 +35,11 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             {
                 numberUnitCurrent = PlacementManager.instance.p_board.Count;
 
-                if (originalCard == null)
+                if (originalCardResources == null)
                 {
-                    originalCard = new Dictionary<GameObject, DiceListScriptable.enumRessources[]>();
-
+                    originalCardResources = new Dictionary<GameObject, DiceListScriptable.enumRessources[]>();
+                    originalCardAtk = new Dictionary<GameObject, int>();
+                    
                     foreach (var card in DeckManager.instance.CardDeck)
                     {
                         if (card.GetComponent<CardData>().p_isChampion)
@@ -47,7 +50,8 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                                 pivotRessourceList[i] = card.GetComponent<CardData>().p_ressources[i];
                             }
 
-                            originalCard.Add(card.GetComponent<CardData>().p_prefabs, pivotRessourceList);
+                            originalCardResources.Add(card.GetComponent<CardData>().p_prefabs, pivotRessourceList);
+                            originalCardAtk.Add(card.GetComponent<CardData>().p_prefabs, card.GetComponent<CardData>().p_atk);
                         }
                     }
                 }
@@ -72,55 +76,57 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                     {
                         card.GetComponent<CardData>().p_ressources
                             .RemoveAt(card.GetComponent<CardData>().p_ressources.Count - 1);
+                        card.GetComponent<CardData>().p_atk++;
                     }
                 }
                 
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
             }
-        }
-        
-        if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
-        {
-            if (view.AmOwner)
-            {
-                if (gameObject.Equals(motherUnit))
-                {
-                    //Debug.Log("WasMotherUnit");
-                    if (unitOnBoard.Count > 1)
-                    {
-                        //Debug.Log("New Mother UNit");
-                        motherUnit = unitOnBoard[1];
-                        degatMore--;
-                    }
-                    else
-                    {
-                        degatMore = 0;
-                        motherUnit = null;
-                        ResetUnit();
-                        return;
-                    }
-                }
             
-                //Debug.Log("Destroy");
-                foreach (var card in DeckManager.instance.CardDeck)
+            else if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
+            {
+                if (view.AmOwner)
                 {
-                    if (card != null)
+                    if (gameObject.Equals(motherUnit))
                     {
-                        if (originalCard.ContainsKey(card.GetComponent<CardData>().p_prefabs))
+                        //Debug.Log("WasMotherUnit");
+                        if (unitOnBoard.Count > 1)
                         {
-                            if (!originalCard[card.GetComponent<CardData>().p_prefabs].Length
-                                .Equals(card.GetComponent<CardData>().p_ressources.Count))
+                            //Debug.Log("New Mother UNit");
+                            motherUnit = unitOnBoard[1];
+                            degatMore--;
+                        }
+                        else
+                        {
+                            degatMore = 0;
+                            motherUnit = null;
+                            ResetUnit();
+                            return;
+                        }
+                    }
+            
+                    //Debug.Log("Destroy");
+                    foreach (var card in DeckManager.instance.CardDeck)
+                    {
+                        if (card != null)
+                        {
+                            if (originalCardResources.ContainsKey(card.GetComponent<CardData>().p_prefabs))
                             {
-                                card.GetComponent<CardData>().p_ressources
-                                    .Add(originalCard[card.GetComponent<CardData>().p_prefabs][
-                                        card.GetComponent<CardData>().p_ressources.Count]);
+                                if (!originalCardResources[card.GetComponent<CardData>().p_prefabs].Length
+                                    .Equals(card.GetComponent<CardData>().p_ressources.Count))
+                                {
+                                    card.GetComponent<CardData>().p_ressources
+                                        .Add(originalCardResources[card.GetComponent<CardData>().p_prefabs][
+                                            card.GetComponent<CardData>().p_ressources.Count]);
+                                    card.GetComponent<CardData>().p_atk--;
+                                }
                             }
                         }
                     }
-                }
 
-                unitOnBoard.Remove(gameObject);
+                    unitOnBoard.Remove(gameObject);
+                }
             }
         }
     }
@@ -132,22 +138,26 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             if (numberUnitCurrent > PlacementManager.instance.p_board.Count)
             {
                 numberUnitCurrent = PlacementManager.instance.p_board.Count;
-            } else if (numberUnitCurrent < PlacementManager.instance.p_board.Count)
+            }
+            else if (numberUnitCurrent < PlacementManager.instance.p_board.Count)
             {
                 numberUnitCurrent = PlacementManager.instance.p_board.Count;
-                
-                if (gameObject.Equals(motherUnit))
+
+                if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<PhotonView>()
+                    .AmOwner)
                 {
-                    if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<PhotonView>()
-                        .AmOwner)
+                    if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<MonstreData>()
+                        .p_isChampion)
                     {
-                        if (PlacementManager.instance.p_board[numberUnitCurrent - 1].monster.GetComponent<MonstreData>()
-                            .p_isChampion)
+                        used = true;
+                        GetComponent<MonstreData>().p_model.layer = 6;
+                        
+                        if (gameObject.Equals(motherUnit))
                         {
                             view.RPC("RPC_Action", RpcTarget.AllViaServer,
                                 PlacementManager.instance.p_board[numberUnitCurrent - 1].monster
                                     .GetComponent<PhotonView>().ViewID, degatMore);
-                            
+
                             degatMore = 0;
                             ResetUnit();
                             DeckManager.instance.CheckUnitWithRessources();
@@ -170,7 +180,8 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 {
                     card.GetComponent<CardData>().p_ressources.Clear();
                     card.GetComponent<CardData>().p_ressources =
-                        new List<DiceListScriptable.enumRessources>(originalCard[card.GetComponent<CardData>().p_prefabs]);
+                        new List<DiceListScriptable.enumRessources>(originalCardResources[card.GetComponent<CardData>().p_prefabs]);
+                    card.GetComponent<CardData>().p_atk = originalCardAtk[card.GetComponent<CardData>().p_prefabs];
                 }
             }
         }
@@ -185,10 +196,9 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
-        isEffectAuto = effectMother.GetIsEffectAuto();
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }

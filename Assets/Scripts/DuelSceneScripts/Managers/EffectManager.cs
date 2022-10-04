@@ -16,7 +16,7 @@ public class EffectManager : MonoBehaviour
     
     public enum enumConditionEffect
     {
-        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveABoneInGauge, SelectACard, Spectacle
+        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, Spectacle, DragUnit
     }
     
     [SerializeField] private PhotonView view;
@@ -34,14 +34,24 @@ public class EffectManager : MonoBehaviour
     private MonstreData currentClick;
     
     private enumEffectPhaseActivation currentEffectPhaseActivation;
-
+    
+    private bool specialInvocation;
     private RaycastHit hit;
-    private int numberIdAll = 0;
-    private int i, j, numberCheckHeroism;
+    private RoundManager.enumRoundState lastPhaseActivation; 
+    private int i, j, numberCheckHeroism,numberIdAll = 0, numberCheck;
 
     public PhotonView View
     {
         get => view;
+    }
+    
+    public bool p_specialInvocation
+    {
+        get => specialInvocation;
+        set
+        {
+            specialInvocation = value;
+        }
     }
 
     public GameObject p_currentUnit
@@ -125,8 +135,7 @@ public class EffectManager : MonoBehaviour
                                                         .HaveAnEffectThisPhase(enumEffectPhaseActivation
                                                             .WhenItsDrawPhase)
                                                     && currentClick.p_effect.GetIsActivable()
-                                                    && !currentClick.p_effect.GetUsed()
-                                                    && !currentClick.p_effect.GetIsEffectAuto())
+                                                    && !currentClick.p_effect.GetUsed())
                                                 {
                                                     currentUnit = currentClick.gameObject;
                                                     UiManager.instance.EnableDisableScrollView(false);
@@ -216,11 +225,16 @@ public class EffectManager : MonoBehaviour
     }
     public void UnitSelected(enumEffectPhaseActivation phase)
     {
-        RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
+        lastPhaseActivation = RoundManager.instance.p_roundState;
+        if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
+        {
+            lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
+        }
+        
         currentEffectPhaseActivation = phase;
         copyCurentUnitCondition =
             new List<enumConditionEffect>(currentUnit.GetComponent<MonstreData>()
-                .GetConditionsListFromEffect());
+                .p_effect.GetConditions());
 
         if (copyCurentUnitCondition.Count.Equals(0))
         {
@@ -228,6 +242,7 @@ public class EffectManager : MonoBehaviour
         }
         else
         {
+            RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
             CheckCondition();
         }
     }
@@ -292,6 +307,12 @@ public class EffectManager : MonoBehaviour
                     ActiveEffect();
                 }
                 break;
+            case enumConditionEffect.DragUnit:
+                UiManager.instance.p_textFeedBack.enabled = true;
+                UiManager.instance.SetTextFeedBack(0);
+                specialInvocation = true;
+                ActiveEffect();
+                break;
         }
     }
 
@@ -300,13 +321,13 @@ public class EffectManager : MonoBehaviour
         return copyCurentUnitCondition.Count.Equals(0);
     }
 
-    public void CancelSelection(RoundManager.enumRoundState state)
+    public void CancelSelection()
     {
         ClearUnits();
+        specialInvocation = false;
         UiManager.instance.EnableDisableMenuNoChoice(false);
         UiManager.instance.EnableDisableMenuYesChoice(false);
-        UiManager.instance.EnableDisableBattleButton(true);
-        RoundManager.instance.p_roundState = state;
+        RoundManager.instance.p_roundState = lastPhaseActivation;
     }
 
     public void ClearUnits()
@@ -322,10 +343,9 @@ public class EffectManager : MonoBehaviour
     {
         for (int j = 0; j < PlacementManager.instance.p_board.Count; j++)
         {
-            
             if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
                 && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
-                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().GetConditionsListFromEffect()
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetConditions()
                     .Contains(enumConditionEffect.Heroism))
             {
                 CheckHeroism(PlacementManager.instance.p_board[j].monster.transform);
@@ -333,12 +353,26 @@ public class EffectManager : MonoBehaviour
         }
     }
     
-    public bool CheckHeroism(Transform go)
+    public void CheckAllHaveAMilkInGauge()
     {
-        int numberCheck = 0;
+        for (int j = 0; j < PlacementManager.instance.p_board.Count; j++)
+        {
+            if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetConditions()
+                    .Contains(enumConditionEffect.HaveAMilkInGauge))
+            {
+                CheckMilkInGauge(PlacementManager.instance.p_board[j].monster.transform);
+            }   
+        }
+    }
+    
+    void CheckHeroism(Transform go)
+    {
+        numberCheck = 0;
         heroismListMobCheck.Clear();
         
-        foreach (var check in go.GetComponent<MonstreData>().GetConditionsListFromEffect())
+        foreach (var check in go.GetComponent<MonstreData>().p_effect.GetConditions())
         {
             if (check == enumConditionEffect.Heroism)
             {
@@ -375,13 +409,43 @@ public class EffectManager : MonoBehaviour
             heroismListMobCheck.Clear();
             go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
             go.GetComponent<MonstreData>().p_model.layer = 7;
-            return true;
+            return;
         }
         
         go.GetComponent<MonstreData>().p_effect.SetIsActivable(false);
         go.GetComponent<MonstreData>().p_model.layer = 6;
-        return false;   
-        
+    }
+
+    void CheckMilkInGauge(Transform go)
+    {
+        numberCheck = 0;
+        foreach (var check in go.GetComponent<MonstreData>().p_effect.GetConditions())
+        {
+            if (check == enumConditionEffect.HaveAMilkInGauge)
+            {
+                numberCheck++;
+            }
+        }
+
+        foreach (var milks in DiceManager.instance.p_diceGauge)
+        {
+            if (milks == DiceListScriptable.enumRessources.Milk)
+            {
+                numberCheck--;
+            }
+        }
+
+        if (numberCheck <= 0)
+        {
+            go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
+            go.GetComponent<MonstreData>().p_model.layer = 7;
+            
+        }
+        else
+        {
+            go.GetComponent<MonstreData>().p_effect.SetIsActivable(false);
+            go.GetComponent<MonstreData>().p_model.layer = 6;
+        }
     }
 
     public void ActivateEffectWhenUnitDie()

@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed5190edb2622bf489388d57b2a88f3a, type: 3}
   m_Name: DiceLuchadork-Lactophage-Pouladin
   m_EditorClassIdentifier: 
-  texture: {fileID: 0}
-  faces: 010000000100000002000000020000000300000003000000
+  faces: 050000000500000002000000020000000300000003000000
