@@ -207,7 +207,6 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                 if (effect != null && !effect.GetUsed() && effect.GetIsActivable())
                 {
                     EffectManager.instance.p_currentUnit = gameObject;
-                    //effect.OnCast(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
                     EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
                 }
             }

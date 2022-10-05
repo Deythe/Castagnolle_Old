@@ -478,6 +478,7 @@ public class CastagneManager : MonoBehaviour
             
             UiManager.instance.EnableDisableMenuNoChoice(false);
             UiManager.instance.EnableDisableMenuYesChoice(false);
+            
             EffectManager.instance.CheckAllHeroism();
             UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         }

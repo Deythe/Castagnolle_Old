@@ -521,8 +521,10 @@ public class UiManager : MonoBehaviour
 
     public void EnableDisableMenuNoChoice(bool b)
     {
+        Debug.Log("Caca");
         if (!DOTween.IsTweening(menuNoChoice.GetComponent<RectTransform>()))
         {
+            Debug.Log("Caca2");
             DOTween.Kill(menuNoChoice.GetComponent<RectTransform>());
         }
 

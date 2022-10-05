@@ -349,9 +349,7 @@ public class EffectManager : MonoBehaviour
     {
         ClearUnits();
         specialInvocation = false;
-        UiManager.instance.EnableDisableMenuNoChoice(false);
-        UiManager.instance.EnableDisableMenuYesChoice(false);
-        
+
         if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
         {
             lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;

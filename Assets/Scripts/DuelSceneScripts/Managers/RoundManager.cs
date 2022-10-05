@@ -259,12 +259,16 @@ public class RoundManager : MonoBehaviourPunCallbacks
                 CastagneManager.instance.CancelSelection();
                 break;
             case enumRoundState.DrawPhase:
-            case enumRoundState.EffectPhase:
                 UiManager.instance.EnableDisableScrollView(true);
                 EffectManager.instance.CancelSelection();
-                p_roundState = enumRoundState.DrawPhase;
+                break;
+            case enumRoundState.EffectPhase:
+                EffectManager.instance.CancelSelection();
                 break;
         }
+        
+        UiManager.instance.EnableDisableMenuNoChoice(false);
+        UiManager.instance.EnableDisableMenuYesChoice(false);
     }
     
     [PunRPC]
