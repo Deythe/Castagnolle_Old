@@ -4,7 +4,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EvolveByKilling : MonoBehaviour, IEffects
+public class Evolve : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
@@ -12,26 +12,15 @@ public class EvolveByKilling : MonoBehaviour, IEffects
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    
+    [SerializeField] private List<Sprite> listSpriteUnit;
+    [SerializeField] private List<GameObject> listGameObjectUnit;
 
-    
-    [SerializeField] private CardData card;
-    [SerializeField] private GameObject blankCard;
-    
-    [SerializeField] private Sprite evolve1;
-    [SerializeField] private Sprite evolve2;
-    
-    [SerializeField] private GameObject unit1;
-    [SerializeField] private GameObject unit2;
-    
     private RectTransform cardListEvolve;
-    private GameObject unitPivot;
-    private int maxKill, currentKill;
 
     private void Start()
     {
-        currentKill = 0;
-        maxKill = 2;
-        cardListEvolve = UiManager.instance.CarListChose;
+        cardListEvolve = UiManager.instance.p_carListChose;
     }
 
 
@@ -41,34 +30,13 @@ public class EvolveByKilling : MonoBehaviour, IEffects
         {
             if (usingPhases[0] == phase)
             {
-                if (currentKill != maxKill)
+                for (int i = 0; i < listSpriteUnit.Count; i++)
                 {
-                    currentKill++;
+                    cardListEvolve.GetChild(i).GetComponent<Image>().sprite = listSpriteUnit[i];
+                    cardListEvolve.GetChild(i).GetComponent<CardEvolve>().unit = listGameObjectUnit[i];
+                    cardListEvolve.GetChild(i).gameObject.SetActive(true);
                 }
-                else
-                {
-                    if (cardListEvolve.childCount == 0)
-                    {
-                        Debug.Log("Effet Rey Mysteriorc");
-                        unitPivot = Instantiate(blankCard, cardListEvolve);
-                        unitPivot.GetComponent<Image>().sprite = evolve1;
-                        unitPivot.GetComponent<CardEvolve>().unit = unit1;
-
-                        unitPivot = Instantiate(blankCard, cardListEvolve);
-                        unitPivot.GetComponent<Image>().sprite = evolve2;
-                        unitPivot.GetComponent<CardEvolve>().unit = unit2;
-
-                        unitPivot = null;
-                    }
-                    else
-                    {
-                        for (int i = cardListEvolve.childCount - 1; i >= 0; i--)
-                        {
-                            cardListEvolve.GetChild(i).gameObject.SetActive(true);
-                        }
-                    }
-                }
-
+                
                 GetComponent<MonstreData>().p_model.layer = 6;
             }
             
@@ -92,18 +60,15 @@ public class EvolveByKilling : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        EvolveByKilling pivot = effectMother as EvolveByKilling;
+        Evolve pivot = effectMother as Evolve;
         view = effectMother.GetView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
-        
-        unit1 = pivot.unit1;
-        unit2 = pivot.unit2;
-        blankCard = pivot.blankCard;
-        evolve1 = pivot.evolve1;
-        evolve2 = pivot.evolve2;
+
+        listSpriteUnit = new List<Sprite>(pivot.listSpriteUnit);
+        listGameObjectUnit = new List<GameObject>(pivot.listGameObjectUnit);
     }
     
     public PhotonView GetView()

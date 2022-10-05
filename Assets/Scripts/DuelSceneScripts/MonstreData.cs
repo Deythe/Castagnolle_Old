@@ -224,6 +224,21 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         PlacementManager.instance.RemoveMonsterBoard(id);
     }
     
+    public void ChangeMeshRenderer(int index)
+    {
+        foreach (var ms in mrs)
+        {   
+            if (view.AmOwner)
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[index];
+            }
+            else
+            {
+                ms.material = PlacementManager.instance.p_listMaterial[index + 1];
+            }
+        }
+    }
+    
     public void BeChoosen()
     {
         foreach (MeshRenderer ms in mrs)
@@ -249,21 +264,6 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                 {
                     ms.material.color = PlacementManager.instance.p_listMaterial[3].color;
                 }
-            }
-        }
-    }
-
-    public void ChangeMeshRenderer(int index)
-    {
-        foreach (var ms in mrs)
-        {   
-            if (view.AmOwner)
-            {
-                ms.material = PlacementManager.instance.p_listMaterial[index];
-            }
-            else
-            {
-                ms.material = PlacementManager.instance.p_listMaterial[index + 1];
             }
         }
     }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using UnityEngine;
 
@@ -138,6 +137,7 @@ public class EffectManager : MonoBehaviour
                                                     && !currentClick.p_effect.GetUsed())
                                                 {
                                                     currentUnit = currentClick.gameObject;
+                                                    currentUnit.GetComponent<MonstreData>().BeChoosen();
                                                     UiManager.instance.EnableDisableScrollView(false);
                                                     UiManager.instance.EnableDisableBattleButton(false);
                                                     UiManager.instance.EnableDisableMenuNoChoice(true);
@@ -161,10 +161,12 @@ public class EffectManager : MonoBehaviour
                                                             if (unitTarget1 == null)
                                                             {
                                                                 unitTarget1 = hit.collider.gameObject;
+                                                                unitTarget1.GetComponent<MonstreData>().BeChoosen();
                                                             }
                                                             else
                                                             {
                                                                 unitTarget2 = hit.collider.gameObject;
+                                                                unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                             }
 
                                                             copyCurentUnitCondition.RemoveAt(0);
@@ -180,10 +182,12 @@ public class EffectManager : MonoBehaviour
                                                         if (unitTarget1 == null)
                                                         {
                                                             unitTarget1 = hit.collider.gameObject;
+                                                            unitTarget1.GetComponent<MonstreData>().BeChoosen();
                                                         }
                                                         else
                                                         {
                                                             unitTarget2 = hit.collider.gameObject;
+                                                            unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                         }
 
                                                         copyCurentUnitCondition.RemoveAt(0);
@@ -199,10 +203,12 @@ public class EffectManager : MonoBehaviour
                                                         if (unitTarget1 == null)
                                                         {
                                                             unitTarget1 = hit.collider.gameObject;
+                                                            unitTarget1.GetComponent<MonstreData>().BeChoosen();
                                                         }
                                                         else
                                                         {
                                                             unitTarget2 = hit.collider.gameObject;
+                                                            unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                         }
 
                                                         copyCurentUnitCondition.RemoveAt(0);
@@ -225,12 +231,8 @@ public class EffectManager : MonoBehaviour
     }
     public void UnitSelected(enumEffectPhaseActivation phase)
     {
+        currentUnit.GetComponent<MonstreData>().BeChoosen();
         lastPhaseActivation = RoundManager.instance.p_roundState;
-        if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
-        {
-            lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
-        }
-        
         currentEffectPhaseActivation = phase;
         copyCurentUnitCondition =
             new List<enumConditionEffect>(currentUnit.GetComponent<MonstreData>()
@@ -294,18 +296,30 @@ public class EffectManager : MonoBehaviour
                 CheckCondition();
                 break;
             case enumConditionEffect.Spectacle:
+                Debug.Log("Boom");
                 currentUnit.GetComponent<MonstreData>().p_effect.GetConditions().RemoveAt(0);
                 copyCurentUnitCondition.RemoveAt(0);
-                if (copyCurentUnitCondition[0] != enumConditionEffect.Spectacle)
+                if (copyCurentUnitCondition.Count.Equals(0))
                 {
+                    Debug.Log("Boom2");
                     ActiveEffect();
-                    CheckCondition();
                 }
                 else
                 {
-                    copyCurentUnitCondition.Clear();
-                    ActiveEffect();
+                    if (copyCurentUnitCondition[0] != enumConditionEffect.Spectacle)
+                    {
+                        Debug.Log("Boom3");
+                        RoundManager.instance.p_roundState = lastPhaseActivation;
+                        ActiveEffect();
+                        UnitSelected(enumEffectPhaseActivation.WhenThisUnitKill);
+                    }
+                    else
+                    {
+                        Debug.Log("Boom4");
+                        CancelSelection();
+                    }   
                 }
+
                 break;
             case enumConditionEffect.DragUnit:
                 UiManager.instance.p_textFeedBack.enabled = true;
@@ -313,12 +327,22 @@ public class EffectManager : MonoBehaviour
                 specialInvocation = true;
                 ActiveEffect();
                 break;
+            case enumConditionEffect.HaveAMilkInGauge:
+                copyCurentUnitCondition.RemoveAt(0);
+                CheckCondition();
+                break;
         }
     }
 
     public bool EffectFinished()
     {
+        if (copyCurentUnitCondition == null)
+        {
+            return true;
+        }
+        
         return copyCurentUnitCondition.Count.Equals(0);
+        
     }
 
     public void CancelSelection()
@@ -327,6 +351,12 @@ public class EffectManager : MonoBehaviour
         specialInvocation = false;
         UiManager.instance.EnableDisableMenuNoChoice(false);
         UiManager.instance.EnableDisableMenuYesChoice(false);
+        
+        if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
+        {
+            lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
+        }
+        
         RoundManager.instance.p_roundState = lastPhaseActivation;
     }
 
@@ -334,6 +364,21 @@ public class EffectManager : MonoBehaviour
     {
         copyCurentUnitCondition = null;
         UiManager.instance.p_textFeedBack.enabled = false;
+        if (unitTarget1 != null)
+        {
+            unitTarget1.GetComponent<MonstreData>().InitColorsTiles();
+        }
+        
+        if (unitTarget2 != null)
+        {
+            unitTarget2.GetComponent<MonstreData>().InitColorsTiles();
+        }
+        
+        if (currentUnit != null)
+        {
+            currentUnit.GetComponent<MonstreData>().InitColorsTiles();
+        }
+        
         unitTarget1 = null;
         unitTarget2 = null;
         currentUnit = null;
@@ -418,31 +463,18 @@ public class EffectManager : MonoBehaviour
 
     void CheckMilkInGauge(Transform go)
     {
-        numberCheck = 0;
-        foreach (var check in go.GetComponent<MonstreData>().p_effect.GetConditions())
+        if (go.GetComponent<MonstreData>().p_effect.GetConditions().Contains(enumConditionEffect.HaveAMilkInGauge))
         {
-            if (check == enumConditionEffect.HaveAMilkInGauge)
+            foreach (var milks in DiceManager.instance.p_diceGauge)
             {
-                numberCheck++;
+                if (milks == DiceListScriptable.enumRessources.Milk)
+                {
+                    go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
+                    go.GetComponent<MonstreData>().p_model.layer = 7;
+                    return;
+                }
             }
-        }
-
-        foreach (var milks in DiceManager.instance.p_diceGauge)
-        {
-            if (milks == DiceListScriptable.enumRessources.Milk)
-            {
-                numberCheck--;
-            }
-        }
-
-        if (numberCheck <= 0)
-        {
-            go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
-            go.GetComponent<MonstreData>().p_model.layer = 7;
             
-        }
-        else
-        {
             go.GetComponent<MonstreData>().p_effect.SetIsActivable(false);
             go.GetComponent<MonstreData>().p_model.layer = 6;
         }

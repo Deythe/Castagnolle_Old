@@ -256,7 +256,7 @@ public class CastagneManager : MonoBehaviour
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
-                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed())
+                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed() && unitsSelected.GetComponent<MonstreData>().p_effect.GetIsActivable())
                     {
                         EffectManager.instance.p_currentUnit = unitsSelected;
                         EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);

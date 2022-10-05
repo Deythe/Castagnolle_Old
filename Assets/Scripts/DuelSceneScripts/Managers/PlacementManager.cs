@@ -13,8 +13,7 @@ public class PlacementManager : MonoBehaviour
     private bool isPlacing;
     private RaycastHit hit;
     private CardData currentCardSelection;
-
-    [SerializeField] private PhotonView view;
+    
     [SerializeField] private List<Case> board;
     [SerializeField] private bool haveAChampionOnBoard;
     [SerializeField] private List<Material> listMaterial;
@@ -27,12 +26,7 @@ public class PlacementManager : MonoBehaviour
         public GameObject monster;
         public List<Vector2> emplacement;
     }
-    
-    public PhotonView p_view
-    {
-        get => view;
-    }
-    
+
     public List<Case> p_board
     {
         get => board;
@@ -152,7 +146,7 @@ public class PlacementManager : MonoBehaviour
                                 else
                                 {
                                     Destroy(currentUnit);
-                                    if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.EffectPhase && EffectManager.instance.p_specialInvocation)
+                                    if (RoundManager.instance.p_roundState == RoundManager.enumRoundState.DragUnitPhase)
                                     {
                                         CancelSelection();
                                     }
@@ -179,6 +173,11 @@ public class PlacementManager : MonoBehaviour
         {
             DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
         }
+        else
+        {
+            EffectManager.instance.p_specialInvocation = false;
+            RoundManager.instance.p_roundState = RoundManager.enumRoundState.DragUnitPhase;
+        }
         
         currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
                 new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
@@ -189,7 +188,7 @@ public class PlacementManager : MonoBehaviour
         goPrefabMonster = null;
         currentCardSelection = null;
 
-        if (currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && view.AmOwner && currentUnitPhoton.GetComponent<MonstreData>().p_effect.GetIsActivable())
+        if (currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && currentUnitPhoton.GetPhotonView().AmOwner && currentUnitPhoton.GetComponent<MonstreData>().p_effect.GetIsActivable())
         {
             EffectManager.instance.p_currentUnit = currentUnitPhoton;
             EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);

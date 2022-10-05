@@ -18,23 +18,7 @@ public class BonesInGauge : MonoBehaviour, IEffects
             {
                 if (DiceManager.instance != null)
                 {
-                    for (int i = 0; i < DiceManager.instance.p_diceGauge.Length; i++)
-                    {
-                        if (DiceManager.instance.p_diceGauge != null)
-                        {
-                            if (DiceManager.instance.p_diceGauge[i] == DiceListScriptable.enumRessources.Nothing)
-                            {
-                                DiceManager.instance.p_diceGauge[i] = DiceListScriptable.enumRessources.Milk;
-                                DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
-                                    DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, true, DiceListScriptable.enumRessources.Milk);
-                                used = true;
-                                GetComponent<MonstreData>().p_model.layer = 6;
-                                DeckManager.instance.CheckUnitWithRessources();
-                                EffectManager.instance.CancelSelection();
-                                return;
-                            }
-                        }
-                    }
+                    DiceManager.instance.PutInGaugeFromEffect(DiceListScriptable.enumRessources.Milk);
                 }
             }
         }

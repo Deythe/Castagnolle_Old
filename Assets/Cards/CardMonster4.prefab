@@ -422,7 +422,7 @@ MonoBehaviour:
   conditions: 
   isEffectAuto: 0
   used: 0
-  isActivable: 0
+  isActivable: 1
 --- !u!1 &7553283004164766204
 GameObject:
   m_ObjectHideFlags: 0

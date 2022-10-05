@@ -156,7 +156,7 @@ public class UiManager : MonoBehaviour
         }
     }
 
-    public RectTransform CarListChose
+    public RectTransform p_carListChose
     {
         get => cardListChose;
     }
@@ -476,36 +476,60 @@ public class UiManager : MonoBehaviour
             buttonThrowDice.SetActive(false);
         }
     }
-    
+
     public void EnableDisableScrollView(bool b)
     {
+        if (!DOTween.IsTweening(scrollView.GetComponent<RectTransform>()))
+        {
+            DOTween.Kill(scrollView.GetComponent<RectTransform>());
+        }
+        
         if (b)
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY+(canvasScaler.referenceResolution.y/7f), 0.4f).SetEase(Ease.OutBack);
+            scrollView.GetComponent<RectTransform>()
+                .DOLocalMoveY(originalScrollPositionY + (canvasScaler.referenceResolution.y / 7f), 0.4f)
+                .SetEase(Ease.OutBack);
         }
         else
         {
-            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.2f).SetEase(Ease.InBack);
+            scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.2f)
+                .SetEase(Ease.InBack);
         }
+
     }
-    
+
+
     public void EnableDisableMenuYesChoice(bool b)
     {
-        if(b)
+        if (!DOTween.IsTweening(menuYesChoice.GetComponent<RectTransform>()))
         {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*0.375f, 0.6f).SetEase(Ease.OutBack).OnComplete(()=> menuYesChoice.enabled=true);
+            DOTween.Kill(menuYesChoice.GetComponent<RectTransform>());
+        }
+
+        if (b)
+        {
+            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * 0.375f, 0.6f)
+                .SetEase(Ease.OutBack).OnComplete(() => menuYesChoice.enabled = true);
         }
         else
         {
             menuYesChoice.enabled = false;
             menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.2f).SetEase(Ease.Linear);
         }
+
     }
-    
+
     public void EnableDisableMenuNoChoice(bool b)
     {
-        if(b){
-            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width*-0.375f, 0.6f).SetEase(Ease.OutBack).OnComplete(()=> menuNoChoice.enabled=true);
+        if (!DOTween.IsTweening(menuNoChoice.GetComponent<RectTransform>()))
+        {
+            DOTween.Kill(menuNoChoice.GetComponent<RectTransform>());
+        }
+
+        if (b)
+        {
+            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * -0.375f, 0.6f)
+                .SetEase(Ease.OutBack).OnComplete(() => menuNoChoice.enabled = true);
         }
         else
         {
@@ -513,6 +537,7 @@ public class UiManager : MonoBehaviour
             menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.2f).SetEase(Ease.Linear);
         }
     }
+
     public void EnableDisableBattleButton(bool b)
     {
         if (b)

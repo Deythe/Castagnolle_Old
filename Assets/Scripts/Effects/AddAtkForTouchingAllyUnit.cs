@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class Commentator : MonoBehaviour, IEffects
+public class AddAtkForTouchingAllyUnit : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
@@ -13,10 +13,9 @@ public class Commentator : MonoBehaviour, IEffects
     [SerializeField] private bool isActivable;
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        /*
         if (view.AmOwner)
         {
-            if (usingPhase[0].Equals(phase))
+            if (usingPhases.Contains(phase))
             {
                 foreach (var unit in PlacementManager.instance.p_board)
                 {
@@ -26,12 +25,12 @@ public class Commentator : MonoBehaviour, IEffects
                     }
                 }
                 
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
+                EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
                 used = true;
             }
         }
-        */
+        
     }
 
     public void InRange(GameObject targetUnit)
@@ -57,7 +56,7 @@ public class Commentator : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
         used = effectMother.GetUsed();
