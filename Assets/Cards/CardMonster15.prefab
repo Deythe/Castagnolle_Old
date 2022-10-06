@@ -602,7 +602,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 037f103c3a767ee419321c087f8dd99d, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -625,9 +625,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enabled: 0
-  bigCard: {fileID: 21300000, guid: fe5306eeb894e8e4ba24bbaf317f5e79, type: 3}
-  prefabs: {fileID: 1764594795200175919, guid: fd77994d012932b4d9a96226daa37ed5, type: 3}
-  atk: 4
+  fullCard: {fileID: 21300000, guid: b30ef4f8206bec84e9e52fbc37f13f35, type: 3}
+  prefabs: {fileID: 1764594795200175919, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
+  atk: 2
   resources: 
   isChampion: 0
   lifeCard: {fileID: 3119162151835323541}
@@ -647,9 +647,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalCard: {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
   view: {fileID: 5347874786083823171, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
-  used: 0
-  usingPhase: 
+  usingPhases: 
   conditions: 
+  isEffectAuto: 0
+  used: 0
+  isActivable: 0
 --- !u!1 &7307452934060067469
 GameObject:
   m_ObjectHideFlags: 0

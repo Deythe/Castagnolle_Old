@@ -13,8 +13,7 @@ public class Evolve : MonoBehaviour, IEffects
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
     
-    [SerializeField] private List<Sprite> listSpriteUnit;
-    [SerializeField] private List<GameObject> listGameObjectUnit;
+    [SerializeField] private List<CardData> listGameObjectUnit;
 
     private RectTransform cardListEvolve;
 
@@ -30,45 +29,50 @@ public class Evolve : MonoBehaviour, IEffects
         {
             if (usingPhases[0] == phase)
             {
-                for (int i = 0; i < listSpriteUnit.Count; i++)
+                if (conditions.Count > 0)
                 {
-                    cardListEvolve.GetChild(i).GetComponent<Image>().sprite = listSpriteUnit[i];
-                    cardListEvolve.GetChild(i).GetComponent<CardEvolve>().unit = listGameObjectUnit[i];
-                    cardListEvolve.GetChild(i).gameObject.SetActive(true);
+                    Debug.Log("Effet evolve 1");
+                    for (int i = 0; i < listGameObjectUnit.Count; i++)
+                    {
+                        cardListEvolve.GetChild(i).GetComponent<CardToBeSelected>().unit = listGameObjectUnit[i];
+                        cardListEvolve.GetChild(i).GetComponent<Image>().sprite = listGameObjectUnit[i].p_fullCard;
+                        cardListEvolve.GetChild(i).gameObject.SetActive(true);
+                    }
+                    conditions.Clear();
+                    GetComponent<MonstreData>().p_model.layer = 6;
                 }
-                
-                GetComponent<MonstreData>().p_model.layer = 6;
-            }
-            
-            else if (usingPhases[1] == phase)
-            {
-                for (int i = cardListEvolve.childCount-1; i >= 0; i--)
+                else
                 {
-                    cardListEvolve.GetChild(i).gameObject.SetActive(false);
+                    Debug.Log("Effet evolve 2");
+                    for (int i = cardListEvolve.childCount - 1; i >= 0; i--)
+                    {
+                        cardListEvolve.GetChild(i).gameObject.SetActive(false);
+                    }
+
+                    PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
+                        transform.rotation, 0);
+
+                    EffectManager.instance.CancelSelection();
+                    used = true;
+                    GetComponent<MonstreData>().p_isChampion = false;
+                    EffectManager.instance.CancelSelection();
+                    PhotonNetwork.Destroy(gameObject);
                 }
-                
-                PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
-                    transform.rotation, 0);
-                
-                EffectManager.instance.CancelSelection();
-                used = true;
-                GetComponent<MonstreData>().p_isChampion = false;
-                PhotonNetwork.Destroy(gameObject);
+
             }
         }
     }
-    
+
     public void TransferEffect(IEffects effectMother)
     {
         Evolve pivot = effectMother as Evolve;
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
-
-        listSpriteUnit = new List<Sprite>(pivot.listSpriteUnit);
-        listGameObjectUnit = new List<GameObject>(pivot.listGameObjectUnit);
+        
+        listGameObjectUnit = new List<CardData>(pivot.listGameObjectUnit);
     }
     
     public PhotonView GetView()

@@ -7,7 +7,7 @@ using UnityEngine;
 public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
     [SerializeField] private CardData card;
-    [SerializeField] private Sprite bigCard;
+    [SerializeField] private Sprite fullCard;
     
     [SerializeField] private SkinnedMeshRenderer model;
     [SerializeField] private Material modelTexture;
@@ -48,7 +48,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
     }
     public Sprite p_bigCard
     {
-        get => bigCard;
+        get => fullCard;
     }
     public int p_id
     {
@@ -158,7 +158,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         
         p_atk = card.p_atk;
         isChampion = card.p_isChampion;
-        bigCard = card.p_fullCard;
+        fullCard = card.p_fullCard;
         
         if (card.p_effetCard != null)
         {
@@ -204,23 +204,23 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                     0.6f,
                     transform.position.z, 3f);
                 
-                if (effect != null && !effect.GetUsed() && effect.GetIsActivable())
+                if (effect != null && !effect.GetUsed() && effect.GetIsActivable() && view.AmOwner)
                 {
                     EffectManager.instance.p_currentUnit = gameObject;
                     EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
                 }
             }
-        }
-
-        for (int i = extension.Count - 1; i >= 0; i--)
-        {
-            if (view.AmOwner)
+            
+            for (int i = extension.Count - 1; i >= 0; i--)
             {
-                PhotonNetwork.Destroy(extension[i]);
+                if (view.AmOwner)
+                {
+                    PhotonNetwork.Destroy(extension[i]);
+                }
             }
-        }
 
-        PlacementManager.instance.RemoveMonsterBoard(id);
+            PlacementManager.instance.RemoveMonsterBoard(id);
+        }
     }
     
     public void ChangeMeshRenderer(int index)

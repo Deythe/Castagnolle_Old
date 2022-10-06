@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enabled: 0
-  bigCard: {fileID: 21300000, guid: 7c330b82910aea9448eaf9e25c8fd590, type: 3}
+  fullCard: {fileID: 21300000, guid: 7c330b82910aea9448eaf9e25c8fd590, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: bbf4d342b153af44098b4fd28d51be7f, type: 3}
   atk: 2
   resources: 
@@ -781,6 +781,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171, guid: bbf4d342b153af44098b4fd28d51be7f, type: 3}
-  targetUnit: {fileID: 0}
   usingPhases: 
   conditions: 
+  isEffectAuto: 0
+  used: 0
+  isActivable: 0
+  targetUnit: {fileID: 0}

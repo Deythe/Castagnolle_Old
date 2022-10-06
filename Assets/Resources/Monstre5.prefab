@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 5933185828017948179, guid: f2e4fb22cbc748e4280c43bd1dc3d467, type: 3}
-  bigCard: {fileID: 0}
+  fullCard: {fileID: 0}
   model: {fileID: 2849119269479624774}
   modelTexture: {fileID: 2100000, guid: 0c288acab6841824190e94e46d2d4d8a, type: 2}
   view: {fileID: 5347874786083823171}

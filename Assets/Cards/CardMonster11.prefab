@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enabled: 0
-  bigCard: {fileID: 21300000, guid: 55ffe184c30873449a53c7df699ee712, type: 3}
+  fullCard: {fileID: 21300000, guid: 55ffe184c30873449a53c7df699ee712, type: 3}
   prefabs: {fileID: 1764594795200175919, guid: 3c1f050b51b5a074490ef71ad85bb968, type: 3}
   atk: 4
   resources: 
@@ -493,10 +493,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 510c310928d5e3c459031601c9de93a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabs: {fileID: 7236249880086410052, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
   view: {fileID: 5347874786083823171, guid: 3c1f050b51b5a074490ef71ad85bb968, type: 3}
-  usingPhase: 03000000
+  usingPhases: 
   conditions: 01000000
+  isEffectAuto: 0
+  used: 0
+  isActivable: 0
 --- !u!1 &7418079783549145917
 GameObject:
   m_ObjectHideFlags: 0

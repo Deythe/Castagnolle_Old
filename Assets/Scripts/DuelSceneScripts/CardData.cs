@@ -9,7 +9,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     public static bool isTouching;
 
     [SerializeField] private bool enabled;
-    [SerializeField] private Sprite bigCard;
+    [SerializeField] private Sprite fullCard;
     [SerializeField] private GameObject prefabs;
     [SerializeField] private int atk;
     [SerializeField] private List<DiceListScriptable.enumRessources> resources;
@@ -47,7 +47,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
     }
     public Sprite p_fullCard
     {
-        get => bigCard;
+        get => fullCard;
     }
     public int p_atk
     {

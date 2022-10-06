@@ -10,7 +10,7 @@ public class EffectManager : MonoBehaviour
     
     public enum enumEffectPhaseActivation
     {
-        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie, WhenItsSpecialTime 
+        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie
     }
     
     public enum enumConditionEffect
@@ -33,7 +33,6 @@ public class EffectManager : MonoBehaviour
     private MonstreData currentClick;
     
     private enumEffectPhaseActivation currentEffectPhaseActivation;
-    
     private bool specialInvocation;
     private RaycastHit hit;
     private RoundManager.enumRoundState lastPhaseActivation; 
@@ -43,6 +42,7 @@ public class EffectManager : MonoBehaviour
     {
         get => view;
     }
+    
     
     public bool p_specialInvocation
     {
@@ -251,13 +251,13 @@ public class EffectManager : MonoBehaviour
     
     public void ActiveEffect()
     {
-        Debug.Log("Effet activated");
-        UiManager.instance.EnableDisableMenuYesChoice(false);
-        UiManager.instance.EnableDisableMenuNoChoice(false);
+        Debug.Log( currentUnit.name +"Effet activated");
+        UiManager.instance.EnableDisableMenuYesChoice(false); 
+        UiManager.instance.EnableDisableMenuNoChoice(false); 
         currentUnit.GetComponent<MonstreData>().ActivateEffects(currentEffectPhaseActivation);
     }
 
-    private void CheckCondition()
+    public void CheckCondition()
     {
         if (copyCurentUnitCondition.Count == 0)
         {
@@ -296,7 +296,6 @@ public class EffectManager : MonoBehaviour
                 CheckCondition();
                 break;
             case enumConditionEffect.Spectacle:
-                Debug.Log("Boom");
                 currentUnit.GetComponent<MonstreData>().p_effect.GetConditions().RemoveAt(0);
                 copyCurentUnitCondition.RemoveAt(0);
                 if (copyCurentUnitCondition.Count.Equals(0))
@@ -309,13 +308,10 @@ public class EffectManager : MonoBehaviour
                     if (copyCurentUnitCondition[0] != enumConditionEffect.Spectacle)
                     {
                         Debug.Log("Boom3");
-                        RoundManager.instance.p_roundState = lastPhaseActivation;
                         ActiveEffect();
-                        UnitSelected(enumEffectPhaseActivation.WhenThisUnitKill);
                     }
                     else
                     {
-                        Debug.Log("Boom4");
                         CancelSelection();
                     }   
                 }
@@ -330,6 +326,9 @@ public class EffectManager : MonoBehaviour
             case enumConditionEffect.HaveAMilkInGauge:
                 copyCurentUnitCondition.RemoveAt(0);
                 CheckCondition();
+                break;
+            case enumConditionEffect.SelectACard:
+                ActiveEffect();
                 break;
         }
     }
@@ -347,9 +346,15 @@ public class EffectManager : MonoBehaviour
 
     public void CancelSelection()
     {
+        Debug.Log("Caca");
         ClearUnits();
         specialInvocation = false;
-
+        
+        for (int i = 0; i < UiManager.instance.p_carListChose.childCount; i++)
+        {
+            UiManager.instance.p_carListChose.GetChild(i).gameObject.SetActive(false);
+        }
+        
         if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
         {
             lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;

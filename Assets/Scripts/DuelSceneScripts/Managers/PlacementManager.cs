@@ -162,13 +162,8 @@ public class PlacementManager : MonoBehaviour
     IEnumerator CoroutineSpawnMonster()
     {
         isWaiting = true;
-        SoundManager.instance.PlaySFXSound(5, 0.05f);
-        EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 0,  AverageCenterX(currentUnit), 0.6f , AverageCenterZ(currentUnit), 4f);
-
-        yield return new WaitForSeconds(1.2f);
-
         EffectManager.instance.ClearUnits();
-
+        
         if (!EffectManager.instance.p_specialInvocation)
         {
             DiceManager.instance.DeleteAllResources(currentCardSelection.p_ressources);
@@ -177,8 +172,14 @@ public class PlacementManager : MonoBehaviour
         {
             EffectManager.instance.p_specialInvocation = false;
             RoundManager.instance.p_roundState = RoundManager.enumRoundState.DragUnitPhase;
+            UiManager.instance.EnableDisableMenuNoChoice(true);
         }
         
+        SoundManager.instance.PlaySFXSound(5, 0.05f);
+        EffectManager.instance.View.RPC("RPC_PlayAnimation", RpcTarget.AllViaServer, 0,  AverageCenterX(currentUnit), 0.6f , AverageCenterZ(currentUnit), 4f);
+        
+        yield return new WaitForSeconds(1.2f);
+
         currentUnitPhoton = PhotonNetwork.Instantiate(goPrefabMonster.name,
                 new Vector3(currentUnit.transform.position.x, 0.5f, currentUnit.transform.position.z),
                 PlayerSetup.instance.transform.rotation, 0);

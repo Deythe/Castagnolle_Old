@@ -181,6 +181,8 @@ public class UiManager : MonoBehaviour
 
         bigCart.GetComponent<RectTransform>().localScale = new Vector3(canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f);
         helpPage.GetComponent<RectTransform>().localScale = new Vector3(canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f, canvasScaler.referenceResolution.y / 1920f);
+        menuYesChoice.enabled = false;
+        menuNoChoice.enabled = false;
     }
 
     private void Start()
@@ -495,48 +497,50 @@ public class UiManager : MonoBehaviour
             scrollView.GetComponent<RectTransform>().DOLocalMoveY(originalScrollPositionY, 0.2f)
                 .SetEase(Ease.InBack);
         }
-
     }
 
 
     public void EnableDisableMenuYesChoice(bool b)
     {
-        if (!DOTween.IsTweening(menuYesChoice.GetComponent<RectTransform>()))
+        if (b != menuYesChoice.enabled)
         {
-            DOTween.Kill(menuYesChoice.GetComponent<RectTransform>());
-        }
+            if (!DOTween.IsTweening(menuYesChoice.GetComponent<RectTransform>()))
+            {
+                DOTween.Kill(menuYesChoice.GetComponent<RectTransform>());
+            }
 
-        if (b)
-        {
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * 0.375f, 0.6f)
-                .SetEase(Ease.OutBack).OnComplete(() => menuYesChoice.enabled = true);
+            if (b)
+            {
+                menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * 0.375f, 0.6f)
+                    .SetEase(Ease.OutBack).OnComplete(() => menuYesChoice.enabled = true);
+            }
+            else
+            {
+                menuYesChoice.enabled = false;
+                menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.2f).SetEase(Ease.Linear);
+            }
         }
-        else
-        {
-            menuYesChoice.enabled = false;
-            menuYesChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width, 0.2f).SetEase(Ease.Linear);
-        }
-
     }
 
     public void EnableDisableMenuNoChoice(bool b)
     {
-        Debug.Log("Caca");
-        if (!DOTween.IsTweening(menuNoChoice.GetComponent<RectTransform>()))
+        if (b != menuNoChoice.enabled)
         {
-            Debug.Log("Caca2");
-            DOTween.Kill(menuNoChoice.GetComponent<RectTransform>());
-        }
+            if (!DOTween.IsTweening(menuNoChoice.GetComponent<RectTransform>()))
+            {
+                DOTween.Kill(menuNoChoice.GetComponent<RectTransform>());
+            }
 
-        if (b)
-        {
-            menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * -0.375f, 0.6f)
-                .SetEase(Ease.OutBack).OnComplete(() => menuNoChoice.enabled = true);
-        }
-        else
-        {
-            menuNoChoice.enabled = false;
-            menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.2f).SetEase(Ease.Linear);
+            if (b)
+            {
+                menuNoChoice.GetComponent<RectTransform>().DOLocalMoveX(Screen.width * -0.375f, 0.6f)
+                    .SetEase(Ease.OutBack).OnComplete(() => menuNoChoice.enabled = true);
+            }
+            else
+            {
+                menuNoChoice.enabled = false;
+                menuNoChoice.GetComponent<Transform>().DOLocalMoveX(-Screen.width, 0.2f).SetEase(Ease.Linear);
+            }
         }
     }
 
