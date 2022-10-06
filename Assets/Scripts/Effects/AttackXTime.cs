@@ -11,35 +11,41 @@ public class AttackXTime : MonoBehaviour, IEffects
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
-    [SerializeField] private int numberAttack;
-    private int currentAttack;
+    [SerializeField] private int xAttack, xMaxAttack;
 
     public void OnCast(EffectManager.enumEffectPhaseActivation phase)
     {
-        if (usingPhases[0].Equals(phase))
+        if (view.AmOwner)
         {
-            if (view.AmOwner)
+            if (usingPhases.Contains(phase))
             {
-                if (currentAttack < numberAttack)
+                if (xAttack <= xMaxAttack)
                 {
                     transform.GetComponent<MonstreData>().p_attacked = false;
                 }
                 else
                 {
                     used = true;
+                    xAttack=0;
                     GetComponent<MonstreData>().p_model.layer = 6;
                 }
+
+                xAttack++;
+                EffectManager.instance.CancelSelection();
             }
         }
     }
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        AttackXTime pivot = effectMother as AttackXTime;
+        view = gameObject.GetPhotonView();
         usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
         conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
+        xAttack = pivot.xAttack;
+        xMaxAttack = pivot.xMaxAttack;
     }
     
     public PhotonView GetView()

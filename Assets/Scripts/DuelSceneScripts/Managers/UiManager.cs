@@ -524,6 +524,7 @@ public class UiManager : MonoBehaviour
 
     public void EnableDisableMenuNoChoice(bool b)
     {
+        Debug.Log("Cacakipu");
         if (b != menuNoChoice.enabled)
         {
             if (!DOTween.IsTweening(menuNoChoice.GetComponent<RectTransform>()))

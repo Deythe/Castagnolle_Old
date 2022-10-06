@@ -12,8 +12,8 @@ public class Evolve : MonoBehaviour, IEffects
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
-    
     [SerializeField] private List<CardData> listGameObjectUnit;
+    private GameObject unitEvolved;
 
     private RectTransform cardListEvolve;
 
@@ -31,7 +31,6 @@ public class Evolve : MonoBehaviour, IEffects
             {
                 if (conditions.Count > 0)
                 {
-                    Debug.Log("Effet evolve 1");
                     for (int i = 0; i < listGameObjectUnit.Count; i++)
                     {
                         cardListEvolve.GetChild(i).GetComponent<CardToBeSelected>().unit = listGameObjectUnit[i];
@@ -43,22 +42,20 @@ public class Evolve : MonoBehaviour, IEffects
                 }
                 else
                 {
-                    Debug.Log("Effet evolve 2");
                     for (int i = cardListEvolve.childCount - 1; i >= 0; i--)
                     {
                         cardListEvolve.GetChild(i).gameObject.SetActive(false);
                     }
 
-                    PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
+                    unitEvolved = PhotonNetwork.Instantiate(EffectManager.instance.p_unitTarget1.name, transform.position,
                         transform.rotation, 0);
-
+                    
+                    unitEvolved.GetComponent<MonstreData>().p_attacked = true;
                     EffectManager.instance.CancelSelection();
                     used = true;
                     GetComponent<MonstreData>().p_isChampion = false;
-                    EffectManager.instance.CancelSelection();
                     PhotonNetwork.Destroy(gameObject);
                 }
-
             }
         }
     }

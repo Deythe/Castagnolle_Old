@@ -15,7 +15,7 @@ public class EffectManager : MonoBehaviour
     
     public enum enumConditionEffect
     {
-        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, Spectacle, DragUnit
+        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, Counter, DragUnit
     }
     
     [SerializeField] private PhotonView view;
@@ -295,19 +295,17 @@ public class EffectManager : MonoBehaviour
                 
                 CheckCondition();
                 break;
-            case enumConditionEffect.Spectacle:
+            case enumConditionEffect.Counter:
                 currentUnit.GetComponent<MonstreData>().p_effect.GetConditions().RemoveAt(0);
                 copyCurentUnitCondition.RemoveAt(0);
                 if (copyCurentUnitCondition.Count.Equals(0))
                 {
-                    Debug.Log("Boom2");
                     ActiveEffect();
                 }
                 else
                 {
-                    if (copyCurentUnitCondition[0] != enumConditionEffect.Spectacle)
+                    if (copyCurentUnitCondition[0] != enumConditionEffect.Counter)
                     {
-                        Debug.Log("Boom3");
                         ActiveEffect();
                     }
                     else
@@ -346,7 +344,6 @@ public class EffectManager : MonoBehaviour
 
     public void CancelSelection()
     {
-        Debug.Log("Caca");
         ClearUnits();
         specialInvocation = false;
         

@@ -709,8 +709,9 @@ MonoBehaviour:
   conditions: 
   isEffectAuto: 0
   used: 0
-  isActivable: 0
-  numberAttack: 0
+  isActivable: 1
+  xAttack: 0
+  xMaxAttack: 2
 --- !u!1 &8237982030814162733
 GameObject:
   m_ObjectHideFlags: 0

@@ -47,7 +47,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int unit, int damage)
     {
-        PlacementManager.instance.SearchMobWithID(unit).p_atk -= damage;
+        PlacementManager.instance.SearchMobWithID(unit).p_atk -= 2*damage;
     }
     
     

@@ -179,6 +179,10 @@ public class CastagneManager : MonoBehaviour
 
         public void Attack()
         {
+            for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+            {
+                deadUnitMeshRenderers[i].material.DOKill(false);
+            }
             StartCoroutine(CoroutineAttack());
         }
         
@@ -202,14 +206,13 @@ public class CastagneManager : MonoBehaviour
             {
                 unitsSelected.GetComponent<MonstreData>().p_animator.SetBool("ATK", false);
             }
-            
+
             if (unitTarget.GetComponent<MonstreData>().p_isMovable && !unitsSelected.GetComponent<MonstreData>().p_isChampion)
             {
                 playerView.RPC("RPC_TakeDamageUnit", RpcTarget.AllViaServer,
                     unitsSelected.GetComponent<PhotonView>().ViewID, unitTarget.GetComponent<MonstreData>().p_atk,
                     unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<MonstreData>().p_atk);
-                
-                StartCoroutine(CoroutineAttackNormalUnit());
+                CoroutineAttackNormalUnit();
             }
             else
             {
@@ -217,7 +220,7 @@ public class CastagneManager : MonoBehaviour
                     unitsSelected.GetComponent<PhotonView>().ViewID, 0,
                     unitTarget.GetComponent<PhotonView>().ViewID, unitsSelected.GetComponent<MonstreData>().p_atk);
 
-                StartCoroutine(CoroutineAttackStaticUnit());
+                CoroutineAttackStaticUnit();
             }
         }
         
@@ -240,7 +243,7 @@ public class CastagneManager : MonoBehaviour
             CancelSelection();
         }
 
-        IEnumerator CoroutineAttackNormalUnit()
+        void CoroutineAttackNormalUnit()
         {
             switch (result)
             {
@@ -260,7 +263,6 @@ public class CastagneManager : MonoBehaviour
                     {
                         EffectManager.instance.p_currentUnit = unitsSelected;
                         EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
-                        yield return new WaitUntil(() => EffectManager.instance.EffectFinished());
                     }
                     
                     break;
@@ -277,7 +279,7 @@ public class CastagneManager : MonoBehaviour
             ClearUnits();
         }
         
-        IEnumerator CoroutineAttackStaticUnit()
+        void CoroutineAttackStaticUnit()
         {
             switch (result)
             {
@@ -291,7 +293,6 @@ public class CastagneManager : MonoBehaviour
                     {
                         EffectManager.instance.p_currentUnit = unitsSelected;
                         EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
-                        yield return new WaitUntil(() => EffectManager.instance.EffectFinished());
                     }
                     
                     EffectManager.instance.ActivateEffectWhenUnitDie();

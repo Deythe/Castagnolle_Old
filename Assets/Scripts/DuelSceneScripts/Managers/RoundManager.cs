@@ -126,6 +126,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
                     UiManager.instance.EnableBorderStatus(255,0,0);
                     break;
                 case enumRoundState.EffectPhase:
+                    UiManager.instance.EnableDisableEndTurn(false);
+                    UiManager.instance.EnableDisableBattleButton(false);
                     UiManager.instance.EnableDisableMenuNoChoice(true);
                     UiManager.instance.EnableDisableScrollView(false);
                     UiManager.instance.EnableBorderStatus(68,168,254);
