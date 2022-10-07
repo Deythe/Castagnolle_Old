@@ -172,7 +172,7 @@ public class PlacementManager : MonoBehaviour
         {
             EffectManager.instance.p_specialInvocation = false;
             RoundManager.instance.p_roundState = RoundManager.enumRoundState.DragUnitPhase;
-            UiManager.instance.EnableDisableMenuNoChoice(true);
+            UiManager.instance.EnableDisableMenuNoChoice(false);
         }
         
         SoundManager.instance.PlaySFXSound(5, 0.05f);
@@ -189,10 +189,10 @@ public class PlacementManager : MonoBehaviour
         goPrefabMonster = null;
         currentCardSelection = null;
 
-        if (currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke) && currentUnitPhoton.GetPhotonView().AmOwner && currentUnitPhoton.GetComponent<MonstreData>().p_effect.GetIsActivable())
+        if (currentUnitPhoton.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation.WhenThisUnitIsInvoke) && currentUnitPhoton.GetPhotonView().AmOwner && currentUnitPhoton.GetComponent<MonstreData>().p_effect.GetIsActivable())
         {
             EffectManager.instance.p_currentUnit = currentUnitPhoton;
-            EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitIsInvoke);
+            EffectManager.instance.UnitSelected(EffectManager.enumEffectConditionActivation.WhenThisUnitIsInvoke);
         }else
         {
             RoundManager.instance.p_roundState = RoundManager.enumRoundState.DrawPhase;
@@ -262,7 +262,7 @@ public class PlacementManager : MonoBehaviour
         return zAveragePosition / unit.GetComponent<MonstreData>().GetCenters().Count;
     }
 
-    public MonstreData SearchMobWithID(int unitID)
+    public MonstreData FindMobWithID(int unitID)
     {
         for (int i = 0; i < board.Count; i++)
         {
@@ -419,7 +419,7 @@ public class PlacementManager : MonoBehaviour
     [PunRPC]
     private void RPC_ActivateEffect(int idUnit)
     {
-        SearchMobWithID(idUnit).GetComponent<MonstreData>().ActivateEffects(0);
+        FindMobWithID(idUnit).GetComponent<MonstreData>().ActivateEffects(0);
     }
 
     public GameObject GetPrefabUnit()

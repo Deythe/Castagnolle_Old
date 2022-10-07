@@ -133,6 +133,8 @@ public class RoundManager : MonoBehaviourPunCallbacks
                     UiManager.instance.EnableBorderStatus(68,168,254);
                     break;
                 case enumRoundState.WaitPhase :
+                    EffectManager.instance.ClearUnits();
+                    CastagneManager.instance.ClearUnits();
                     UiManager.instance.EnableDisableScrollView(false);
                     UiManager.instance.EnableDisableMenuYesChoice(false);
                     UiManager.instance.EnableDisableMenuNoChoice(false);
@@ -242,10 +244,11 @@ public class RoundManager : MonoBehaviourPunCallbacks
         switch (roundState)
         {
             case enumRoundState.DrawPhase:
-                EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenItsDrawPhase);
+                EffectManager.instance.UnitSelected(EffectManager.enumEffectConditionActivation.WhenItsDrawPhase);
                 break;
             case enumRoundState.EffectPhase:
-                EffectManager.instance.ActiveEffect();
+                EffectManager.instance.Action();
+
                 break;
             case enumRoundState.CastagnePhase:
                 CastagneManager.instance.Attack();
@@ -255,6 +258,9 @@ public class RoundManager : MonoBehaviourPunCallbacks
 
     public void CancelAction()
     {
+        UiManager.instance.EnableDisableMenuNoChoice(false);
+        UiManager.instance.EnableDisableMenuYesChoice(false);
+        
         SoundManager.instance.PlaySFXSound(1, 0.07f);
         switch (roundState)
         {

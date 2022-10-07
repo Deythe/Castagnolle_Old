@@ -6,11 +6,13 @@ using UnityEngine;
 public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
+
 
     public static Dictionary<GameObject, DiceListScriptable.enumRessources[]> originalCardResources;
     public static Dictionary<GameObject, int> originalCardAtk;
@@ -27,11 +29,11 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     {
         isActivable = true;
     }
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (usingPhases.Contains(phase))
+            if (conditions.Contains(condition))
             {
                 numberUnitCurrent = PlacementManager.instance.p_board.Count;
 
@@ -84,7 +86,7 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
                 EffectManager.instance.CancelSelection();
             }
             
-            else if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
+            else if (condition == EffectManager.enumEffectConditionActivation.WhenThisUnitDie)
             {
                 if (view.AmOwner)
                 {
@@ -169,6 +171,8 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
             }
         }
     }
+    
+    
 
     void ResetUnit()
     {
@@ -191,14 +195,14 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int id, int atk)
     { 
-        PlacementManager.instance.SearchMobWithID(id).p_atk+=atk;
+        PlacementManager.instance.FindMobWithID(id).p_atk+=atk;
     }
     
     public void TransferEffect(IEffects effectMother)
     {
         view = gameObject.GetPhotonView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -208,14 +212,19 @@ public class NeedLessRessourcesForChampions : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()

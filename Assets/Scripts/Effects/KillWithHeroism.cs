@@ -7,17 +7,19 @@ using UnityEngine;
 public class KillWithHeroism : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (usingPhases.Contains(phase))
+            if (conditions.Contains(condition))
             {
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
                     EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID);
@@ -32,14 +34,14 @@ public class KillWithHeroism : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int idTarget)
     {
-        PlacementManager.instance.SearchMobWithID(idTarget).p_atk-= PlacementManager.instance.SearchMobWithID(idTarget).p_atk;
+        PlacementManager.instance.FindMobWithID(idTarget).p_atk-= PlacementManager.instance.FindMobWithID(idTarget).p_atk;
     }
     
     public void TransferEffect(IEffects effectMother)
     {
         view = effectMother.GetView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -49,14 +51,14 @@ public class KillWithHeroism : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()
@@ -72,6 +74,11 @@ public class KillWithHeroism : MonoBehaviour, IEffects
     public bool GetUsed()
     {
         return used;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
     }
 
     public void SetUsed(bool b)

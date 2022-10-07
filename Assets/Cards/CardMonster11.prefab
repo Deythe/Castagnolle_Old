@@ -493,12 +493,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 510c310928d5e3c459031601c9de93a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardInstance: {fileID: 7236249880086410052, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
   view: {fileID: 5347874786083823171, guid: 3c1f050b51b5a074490ef71ad85bb968, type: 3}
-  usingPhases: 
-  conditions: 01000000
+  conditions: 03000000
+  actions: 010000000800000007000000
   isEffectAuto: 0
   used: 0
-  isActivable: 0
+  isActivable: 1
+  orderPriority: 0
 --- !u!1 &7418079783549145917
 GameObject:
   m_ObjectHideFlags: 0

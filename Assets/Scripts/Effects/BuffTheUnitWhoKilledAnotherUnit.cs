@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class AllBonesForStrenght : MonoBehaviour, IEffects
+public class BuffTheUnitWhoKilledAnotherUnit : MonoBehaviour,IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
@@ -13,8 +14,10 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    private int check;
-
+    private void Awake()
+    {
+        isActivable = true;
+    }
 
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
@@ -22,34 +25,19 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
         {
             if (conditions.Contains(condition))
             {
-                check = 0;
+                view.RPC("RPC_Action", RpcTarget.AllViaServer,
+                    CastagneManager.instance.p_unitSelected.GetComponent<PhotonView>().ViewID);
                 
-                for (int i = 0; i < DiceManager.instance.p_diceGauge.Length; i++)
-                {
-                    if (DiceManager.instance.p_diceGauge[i] == DiceListScriptable.enumRessources.Milk)
-                    {
-                        DiceManager.instance.p_diceGauge[i] = DiceListScriptable.enumRessources.Nothing;
-                        DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.AllViaServer,
-                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, DiceListScriptable.enumRessources.Nothing);
-                        check++;
-                    }
-                }
-                
-                view.RPC("RPC_Action", RpcTarget.All, check);
-                check = 0; 
-                
-                DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection();
-                GetComponent<MonstreData>().p_model.layer = 6;
-                used = true;
             }
         }
     }
-
+    
     [PunRPC]
-    private void RPC_Action(int checks)
+    private void RPC_Action(int unitID)
     {
-        GetComponent<MonstreData>().p_atk+=(2*checks);
+        Debug.Log("Rpc Ring");
+        PlacementManager.instance.FindMobWithID(unitID).p_atk++;
     }
     
     public void TransferEffect(IEffects effectMother)
@@ -110,4 +98,5 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
 }

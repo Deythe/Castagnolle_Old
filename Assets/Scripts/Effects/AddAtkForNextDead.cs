@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
+
 public class AddAtkForNextDead : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        if (usingPhases[0]==phase)
+        if (conditions[0]==condition)
         {
             switch (CastagneManager.instance.p_result)
             {
@@ -40,8 +43,8 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
     public void TransferEffect(IEffects effectMother)
     {
         view = effectMother.GetView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -51,14 +54,14 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()
@@ -69,6 +72,11 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
     public void SetIsActivable(bool b)
     {
         isActivable = b;
+    }
+
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
     }
 
     public bool GetUsed()

@@ -9,18 +9,20 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     public static GameObject motherUnit;
     
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
+
 
     
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (usingPhases.Contains(phase))
+            if (conditions.Contains(condition))
             {
                 EffectManager.instance.p_specialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(GetComponent<MonstreData>().p_stats.GetComponent<CardData>().p_prefabs);
@@ -34,7 +36,7 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
             }
         }
         
-        else if (phase == EffectManager.enumEffectPhaseActivation.WhenThisUnitDie)
+        else if (condition == EffectManager.enumEffectConditionActivation.WhenThisUnitDie)
         {
             if (view.AmOwner)
             {
@@ -67,15 +69,15 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     [PunRPC]
     private void RPC_Action(int id, int atk, bool mov)
     { 
-        PlacementManager.instance.SearchMobWithID(id).p_atk=atk;
-        PlacementManager.instance.SearchMobWithID(id).p_isMovable=mov;
+        PlacementManager.instance.FindMobWithID(id).p_atk=atk;
+        PlacementManager.instance.FindMobWithID(id).p_isMovable=mov;
     }
     
     public void TransferEffect(IEffects effectMother)
     {
         view = effectMother.GetView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -85,14 +87,19 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()

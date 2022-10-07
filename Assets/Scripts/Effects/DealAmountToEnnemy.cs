@@ -6,35 +6,42 @@ using UnityEngine;
 public class DealAmountToEnnemy : MonoBehaviour,IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    private int dmg;
+
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        /*
         if (view.AmOwner)
         {
-            if (phase == usingPhase)
+            if (conditions.Contains(condition))
             {
-                RoundManager.instance.p_roundState = 6;
-                EffectManager.instance.CurrentUnit = gameObject;
-            }
-            else if (phase == 6)
-            {
-                view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.p_unitTarget2.GetComponent<PhotonView>().ViewID, BattlePhaseManager.instance.TargetUnitAttack);
+                Debug.Log(dmg);
+                dmg = CastagneManager.instance.p_targetUnitAttack;
+                view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID, dmg);
                 used = true;
+                EffectManager.instance.CancelSelection();
+                GetComponent<MonstreData>().p_model.layer = 6;
             }
-        }*/
+        }
+    }
+    
+    [PunRPC]
+    private void RPC_Action(int idTarget, int damage)
+    {
+        PlacementManager.instance.FindMobWithID(idTarget).p_atk-= damage;
     }
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        view = gameObject.GetPhotonView();
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -44,14 +51,19 @@ public class DealAmountToEnnemy : MonoBehaviour,IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()

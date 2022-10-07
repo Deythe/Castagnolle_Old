@@ -16,7 +16,7 @@ public class CastagneManager : MonoBehaviour
         [SerializeField] private GameObject unitsSelected, unitTarget;
 
         [SerializeField] private List<Vector3> deadUnitCenters = new List<Vector3>();
-        [SerializeField] private List<MeshRenderer> deadUnitMeshRenderers;
+        [SerializeField] private List<MeshRenderer> deadUnitMeshRenderers = new List<MeshRenderer>();
         [SerializeField] private List<Vector3> previsualisationUnitMore = new List<Vector3>();
         
         private GameObject unitFusion;
@@ -30,27 +30,21 @@ public class CastagneManager : MonoBehaviour
         private float sizeListCentersDeadUnit;
         
         private int targetUnitAttack;
-        private bool isWaiting;
-        
+
         private bool pivot;
         private RaycastHit hit;
 
-        public bool IsWaiting
-        {
-            get => isWaiting;
-            set
-            {
-                isWaiting = value;
-            }
-        }
         public int p_targetUnitAttack
-        {
-            get => targetUnitAttack;
+        { get => targetUnitAttack;
         }
 
         public int p_result
         {
             get => result;
+            set
+            {
+                result = value;
+            }
         }
         
         public GameObject p_unitTarget
@@ -165,13 +159,13 @@ public class CastagneManager : MonoBehaviour
             switch (result)
             {
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
-                    deadUnitMeshRenderers = new List<MeshRenderer>(unitTarget.GetComponent<MonstreData>().GetMeshRenderers());
+                    CopyTransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = unitTarget.GetComponent<MonstreData>().GetMeshRenderers();
                     ShowAllUnitsExtension(unitsSelected);
                     break;
                 case <0 :
-                    TransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
-                    deadUnitMeshRenderers = new List<MeshRenderer>(unitsSelected.GetComponent<MonstreData>().GetMeshRenderers());
+                    CopyTransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    deadUnitMeshRenderers = unitsSelected.GetComponent<MonstreData>().GetMeshRenderers();
                     ShowAllUnitsExtension(unitTarget);
                     break;
             }
@@ -179,11 +173,14 @@ public class CastagneManager : MonoBehaviour
 
         public void Attack()
         {
-            for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+            if (deadUnitMeshRenderers != null)
             {
-                deadUnitMeshRenderers[i].material.DOKill(false);
+                for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+                {
+                    deadUnitMeshRenderers[i].material.DOKill(false);
+                }
             }
-            
+
             UiManager.instance.EnableDisableMenuNoChoice(false);
             UiManager.instance.EnableDisableMenuYesChoice(false);
             
@@ -258,21 +255,21 @@ public class CastagneManager : MonoBehaviour
                     break;
 
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    CopyTransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
-                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed() && unitsSelected.GetComponent<MonstreData>().p_effect.GetIsActivable())
+                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed() && unitsSelected.GetComponent<MonstreData>().p_effect.GetIsActivable())
                     {
                         EffectManager.instance.p_currentUnit = unitsSelected;
-                        EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
+                        EffectManager.instance.UnitSelected(EffectManager.enumEffectConditionActivation.WhenThisUnitKill);
                     }
                     
                     break;
 
                 case <0:
-                    TransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    CopyTransformToVector3(unitsSelected.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     LifeManager.instance.TakeDamageHimself();
                     
                     StartCoroutine(AddAllExtension(unitTarget, false));
@@ -289,14 +286,14 @@ public class CastagneManager : MonoBehaviour
             {
                 case 0:
                 case >0:
-                    TransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
+                    CopyTransformToVector3(unitTarget.GetComponent<MonstreData>().GetCenters(), deadUnitCenters);
                     LifeManager.instance.TakeDamageEnnemi(PlacementManager.instance.CenterMoreFar(unitsSelected));
                     StartCoroutine(AddAllExtension(unitsSelected, true));
 
-                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed())
+                    if (unitsSelected.GetComponent<MonstreData>().HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation.WhenThisUnitKill) && !unitsSelected.GetComponent<MonstreData>().p_effect.GetUsed())
                     {
                         EffectManager.instance.p_currentUnit = unitsSelected;
-                        EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitKill);
+                        EffectManager.instance.UnitSelected(EffectManager.enumEffectConditionActivation.WhenThisUnitKill);
                     }
                     
                     EffectManager.instance.ActivateEffectWhenUnitDie();
@@ -309,7 +306,7 @@ public class CastagneManager : MonoBehaviour
         void ShowAllUnitsExtension(GameObject unitMore)
         {
             motherUnitTiles = unitMore.GetComponent<MonstreData>().p_id;
-            TransformToVector3(unitMore.GetComponent<MonstreData>().GetCenters(), previsualisationUnitMore);
+            CopyTransformToVector3(unitMore.GetComponent<MonstreData>().GetCenters(), previsualisationUnitMore);
             
             sizeListCentersDeadUnit = Mathf.Ceil(deadUnitCenters.Count / 2f);
 
@@ -457,11 +454,14 @@ public class CastagneManager : MonoBehaviour
 
         public void CancelSelection()
         {
-            for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+            if (deadUnitMeshRenderers != null)
             {
-                deadUnitMeshRenderers[i].material.DOKill(false);
+                for (int i = 0; i < deadUnitMeshRenderers.Count; i++)
+                {
+                    deadUnitMeshRenderers[i].material.DOKill(false);
+                }
             }
-            
+
             ClearUnits();
         }
 
@@ -479,13 +479,12 @@ public class CastagneManager : MonoBehaviour
                 unitTarget = null;
             }
 
-            targetUnitAttack = 0;
-
+            deadUnitMeshRenderers = null;
             EffectManager.instance.CheckAllHeroism();
             UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         }
         
-        void TransformToVector3(List<Transform> transf, List<Vector3> vect)
+        void CopyTransformToVector3(List<Transform> transf, List<Vector3> vect)
         {
             vect.Clear();
             for (int i = 0; i < transf.Count; i++)
@@ -516,11 +515,11 @@ public class CastagneManager : MonoBehaviour
         [PunRPC]
         private void RPC_TakeDamageUnit(int unitSelected, int damage, int unitTarget, int damage2)
         {
-            unitPivot = PlacementManager.instance.SearchMobWithID(unitSelected);
+            unitPivot = PlacementManager.instance.FindMobWithID(unitSelected);
             UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage);
             unitPivot.p_atk -= Mathf.Abs(damage);
             
-            unitPivot = PlacementManager.instance.SearchMobWithID(unitTarget);
+            unitPivot = PlacementManager.instance.FindMobWithID(unitTarget);
             UiManager.instance.PlayHitMarker(unitPivot.transform.position, damage2);
             unitPivot.p_atk -= Mathf.Abs(damage2);
         }

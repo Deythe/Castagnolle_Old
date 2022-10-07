@@ -861,7 +861,7 @@ namespace Photon.Pun
             prefabPool.Destroy(go);     // PUN 2 always uses a PrefabPool (even for the default implementation)
         }
 
-
+        
         private static readonly ExitGames.Client.Photon.Hashtable removeFilter = new ExitGames.Client.Photon.Hashtable();
         private static readonly ExitGames.Client.Photon.Hashtable ServerCleanDestroyEvent = new ExitGames.Client.Photon.Hashtable();
         private static readonly RaiseEventOptions ServerCleanOptions = new RaiseEventOptions() { CachingOption = EventCaching.RemoveFromRoomCache };

@@ -8,31 +8,37 @@ public class EffectManager : MonoBehaviour
 {
     public static EffectManager instance;
     
-    public enum enumEffectPhaseActivation
+    public enum enumEffectConditionActivation
     {
         WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie
     }
     
-    public enum enumConditionEffect
+    public enum enumActionEffect
     {
-        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, Counter, DragUnit
+        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, KillCounter, DragUnit, Validate
+    }
+
+    public enum enumOrderPriority
+    {
+        LowPriority, MediumPriority, HighPriority
     }
     
     [SerializeField] private PhotonView view;
     [SerializeField] private List<GameObject> effectsList;
     [SerializeField] private List<GameObject> instantiateEffect;
 
-    [SerializeField] private List<enumConditionEffect> copyCurentUnitCondition;
+    [SerializeField] private List<enumActionEffect> copyCurrentUnitAction;
     [SerializeField] private List<GameObject> heroismListMobCheck;
     
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private GameObject unitTarget1;
     [SerializeField] private GameObject unitTarget2;
-    
     [SerializeField] private Transform pooler;
+    
     private MonstreData currentClick;
     
-    private enumEffectPhaseActivation currentEffectPhaseActivation;
+    private enumEffectConditionActivation currentEffectConditionActivation;
+
     private bool specialInvocation;
     private RaycastHit hit;
     private RoundManager.enumRoundState lastPhaseActivation; 
@@ -80,15 +86,6 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public void InstantiateAllEffect()
-    {
-        for (i = 0; i < effectsList.Count ; i++)
-        {
-            instantiateEffect.Add(Instantiate(effectsList[i],Vector3.zero, PlayerSetup.instance.transform.rotation, pooler));
-            instantiateEffect[i].SetActive(false);
-        }
-    }
-    
     private void Awake()
     {
         if (instance == null)
@@ -105,6 +102,15 @@ public class EffectManager : MonoBehaviour
         if (RoundManager.instance != null)
         {
             SelectTarget();
+        }
+    }
+    
+    public void InstantiateAllEffect()
+    {
+        for (i = 0; i < effectsList.Count ; i++)
+        {
+            instantiateEffect.Add(Instantiate(effectsList[i],Vector3.zero, PlayerSetup.instance.transform.rotation, pooler));
+            instantiateEffect[i].SetActive(false);
         }
     }
 
@@ -131,13 +137,14 @@ public class EffectManager : MonoBehaviour
                                             if (currentClick.photonView.AmOwner)
                                             {
                                                 if (currentClick
-                                                        .HaveAnEffectThisPhase(enumEffectPhaseActivation
+                                                        .HaveAnEffectThisPhase(enumEffectConditionActivation
                                                             .WhenItsDrawPhase)
                                                     && currentClick.p_effect.GetIsActivable()
                                                     && !currentClick.p_effect.GetUsed())
                                                 {
                                                     currentUnit = currentClick.gameObject;
                                                     currentUnit.GetComponent<MonstreData>().BeChoosen();
+                                                    lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
                                                     UiManager.instance.EnableDisableScrollView(false);
                                                     UiManager.instance.EnableDisableBattleButton(false);
                                                     UiManager.instance.EnableDisableMenuNoChoice(true);
@@ -149,11 +156,11 @@ public class EffectManager : MonoBehaviour
                                         
 
                                     case RoundManager.enumRoundState.EffectPhase:
-                                        if (copyCurentUnitCondition.Count > 0)
+                                        if (copyCurrentUnitAction.Count > 0)
                                         {
-                                            switch (copyCurentUnitCondition[0])
+                                            switch (copyCurrentUnitAction[0])
                                             {
-                                                case enumConditionEffect.SelectAllyUnityButNotThisOne:
+                                                case enumActionEffect.SelectAllyUnityButNotThisOne:
                                                     if (hit.collider.GetComponent<PhotonView>().AmOwner)
                                                     {
                                                         if (!hit.collider.gameObject.Equals(currentUnit))
@@ -169,14 +176,14 @@ public class EffectManager : MonoBehaviour
                                                                 unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                             }
 
-                                                            copyCurentUnitCondition.RemoveAt(0);
+                                                            copyCurrentUnitAction.RemoveAt(0);
                                                             CheckCondition();
                                                         }
                                                     }
 
                                                     break;
 
-                                                case enumConditionEffect.SelectAllyUnit:
+                                                case enumActionEffect.SelectAllyUnit:
                                                     if (hit.collider.GetComponent<PhotonView>().AmOwner)
                                                     {
                                                         if (unitTarget1 == null)
@@ -190,14 +197,14 @@ public class EffectManager : MonoBehaviour
                                                             unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                         }
 
-                                                        copyCurentUnitCondition.RemoveAt(0);
+                                                        copyCurrentUnitAction.RemoveAt(0);
                                                         CheckCondition();
 
                                                     }
 
                                                     break;
 
-                                                case enumConditionEffect.SelectEnemyUnit:
+                                                case enumActionEffect.SelectEnemyUnit:
                                                     if (!hit.collider.GetComponent<PhotonView>().AmOwner)
                                                     {
                                                         if (unitTarget1 == null)
@@ -211,7 +218,7 @@ public class EffectManager : MonoBehaviour
                                                             unitTarget2.GetComponent<MonstreData>().BeChoosen();
                                                         }
 
-                                                        copyCurentUnitCondition.RemoveAt(0);
+                                                        copyCurrentUnitAction.RemoveAt(0);
                                                         CheckCondition();
                                                     }
 
@@ -229,37 +236,51 @@ public class EffectManager : MonoBehaviour
             }
         }
     }
-    public void UnitSelected(enumEffectPhaseActivation phase)
+
+    public void UnitSelected(enumEffectConditionActivation condition)
     {
         currentUnit.GetComponent<MonstreData>().BeChoosen();
         lastPhaseActivation = RoundManager.instance.p_roundState;
-        currentEffectPhaseActivation = phase;
-        copyCurentUnitCondition =
-            new List<enumConditionEffect>(currentUnit.GetComponent<MonstreData>()
-                .p_effect.GetConditions());
+        currentEffectConditionActivation = condition;
+        copyCurrentUnitAction = new List<enumActionEffect>(currentUnit
+            .GetComponent<MonstreData>()
+            .p_effect.GetActions());
 
-        if (copyCurentUnitCondition.Count.Equals(0))
+        if (copyCurrentUnitAction.Count.Equals(0))
         {
             ActiveEffect();
         }
         else
         {
-            RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
             CheckCondition();
         }
+
     }
-    
-    public void ActiveEffect()
+
+    public void Action()
+    {
+        if (copyCurrentUnitAction[0] == enumActionEffect.Validate)
+        {
+            copyCurrentUnitAction.RemoveAt(0);
+            CheckCondition();
+        }
+        else
+        {
+            ActiveEffect();
+        }
+    }
+
+    void ActiveEffect()
     {
         Debug.Log( currentUnit.name +"Effet activated");
         UiManager.instance.EnableDisableMenuYesChoice(false); 
         UiManager.instance.EnableDisableMenuNoChoice(false); 
-        currentUnit.GetComponent<MonstreData>().ActivateEffects(currentEffectPhaseActivation);
+        currentUnit.GetComponent<MonstreData>().ActivateEffects(currentEffectConditionActivation);
     }
 
     public void CheckCondition()
     {
-        if (copyCurentUnitCondition.Count == 0)
+        if (copyCurrentUnitAction.Count == 0)
         {
             UiManager.instance.EnableDisableMenuYesChoice(true);
             return;
@@ -267,27 +288,29 @@ public class EffectManager : MonoBehaviour
       
         UiManager.instance.EnableDisableMenuYesChoice(false); 
         
-        switch (copyCurentUnitCondition[0])
+        switch (copyCurrentUnitAction[0])
         {
-            case enumConditionEffect.SelectAllyUnityButNotThisOne:
-            case enumConditionEffect.SelectAllyUnit:
+            case enumActionEffect.SelectAllyUnityButNotThisOne:
+            case enumActionEffect.SelectAllyUnit:
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
                 UiManager.instance.SetTextFeedBack(1);
                 UiManager.instance.p_textFeedBack.enabled = true;
                 break;
-            case enumConditionEffect.SelectEnemyUnit:
+            case enumActionEffect.SelectEnemyUnit:
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
                 UiManager.instance.SetTextFeedBack(2);
                 UiManager.instance.p_textFeedBack.enabled = true;
                 break;
-            case enumConditionEffect.Heroism:
-                for (i = copyCurentUnitCondition.Count-1; i >= 0; i--)
+            case enumActionEffect.Heroism:
+                for (i = copyCurrentUnitAction.Count-1; i >= 0; i--)
                 {
-                    if (copyCurentUnitCondition[i] == enumConditionEffect.Heroism)
+                    if (copyCurrentUnitAction[i] == enumActionEffect.Heroism)
                     {
-                        copyCurentUnitCondition.RemoveAt(i);
+                        copyCurrentUnitAction.RemoveAt(i);
                     }
                 }
                 
-                if (copyCurentUnitCondition.Count == 0)
+                if (copyCurrentUnitAction.Count == 0)
                 {
                     ActiveEffect();
                     return;
@@ -295,16 +318,16 @@ public class EffectManager : MonoBehaviour
                 
                 CheckCondition();
                 break;
-            case enumConditionEffect.Counter:
-                currentUnit.GetComponent<MonstreData>().p_effect.GetConditions().RemoveAt(0);
-                copyCurentUnitCondition.RemoveAt(0);
-                if (copyCurentUnitCondition.Count.Equals(0))
+            case enumActionEffect.KillCounter:
+                currentUnit.GetComponent<MonstreData>().p_effect.GetActions().RemoveAt(0);
+                copyCurrentUnitAction.RemoveAt(0);
+                if (copyCurrentUnitAction.Count.Equals(0))
                 {
                     ActiveEffect();
                 }
                 else
                 {
-                    if (copyCurentUnitCondition[0] != enumConditionEffect.Counter)
+                    if (copyCurrentUnitAction[0] != enumActionEffect.KillCounter)
                     {
                         ActiveEffect();
                     }
@@ -315,18 +338,31 @@ public class EffectManager : MonoBehaviour
                 }
 
                 break;
-            case enumConditionEffect.DragUnit:
+            case enumActionEffect.DragUnit:
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
                 UiManager.instance.p_textFeedBack.enabled = true;
                 UiManager.instance.SetTextFeedBack(0);
                 specialInvocation = true;
                 ActiveEffect();
                 break;
-            case enumConditionEffect.HaveAMilkInGauge:
-                copyCurentUnitCondition.RemoveAt(0);
-                CheckCondition();
+            case enumActionEffect.HaveAMilkInGauge:
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
+                copyCurrentUnitAction.RemoveAt(0);
+                if (copyCurrentUnitAction.Count.Equals(0))
+                {
+                    ActiveEffect();
+                }
+                else
+                {
+                    CheckCondition();
+                }
                 break;
-            case enumConditionEffect.SelectACard:
+            case enumActionEffect.SelectACard:
+                RoundManager.instance.p_roundState = RoundManager.enumRoundState.EffectPhase;
                 ActiveEffect();
+                break;
+            case enumActionEffect.Validate:
+                UiManager.instance.EnableDisableMenuYesChoice(true);
                 break;
         }
     }
@@ -335,10 +371,7 @@ public class EffectManager : MonoBehaviour
     {
         ClearUnits();
         specialInvocation = false;
-        
-        UiManager.instance.EnableDisableMenuNoChoice(false);
-        UiManager.instance.EnableDisableMenuYesChoice(false);
-        
+
         for (i = 0; i < UiManager.instance.p_carListToBeSelected.childCount; i++)
         {
             UiManager.instance.p_carListToBeSelected.GetChild(i).gameObject.SetActive(false);
@@ -347,6 +380,9 @@ public class EffectManager : MonoBehaviour
         if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)
         {
             lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
+        }else if (lastPhaseActivation == RoundManager.enumRoundState.ThrowPhase)
+        {
+            lastPhaseActivation = RoundManager.enumRoundState.WaitPhase;
         }
         
         RoundManager.instance.p_roundState = lastPhaseActivation;
@@ -354,7 +390,6 @@ public class EffectManager : MonoBehaviour
 
     public void ClearUnits()
     {
-        copyCurentUnitCondition = null;
         UiManager.instance.p_textFeedBack.enabled = false;
         if (unitTarget1 != null)
         {
@@ -365,12 +400,12 @@ public class EffectManager : MonoBehaviour
         {
             unitTarget2.GetComponent<MonstreData>().InitColorsTiles();
         }
-        
-        if (currentUnit != null)
+
+        if (currentUnit!=null)
         {
             currentUnit.GetComponent<MonstreData>().InitColorsTiles();
         }
-        
+
         unitTarget1 = null;
         unitTarget2 = null;
         currentUnit = null;
@@ -382,8 +417,8 @@ public class EffectManager : MonoBehaviour
         {
             if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
                 && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
-                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetConditions()
-                    .Contains(enumConditionEffect.Heroism))
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetActions()
+                    .Contains(enumActionEffect.Heroism))
             {
                 CheckHeroism(PlacementManager.instance.p_board[j].monster.transform);
             }   
@@ -396,8 +431,8 @@ public class EffectManager : MonoBehaviour
         {
             if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
                 && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
-                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetConditions()
-                    .Contains(enumConditionEffect.HaveAMilkInGauge))
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetActions()
+                    .Contains(enumActionEffect.HaveAMilkInGauge))
             {
                 CheckMilkInGauge(PlacementManager.instance.p_board[j].monster.transform);
             }   
@@ -409,9 +444,9 @@ public class EffectManager : MonoBehaviour
         numberCheck = 0;
         heroismListMobCheck.Clear();
         
-        foreach (var check in go.GetComponent<MonstreData>().p_effect.GetConditions())
+        foreach (var check in go.GetComponent<MonstreData>().p_effect.GetActions())
         {
-            if (check == enumConditionEffect.Heroism)
+            if (check == enumActionEffect.Heroism)
             {
                 numberCheck++;
             }
@@ -455,7 +490,7 @@ public class EffectManager : MonoBehaviour
 
     void CheckMilkInGauge(Transform go)
     {
-        if (go.GetComponent<MonstreData>().p_effect.GetConditions().Contains(enumConditionEffect.HaveAMilkInGauge))
+        if (go.GetComponent<MonstreData>().p_effect.GetActions().Contains(enumActionEffect.HaveAMilkInGauge))
         {
             foreach (var milks in DiceManager.instance.p_diceGauge)
             {
@@ -476,14 +511,53 @@ public class EffectManager : MonoBehaviour
     {
         foreach (var cases in PlacementManager.instance.p_board)
         {
-            if (cases.monster.GetComponent<MonstreData>().HaveAnEffectThisPhase(enumEffectPhaseActivation.WhenAUnitDie) 
+            if (cases.monster.GetComponent<MonstreData>().HaveAnEffectThisPhase(enumEffectConditionActivation.WhenAUnitDie) 
                 && cases.monster.GetComponent<MonstreData>().p_effect.GetIsActivable()
                 && !cases.monster.GetComponent<MonstreData>().p_effect.GetUsed())
             {
-                currentUnit = cases.monster;
-                UnitSelected(enumEffectPhaseActivation.WhenAUnitDie);
+                if (cases.monster.GetPhotonView().AmOwner)
+                {
+                    currentUnit = cases.monster;
+                    UnitSelected(enumEffectConditionActivation.WhenAUnitDie);
+                }
+                else
+                {
+                    switch (CastagneManager.instance.p_result)
+                    {
+                        case 0:
+                            view.RPC("RPC_ActivateEffectWhenUnitDieEnemy", RpcTarget.Others, cases.monster.GetComponent<MonstreData>().p_id, 0, CastagneManager.instance.p_result);
+                            break;
+                        case >0:
+                           view.RPC("RPC_ActivateEffectWhenUnitDieEnemy", RpcTarget.Others, cases.monster.GetComponent<MonstreData>().p_id, CastagneManager.instance.p_unitSelected.GetComponent<MonstreData>().p_id, CastagneManager.instance.p_result);
+                           break;
+                       
+                        case <0:
+                            view.RPC("RPC_ActivateEffectWhenUnitDieEnemy", RpcTarget.Others, cases.monster.GetComponent<MonstreData>().p_id, CastagneManager.instance.p_unitTarget.GetComponent<MonstreData>().p_id, CastagneManager.instance.p_result);
+                            break;
+                    }
+                }
             }
         }
+    }
+    
+    [PunRPC]
+    private void RPC_ActivateEffectWhenUnitDieEnemy(int idUnitWhichUseEffect, int idUnitSurvived, int result)
+    {
+        Debug.Log("Effet Unit distant");
+        currentUnit = PlacementManager.instance.FindMobWithID(idUnitWhichUseEffect).gameObject;
+        CastagneManager.instance.p_result = result;
+        switch (result)
+        {
+            case >0:
+                CastagneManager.instance.p_unitTarget = PlacementManager.instance.FindMobWithID(idUnitSurvived).gameObject;
+                break;
+                       
+            case <0:
+                CastagneManager.instance.p_unitSelected = PlacementManager.instance.FindMobWithID(idUnitSurvived).gameObject;
+                break;   
+        }
+        CastagneManager.instance.p_result = result;
+        UnitSelected(enumEffectConditionActivation.WhenAUnitDie);
     }
     
     [PunRPC]

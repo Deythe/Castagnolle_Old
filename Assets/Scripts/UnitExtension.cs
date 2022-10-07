@@ -14,7 +14,7 @@ public class UnitExtension : MonoBehaviour
     }
     public void Init(int idmore)
     {
-        unitParent = PlacementManager.instance.SearchMobWithID(idmore).gameObject;
+        unitParent = PlacementManager.instance.FindMobWithID(idmore).gameObject;
         
         if (view.AmOwner)
         {

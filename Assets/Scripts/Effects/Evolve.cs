@@ -7,12 +7,14 @@ using UnityEngine.UI;
 public class Evolve : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
     [SerializeField] private List<CardData> listGameObjectUnit;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
+
     private GameObject unitEvolved;
 
     private RectTransform cardListEvolve;
@@ -23,13 +25,13 @@ public class Evolve : MonoBehaviour, IEffects
     }
 
 
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (usingPhases[0] == phase)
+            if (conditions[0] == condition)
             {
-                if (conditions.Count > 0)
+                if (actions.Count > 0)
                 {
                     for (int i = 0; i < listGameObjectUnit.Count; i++)
                     {
@@ -37,7 +39,7 @@ public class Evolve : MonoBehaviour, IEffects
                         cardListEvolve.GetChild(i).GetComponent<Image>().sprite = listGameObjectUnit[i].p_fullCard;
                         cardListEvolve.GetChild(i).gameObject.SetActive(true);
                     }
-                    conditions.Clear();
+                    actions.Clear();
                     UiManager.instance.EnableDisableMenuNoChoice(true); 
                     GetComponent<MonstreData>().p_model.layer = 6;
                 }
@@ -65,8 +67,8 @@ public class Evolve : MonoBehaviour, IEffects
     {
         Evolve pivot = effectMother as Evolve;
         view = gameObject.GetPhotonView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
         
@@ -78,14 +80,14 @@ public class Evolve : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()
@@ -101,6 +103,11 @@ public class Evolve : MonoBehaviour, IEffects
     public bool GetUsed()
     {
         return used;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
     }
 
     public void SetUsed(bool b)

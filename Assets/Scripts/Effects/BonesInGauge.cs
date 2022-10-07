@@ -5,16 +5,18 @@ using UnityEngine;
 public class BonesInGauge : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
+
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (usingPhases.Contains(phase))
+            if (conditions.Contains(condition))
             {
                 if (DiceManager.instance != null)
                 {
@@ -27,8 +29,8 @@ public class BonesInGauge : MonoBehaviour, IEffects
     public void TransferEffect(IEffects effectMother)
     {
         view = gameObject.GetPhotonView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
@@ -38,19 +40,24 @@ public class BonesInGauge : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
     }
     
     public bool GetIsActivable()
     {
         return isActivable;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
     }
 
     public void SetIsActivable(bool b)

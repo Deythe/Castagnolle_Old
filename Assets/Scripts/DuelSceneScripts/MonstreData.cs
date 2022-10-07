@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using TMPro;
@@ -204,10 +205,10 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                     0.6f,
                     transform.position.z, 3f);
                 
-                if (effect != null && !effect.GetUsed() && effect.GetIsActivable() && view.AmOwner)
+                if (effect != null && HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation.WhenThisUnitDie))
                 {
                     EffectManager.instance.p_currentUnit = gameObject;
-                    EffectManager.instance.UnitSelected(EffectManager.enumEffectPhaseActivation.WhenThisUnitDie);
+                    EffectManager.instance.UnitSelected(EffectManager.enumEffectConditionActivation.WhenThisUnitDie);
                 }
             }
             
@@ -222,7 +223,32 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
             PlacementManager.instance.RemoveMonsterBoard(id);
         }
     }
-    
+
+    public void TempoDeath()
+    {
+        Debug.Log("TempoDeath");
+        StartCoroutine(CoroutineTempoDeath());
+    }
+
+    IEnumerator CoroutineTempoDeath()
+    {
+        hpPackage.SetActive(false);
+        model.enabled = false;
+        for (int i = 0; i < mrs.Count; i++)
+        {
+            mrs[i].enabled = false;
+        }
+        
+        for (int i = extension.Count - 1; i >= 0; i--)
+        {
+            extension[i].SetActive(false);
+        }
+        
+        PlacementManager.instance.RemoveMonsterBoard(id);
+        yield return new WaitUntil(() => EffectManager.instance.p_currentUnit == null);
+        PhotonNetwork.Destroy(gameObject);
+    }
+
     public void ChangeMeshRenderer(int index)
     {
         foreach (var ms in mrs)
@@ -303,22 +329,22 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
     {
         if (effect != null)
         {
-            if (view.AmOwner && (!effect.GetUsingPhases().Count.Equals(0)
-                                 && !effect.GetConditions()
-                                     .Contains(EffectManager.enumConditionEffect.Heroism)
-                                 && !effect.GetConditions()
-                                     .Contains(EffectManager.enumConditionEffect.HaveAMilkInGauge)))
+            if (view.AmOwner && (!effect.GetConditions().Count.Equals(0)
+                                 && !effect.GetActions()
+                                     .Contains(EffectManager.enumActionEffect.Heroism)
+                                 && !effect.GetActions()
+                                     .Contains(EffectManager.enumActionEffect.HaveAMilkInGauge)))
             {
                 model.gameObject.layer = 7;
             }
         }
     }
     
-    public bool HaveAnEffectThisPhase(EffectManager.enumEffectPhaseActivation phase)
+    public bool HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation condition)
     {
         if (effect != null)
         {
-            if (effect.GetUsingPhases().Contains(phase) && !effect.GetUsed() && effect.GetIsActivable())
+            if (effect.GetConditions().Contains(condition) && !effect.GetUsed() && effect.GetIsActivable())
             {
                 return true;
             }
@@ -329,13 +355,13 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         return false;
     }
     
-    public void ActivateEffects(EffectManager.enumEffectPhaseActivation phase)
+    public void ActivateEffects(EffectManager.enumEffectConditionActivation condition)
     {
         if (effect != null)
         {
             if (!effect.GetUsed())
             {
-                effect.OnCast(phase);
+                effect.OnCast(condition);
             }
         }
     }
@@ -344,7 +370,7 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
     {
         if (effect != null)
         {
-            if (effect.GetUsingPhases().Contains(EffectManager.enumEffectPhaseActivation.WhenItsDrawPhase) &&
+            if (effect.GetConditions().Contains(EffectManager.enumEffectConditionActivation.WhenItsDrawPhase) &&
                 view.AmOwner && effect.GetIsActivable())
             {
                 effect.SetUsed(false);

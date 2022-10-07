@@ -6,15 +6,16 @@ using UnityEngine;
 
 public interface IEffects
 {
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase);
+    public void OnCast(EffectManager.enumEffectConditionActivation condition);
 
     public PhotonView GetView();
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases();
-    public List<EffectManager.enumConditionEffect> GetConditions();
+    public List<EffectManager.enumEffectConditionActivation> GetConditions();
+    public List<EffectManager.enumActionEffect> GetActions();
     
     public bool GetIsActivable();
     public void SetIsActivable(bool b);
-    
+
+    public EffectManager.enumOrderPriority GetOrderPriority();
     public bool GetUsed();
     public void SetUsed(bool b);
     public void TransferEffect(IEffects effectMother);

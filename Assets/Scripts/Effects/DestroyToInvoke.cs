@@ -5,42 +5,48 @@ using UnityEngine;
 
 public class DestroyToInvoke : MonoBehaviour, IEffects
 {
+    [SerializeField] private GameObject cardInstance;
     [SerializeField] private PhotonView view;
-    [SerializeField] private List<EffectManager.enumEffectPhaseActivation> usingPhases;
-    [SerializeField] private List<EffectManager.enumConditionEffect> conditions;
+    [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
+    [SerializeField] private List<EffectManager.enumActionEffect> actions;
     [SerializeField] private bool isEffectAuto;
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
+    [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    public void OnCast(EffectManager.enumEffectPhaseActivation phase)
+    public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        /*
-        if (usingPhase[0].Equals(phase))
+        if (view.AmOwner)
         {
-            if (view.AmOwner)
+            if (conditions.Contains(condition))
             {
-                PhotonNetwork.Destroy(EffectManager.instance.p_unitTarget1);
-                PlacementManager.instance.p_specialInvocation = true;
-                PlacementManager.instance.SetGOPrefabsMonster(prefabs.GetComponent<CardData>().p_prefabs);
+                if (!EffectManager.instance.p_unitTarget1.GetComponent<MonstreData>()
+                    .HaveAnEffectThisPhase(EffectManager.enumEffectConditionActivation.WhenThisUnitDie))
+                {
+                    PhotonNetwork.Destroy(EffectManager.instance.p_unitTarget1);
+                }
+                else
+                {
+                    EffectManager.instance.p_unitTarget1.GetComponent<MonstreData>().TempoDeath();
+                }
+                PlacementManager.instance.SetGOPrefabsMonster(cardInstance.GetComponent<CardData>().p_prefabs);
                 UiManager.instance.ShowingOffBigCard();
-                EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DragUnitPhase);
-                UiManager.instance.p_textFeedBack.enabled = true;
-                UiManager.instance.SetTextFeedBack(0);
-                UiManager.instance.EnableBorderStatus(68, 168, 254);
                 GetComponent<MonstreData>().p_model.layer = 6;
                 used = true;
             }
         }
-        */
     }
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
-        usingPhases = new List<EffectManager.enumEffectPhaseActivation>(effectMother.GetUsingPhases());
-        conditions = new List<EffectManager.enumConditionEffect>(effectMother.GetConditions());
+        DestroyToInvoke pivot = effectMother as DestroyToInvoke;
+        view = gameObject.GetPhotonView();
+        conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
+        actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
+        cardInstance = pivot.cardInstance;
+
     }
     
     public PhotonView GetView()
@@ -48,14 +54,19 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
         return view;
     }
     
-    public List<EffectManager.enumEffectPhaseActivation> GetUsingPhases()
-    {
-        return usingPhases;
-    }
-    
-    public List<EffectManager.enumConditionEffect> GetConditions()
+    public List<EffectManager.enumEffectConditionActivation> GetConditions()
     {
         return conditions;
+    }
+    
+    public List<EffectManager.enumActionEffect> GetActions()
+    {
+        return actions;
+    }
+    
+    public EffectManager.enumOrderPriority GetOrderPriority()
+    {
+        return orderPriority;
     }
     
     public bool GetIsActivable()

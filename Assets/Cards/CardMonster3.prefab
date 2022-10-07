@@ -630,8 +630,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardInstance: {fileID: 7236249880086410052, guid: 88e70667a1fe24d43940648e93d4c17a, type: 3}
   view: {fileID: 5347874786083823171, guid: 084b635bbe5ad874f8d268c6d6cd026b, type: 3}
-  usingPhases: 00000000
-  conditions: 07000000
+  conditions: 00000000
+  actions: 07000000
   isEffectAuto: 0
   used: 0
   isActivable: 1
