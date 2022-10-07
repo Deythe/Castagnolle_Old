@@ -331,25 +331,17 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public bool EffectFinished()
-    {
-        if (copyCurentUnitCondition == null)
-        {
-            return true;
-        }
-        
-        return copyCurentUnitCondition.Count.Equals(0);
-        
-    }
-
     public void CancelSelection()
     {
         ClearUnits();
         specialInvocation = false;
         
-        for (int i = 0; i < UiManager.instance.p_carListChose.childCount; i++)
+        UiManager.instance.EnableDisableMenuNoChoice(false);
+        UiManager.instance.EnableDisableMenuYesChoice(false);
+        
+        for (i = 0; i < UiManager.instance.p_carListToBeSelected.childCount; i++)
         {
-            UiManager.instance.p_carListChose.GetChild(i).gameObject.SetActive(false);
+            UiManager.instance.p_carListToBeSelected.GetChild(i).gameObject.SetActive(false);
         }
         
         if (lastPhaseActivation == RoundManager.enumRoundState.DragUnitPhase)

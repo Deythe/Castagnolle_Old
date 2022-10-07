@@ -269,9 +269,6 @@ public class RoundManager : MonoBehaviourPunCallbacks
                 EffectManager.instance.CancelSelection();
                 break;
         }
-        
-        UiManager.instance.EnableDisableMenuNoChoice(false);
-        UiManager.instance.EnableDisableMenuYesChoice(false);
     }
     
     [PunRPC]

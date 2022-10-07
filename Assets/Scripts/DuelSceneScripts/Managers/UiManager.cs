@@ -42,7 +42,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] private TMP_Text lifeCard;
     [SerializeField] private RectTransform ressourceCard;
     
-    [SerializeField] private RectTransform cardListChose;
+    [SerializeField] private RectTransform cardListToBeSelected;
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject settingsButtonMenu;
     [SerializeField] private GameObject viewButton;
@@ -156,9 +156,9 @@ public class UiManager : MonoBehaviour
         }
     }
 
-    public RectTransform p_carListChose
+    public RectTransform p_carListToBeSelected
     {
-        get => cardListChose;
+        get => cardListToBeSelected;
     }
     public GameObject Card
     {

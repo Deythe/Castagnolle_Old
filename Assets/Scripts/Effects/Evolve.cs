@@ -19,7 +19,7 @@ public class Evolve : MonoBehaviour, IEffects
 
     private void Start()
     {
-        cardListEvolve = UiManager.instance.p_carListChose;
+        cardListEvolve = UiManager.instance.p_carListToBeSelected;
     }
 
 
@@ -38,6 +38,7 @@ public class Evolve : MonoBehaviour, IEffects
                         cardListEvolve.GetChild(i).gameObject.SetActive(true);
                     }
                     conditions.Clear();
+                    UiManager.instance.EnableDisableMenuNoChoice(true); 
                     GetComponent<MonstreData>().p_model.layer = 6;
                 }
                 else

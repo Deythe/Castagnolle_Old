@@ -183,6 +183,10 @@ public class CastagneManager : MonoBehaviour
             {
                 deadUnitMeshRenderers[i].material.DOKill(false);
             }
+            
+            UiManager.instance.EnableDisableMenuNoChoice(false);
+            UiManager.instance.EnableDisableMenuYesChoice(false);
+            
             StartCoroutine(CoroutineAttack());
         }
         
@@ -476,10 +480,7 @@ public class CastagneManager : MonoBehaviour
             }
 
             targetUnitAttack = 0;
-            
-            UiManager.instance.EnableDisableMenuNoChoice(false);
-            UiManager.instance.EnableDisableMenuYesChoice(false);
-            
+
             EffectManager.instance.CheckAllHeroism();
             UiManager.instance.p_instanceEnemyPointer.SetActive(false);
         }

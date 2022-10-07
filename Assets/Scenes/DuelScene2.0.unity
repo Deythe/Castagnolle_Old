@@ -891,7 +891,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3924e99a8277c75499ef256389d16a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  view: {fileID: 245626027}
   board: []
   haveAChampionOnBoard: 0
   listMaterial:
@@ -3156,6 +3155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -3627,7 +3627,7 @@ MonoBehaviour:
   bigCart: {fileID: 1042743109}
   lifeCard: {fileID: 299525593}
   ressourceCard: {fileID: 2117864331}
-  cardListChose: {fileID: 1212953575}
+  cardListToBeSelected: {fileID: 1212953575}
   settingsMenu: {fileID: 1260019442}
   settingsButtonMenu: {fileID: 183571060}
   viewButton: {fileID: 510766468}
