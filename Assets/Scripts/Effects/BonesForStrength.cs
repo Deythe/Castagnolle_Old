@@ -13,64 +13,32 @@ public class BonesForStrength : MonoBehaviour, IEffects
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-    [SerializeField] private GameObject targetUnit;
-
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        /*
         if (view.AmOwner)
         {
-            if (phase == 3)
+            if (conditions.Contains(condition))
             {
-                if (HaveABoneInGauge())
-                {
-                    RoundManager.instance.p_roundState = 7;
-                    EffectManager.instance.CurrentUnit = gameObject;
-                }
-                else
-                {
-                    EffectManager.instance.CancelSelection(1);
-                    UiManager.instance.ShowTextFeedBackWithDelay(3);
-                }
-            }
-            else if (phase == 7)
-            {
-                Debug.Log("CACA");
-                targetUnit = EffectManager.instance.p_unitTarget1;
-
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
-                    EffectManager.instance.p_unitTarget1.GetComponent<Monster>().p_id);
+                    EffectManager.instance.p_unitTarget1.GetComponent<MonstreData>().p_id);
 
-                for (int i = 0; i < DiceManager.instance.Gauge.Length; i++)
+                for (int i = 0; i < DiceManager.instance.p_diceGauge.Length; i++)
                 {
-                    if (DiceManager.instance.Gauge[i].Equals(5))
+                    if (DiceManager.instance.p_diceGauge[i] == DiceListScriptable.enumRessources.Milk)
                     {
-                        DiceManager.instance.Gauge[i] = 0;
+                        DiceManager.instance.p_diceGauge[i] = DiceListScriptable.enumRessources.Nothing;
                         DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
-                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, 0);
-                        EffectManager.instance.CancelSelection(1);
-                        used = true;
-                        GetComponent<Monster>().p_model.layer = 6;
+                            DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, DiceListScriptable.enumRessources.Nothing);
+                        EffectManager.instance.CancelSelection();
                         DeckManager.instance.CheckUnitWithRessources();
+                        used = true;
+                        GetComponent<MonstreData>().p_model.layer = 6;
                         return;
                     }
                 }
             }
         }
-        */
-    }
-
-    public bool HaveABoneInGauge()
-    {
-        foreach (var gaugedice in DiceManager.instance.p_diceGauge)
-        {
-            if (gaugedice.Equals(5))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        
     }
     
 
@@ -82,7 +50,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();

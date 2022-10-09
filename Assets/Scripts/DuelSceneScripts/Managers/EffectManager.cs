@@ -142,6 +142,10 @@ public class EffectManager : MonoBehaviour
                                                     && currentClick.p_effect.GetIsActivable()
                                                     && !currentClick.p_effect.GetUsed())
                                                 {
+                                                    if (currentUnit != null)
+                                                    {
+                                                        currentUnit.GetComponent<MonstreData>().InitColorsTiles();
+                                                    }
                                                     currentUnit = currentClick.gameObject;
                                                     currentUnit.GetComponent<MonstreData>().BeChoosen();
                                                     lastPhaseActivation = RoundManager.enumRoundState.DrawPhase;
@@ -259,14 +263,16 @@ public class EffectManager : MonoBehaviour
 
     public void Action()
     {
+        if (copyCurrentUnitAction.Count.Equals(0))
+        {
+            ActiveEffect();
+            return;
+        }
+
         if (copyCurrentUnitAction[0] == enumActionEffect.Validate)
         {
             copyCurrentUnitAction.RemoveAt(0);
             CheckCondition();
-        }
-        else
-        {
-            ActiveEffect();
         }
     }
 

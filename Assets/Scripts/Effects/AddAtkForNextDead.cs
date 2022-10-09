@@ -17,19 +17,22 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
 
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        if (conditions[0]==condition)
+        if (view.AmOwner)
         {
-            switch (CastagneManager.instance.p_result)
+            if (conditions.Contains(condition))
             {
-                case 0:
+                if (CastagneManager.instance.p_result.Equals(0))
+                {
                     view.RPC("RPC_Action", RpcTarget.AllViaServer,
                         2);
-                    break;
-                case <0:
-                case >0:
+                }
+                else
+                {
                     view.RPC("RPC_Action", RpcTarget.AllViaServer,
                         1);
-                    break;
+                }
+                
+                EffectManager.instance.CancelSelection();
             }
         }
     }
@@ -42,7 +45,7 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
