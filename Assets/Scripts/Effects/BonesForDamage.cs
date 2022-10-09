@@ -36,7 +36,8 @@ public class BonesForDamage : MonoBehaviour, IEffects
 
                 view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID,
                     dmg);
-
+                
+                EffectManager.instance.CheckAllHaveAMilkInGauge();
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
@@ -48,7 +49,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_Action(int unit, int damage)
     {
-        PlacementManager.instance.FindMobWithID(unit).p_atk -= 2*damage;
+        PlacementManager.instance.FindMobWithID(unit).p_atk -= 3*damage;
     }
     
     
@@ -99,6 +100,11 @@ public class BonesForDamage : MonoBehaviour, IEffects
     public void SetUsed(bool b)
     {
         used = b;
+    }
+    
+    public void ResetEffect()
+    {
+        used = false;
     }
 
     public bool GetIsEffectAuto()

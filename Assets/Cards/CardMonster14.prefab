@@ -650,10 +650,10 @@ MonoBehaviour:
   actions: 
   isEffectAuto: 0
   used: 0
-  isActivable: 0
-  cardUnit: {fileID: 1764594795200175919, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
+  isActivable: 1
+  cardUnit: {fileID: 7236249880086410052, guid: b0a3cd6294fd96d49b4ff29f452f3da3, type: 3}
   boardPosition: []
-  numberPoupoul: 1
+  numberUnitToInvoke: 1
   unitPivot: {fileID: 0}
   orderPriority: 0
 --- !u!1 &7307452934060067469

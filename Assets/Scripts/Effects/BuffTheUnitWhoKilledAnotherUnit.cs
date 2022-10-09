@@ -83,6 +83,11 @@ public class BuffTheUnitWhoKilledAnotherUnit : MonoBehaviour,IEffects
     {
         return used;
     }
+    
+    public void ResetEffect()
+    {
+        used = false;
+    }
 
     public void SetUsed(bool b)
     {

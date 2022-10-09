@@ -145,6 +145,4 @@ public class DeckManager : MonoBehaviour
 
         return true;
     }
-
-
 }

@@ -19,4 +19,5 @@ public interface IEffects
     public bool GetUsed();
     public void SetUsed(bool b);
     public void TransferEffect(IEffects effectMother);
+    public void ResetEffect();
 }

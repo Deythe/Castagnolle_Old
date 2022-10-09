@@ -375,6 +375,8 @@ public class EffectManager : MonoBehaviour
 
     public void CancelSelection()
     {
+        Debug.Log(lastPhaseActivation);
+        
         ClearUnits();
         specialInvocation = false;
 
@@ -583,10 +585,10 @@ public class EffectManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         
         instantiateEffect[idEffect].SetActive(false);
-        instantiateEffect[idEffect].transform.position = new Vector3(x, y, z);
+        instantiateEffect[idEffect].transform.position = Vector3.zero;
     }
 
-    public void PlayAllParticulesSystem(int idEffect)
+    void PlayAllParticulesSystem(int idEffect)
     {
         if (instantiateEffect[idEffect].GetComponent<ParticleSystem>() != null)
         {

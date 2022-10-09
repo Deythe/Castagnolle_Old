@@ -24,7 +24,6 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         {
             if (conditions.Contains(condition))
             {
-                EffectManager.instance.p_specialInvocation = true;
                 PlacementManager.instance.SetGOPrefabsMonster(GetComponent<MonstreData>().p_stats.GetComponent<CardData>().p_prefabs);
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
@@ -115,6 +114,11 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     public bool GetUsed()
     {
         return used;
+    }
+    
+    public void ResetEffect()
+    {
+        used = false;
     }
 
     public void SetUsed(bool b)

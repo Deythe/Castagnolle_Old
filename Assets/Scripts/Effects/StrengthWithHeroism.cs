@@ -83,6 +83,11 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     {
         used = b;
     }
+    
+    public void ResetEffect()
+    {
+        used = false;
+    }
 
     public bool GetIsEffectAuto()
     {

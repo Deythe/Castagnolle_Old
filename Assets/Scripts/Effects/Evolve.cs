@@ -109,6 +109,11 @@ public class Evolve : MonoBehaviour, IEffects
     {
         return orderPriority;
     }
+    
+    public void ResetEffect()
+    {
+        used = false;
+    }
 
     public void SetUsed(bool b)
     {

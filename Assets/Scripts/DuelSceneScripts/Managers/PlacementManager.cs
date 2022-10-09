@@ -140,8 +140,7 @@ public class PlacementManager : MonoBehaviour
 
                                 if (!CheckAlreadyHere(currentUnit) && CheckAllPosition(currentUnit))
                                 {
-                                    isPlacing = false;
-                                    StartCoroutine(CoroutineSpawnMonster());
+                                    SpawnMonster();
                                 }
                                 else
                                 {
@@ -157,6 +156,12 @@ public class PlacementManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SpawnMonster()
+    {
+        isPlacing = false;
+        StartCoroutine(CoroutineSpawnMonster());
     }
 
     IEnumerator CoroutineSpawnMonster()

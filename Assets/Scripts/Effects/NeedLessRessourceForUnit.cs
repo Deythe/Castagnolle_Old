@@ -19,7 +19,6 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
 
-
     private int numberUnitCurrent;
     private int[] pivotRessourceList;
     private int pivot;
@@ -149,11 +148,14 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        NeedLessRessourceForUnit pivot = effectMother as NeedLessRessourceForUnit;
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
+
+        originalCard = pivot.originalCard;
     }
     
     public PhotonView GetView()
@@ -194,6 +196,11 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     public void SetUsed(bool b)
     {
         used = b;
+    }
+    
+    public void ResetEffect()
+    {
+        used = false;
     }
 
     public bool GetIsEffectAuto()

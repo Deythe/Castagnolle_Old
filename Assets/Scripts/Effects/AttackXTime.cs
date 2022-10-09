@@ -20,7 +20,7 @@ public class AttackXTime : MonoBehaviour, IEffects
         {
             if (conditions.Contains(condition))
             {
-                if (xAttack <= xMaxAttack)
+                if (xAttack < xMaxAttack)
                 {
                     transform.GetComponent<MonstreData>().p_attacked = false;
                 }
@@ -87,6 +87,12 @@ public class AttackXTime : MonoBehaviour, IEffects
     public void SetUsed(bool b)
     {
         used = b;
+    }
+    
+    public void ResetEffect()
+    {
+        xAttack = 0;
+        used = false;
     }
 
     public bool GetIsEffectAuto()

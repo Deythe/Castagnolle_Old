@@ -373,8 +373,8 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
             if (effect.GetConditions().Contains(EffectManager.enumEffectConditionActivation.WhenItsDrawPhase) &&
                 view.AmOwner && effect.GetIsActivable())
             {
-                effect.SetUsed(false);
                 model.gameObject.layer = 7;
+                effect.ResetEffect();
             }
         }
     }

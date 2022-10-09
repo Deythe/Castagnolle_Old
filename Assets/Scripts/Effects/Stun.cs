@@ -24,6 +24,7 @@ public class Stun : MonoBehaviour, IEffects
         {
             if (conditions[0] == condition)
             {
+                targetUnit = EffectManager.instance.p_unitTarget1;
                 view.RPC("RPC_Action", RpcTarget.AllViaServer,
                     EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID);
                 used = true;
@@ -51,13 +52,18 @@ public class Stun : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
     }
-    
+
+    public void ResetEffect()
+    {
+        used = false;
+    }
+
     public PhotonView GetView()
     {
         return view;

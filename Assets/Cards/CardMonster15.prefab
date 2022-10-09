@@ -647,11 +647,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalCard: {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
   view: {fileID: 5347874786083823171, guid: 87b67c48b6581c642b0de1213cb12928, type: 3}
-  usingPhases: 
-  conditions: 
+  conditions: 00000000
+  actions: 
   isEffectAuto: 0
   used: 0
-  isActivable: 0
+  isActivable: 1
+  orderPriority: 0
 --- !u!1 &7307452934060067469
 GameObject:
   m_ObjectHideFlags: 0
