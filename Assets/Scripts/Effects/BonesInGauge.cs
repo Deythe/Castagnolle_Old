@@ -89,4 +89,9 @@ public class BonesInGauge : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

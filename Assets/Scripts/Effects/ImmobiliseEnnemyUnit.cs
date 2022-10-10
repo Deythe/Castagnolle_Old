@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class Stun : MonoBehaviour, IEffects
+public class ImmobiliseEnnemyUnit : MonoBehaviour, IEffects
 {
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
@@ -62,6 +62,11 @@ public class Stun : MonoBehaviour, IEffects
     public void ResetEffect()
     {
         used = false;
+    }
+
+    public void CancelEffect()
+    {
+        
     }
 
     public PhotonView GetView()

@@ -106,4 +106,9 @@ public class AddAtkForNextDead : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

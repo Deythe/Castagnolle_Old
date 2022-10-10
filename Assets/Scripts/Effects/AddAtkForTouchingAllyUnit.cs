@@ -119,4 +119,9 @@ public class AddAtkForTouchingAllyUnit : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

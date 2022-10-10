@@ -129,4 +129,9 @@ public class Evolve : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

@@ -19,31 +19,20 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            /*
-            if (usingPhases[0].Equals(phase))
+            if (conditions.Contains(condition))
             {
-                if (EffectManager.instance.CheckHeroism(transform))
-                {
-                    GetComponent<MonstreData>().p_attacked = false;
-                    used = true;
-                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
-                    GetComponent<MonstreData>().p_model.layer = 6;
-                    GetComponent<MonstreData>().ChangeMeshRenderer(0);
-                }
-                else
-                {
-                    EffectManager.instance.CancelSelection(RoundManager.enumRoundState.DrawPhase);
-                    UiManager.instance.ShowTextFeedBackWithDelay(3);
-                    GetComponent<MonstreData>().p_model.layer = 6;
-                }
+                GetComponent<MonstreData>().p_attacked = false;
+                used = true;
+                EffectManager.instance.CancelSelection();
+                GetComponent<MonstreData>().p_model.layer = 6;
+                GetComponent<MonstreData>().ChangeMeshRenderer(0);
             }
-            */
         }
     }
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
@@ -103,5 +92,10 @@ public class AttackWithHeroism : MonoBehaviour, IEffects
     public void SetIsEffectAuto(bool b)
     {
         isEffectAuto = b;
+    }
+    
+    public void CancelEffect()
+    {
+        
     }
 }

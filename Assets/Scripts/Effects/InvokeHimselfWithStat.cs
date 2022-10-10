@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class InvokeHimselfWithStat : MonoBehaviour,IEffects
 {
-    public static GameObject motherUnit;
-    
     [SerializeField] private PhotonView view;
     [SerializeField] private List<EffectManager.enumEffectConditionActivation> conditions;
     [SerializeField] private List<EffectManager.enumActionEffect> actions;
@@ -15,19 +13,19 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
-    private int numberUnitOnBoard;
-
+    [SerializeField] private int numberUnitOnBoard;
+    private GameObject unitPivot;
     
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (conditions[0] == condition)
+            if (conditions.Contains(condition))
             {
+                PlacementManager.instance.RemoveMonsterBoard(gameObject.GetComponent<MonstreData>().p_id);
+                PlacementManager.instance.SetGOPrefabsMonster(GetComponent<MonstreData>().p_stats.p_prefabs);
                 numberUnitOnBoard = PlacementManager.instance.p_board.Count;
-                PlacementManager.instance.SetGOPrefabsMonster(gameObject);
                 UiManager.instance.ShowingOffBigCard();
-                motherUnit = gameObject;
                 GetComponent<MonstreData>().p_model.layer = 6;
                 StartCoroutine(CoroutineOnCast());
             }
@@ -36,15 +34,14 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
 
     IEnumerator CoroutineOnCast()
     {
-        yield return new WaitUntil(()=> numberUnitOnBoard == PlacementManager.instance.p_board.Count+1);
-        view.RPC("RPC_Action", RpcTarget.All, GetComponent<MonstreData>().p_id,
-            motherUnit.GetComponent<MonstreData>().p_atk, motherUnit.GetComponent<MonstreData>().p_isMovable);
-                    
-        PhotonNetwork.Destroy(motherUnit);
-        GetComponent<MonstreData>().p_model.layer = 6;
-        motherUnit = null;
+        yield return new WaitUntil(()=> PlacementManager.instance.p_board.Count == numberUnitOnBoard+1);
+        unitPivot = PlacementManager.instance.p_board[^1].monster;
+        unitPivot.GetPhotonView().RPC("RPC_Action", RpcTarget.AllViaServer, unitPivot.GetComponent<MonstreData>().p_id,
+            gameObject.GetComponent<MonstreData>().p_atk, gameObject.GetComponent<MonstreData>().p_isMovable);
+        unitPivot.GetComponent<MonstreData>().p_model.layer = 6;
+        unitPivot.GetComponent<MonstreData>().p_effect.SetUsed(true);
         PlacementManager.instance.p_haveAChampionOnBoard = true;
-        used = true;
+        PhotonNetwork.Destroy(gameObject);
     }
 
     [PunRPC]
@@ -61,7 +58,6 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
-        motherUnit = null;
         numberUnitOnBoard = 0;
     }
     
@@ -118,5 +114,10 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     public void SetIsEffectAuto(bool b)
     {
         isEffectAuto = b;
+    }
+    
+    public void CancelEffect()
+    {
+        
     }
 }

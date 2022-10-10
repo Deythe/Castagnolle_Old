@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 7236249880086410057}
   - component: {fileID: 7236249880086410054}
   - component: {fileID: 5933185828017948179}
+  - component: {fileID: -4856776233629175599}
   m_Layer: 5
   m_Name: CardMonster21
   m_TagString: Card
@@ -539,6 +540,26 @@ MonoBehaviour:
   lifeCard: {fileID: 7239785777335538610}
   resourceCard: {fileID: 2813036859377982753}
   image: {fileID: 7236249880086410054}
+--- !u!114 &-4856776233629175599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7236249880086410052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27ae52757f7a02c449141fd8dc00046a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 0}
+  conditions: 00000000
+  actions: 01000000
+  isEffectAuto: 0
+  used: 0
+  isActivable: 1
+  orderPriority: 0
+  targetUnit: {fileID: 0}
 --- !u!1 &8241390244848586262
 GameObject:
   m_ObjectHideFlags: 0

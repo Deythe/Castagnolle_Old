@@ -212,4 +212,9 @@ public class NeedLessRessourceForUnit : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

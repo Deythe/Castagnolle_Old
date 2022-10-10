@@ -226,7 +226,6 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
 
     public void TempoDeath()
     {
-        Debug.Log("TempoDeath");
         StartCoroutine(CoroutineTempoDeath());
     }
 
@@ -333,7 +332,8 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
                                  && !effect.GetActions()
                                      .Contains(EffectManager.enumActionEffect.Heroism)
                                  && !effect.GetActions()
-                                     .Contains(EffectManager.enumActionEffect.HaveAMilkInGauge)))
+                                     .Contains(EffectManager.enumActionEffect.HaveAMilkInGauge)
+                                 && !effect.GetActions().Contains(EffectManager.enumActionEffect.HaveANeutralInGauge)))
             {
                 model.gameObject.layer = 7;
             }

@@ -19,7 +19,7 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     {
         if (view.AmOwner)
         {
-            if (conditions[0]== condition)
+            if (conditions.Contains(condition))
             {
                 view.RPC("RPC_Action", RpcTarget.AllViaServer);
                 EffectManager.instance.CancelSelection();
@@ -37,7 +37,7 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions()); 
         used = effectMother.GetUsed();
@@ -97,5 +97,10 @@ public class StrengthWithHeroism : MonoBehaviour, IEffects
     public void SetIsEffectAuto(bool b)
     {
         isEffectAuto = b;
+    }
+    
+    public void CancelEffect()
+    {
+        
     }
 }

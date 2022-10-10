@@ -103,4 +103,9 @@ public class DestroyToInvoke : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

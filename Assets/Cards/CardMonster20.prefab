@@ -705,11 +705,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171, guid: a8574f98ac0a7204f93c7a54e0cc5b4d, type: 3}
-  usingPhases: 03000000
-  conditions: 030000000300000002000000
+  conditions: 03000000
+  actions: 030000000300000002000000
   isEffectAuto: 0
   used: 0
-  isActivable: 0
+  isActivable: 1
+  orderPriority: 0
 --- !u!1 &8557155439209145613
 GameObject:
   m_ObjectHideFlags: 0

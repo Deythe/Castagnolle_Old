@@ -37,7 +37,7 @@ public class BonesForDamage : MonoBehaviour, IEffects
                 view.RPC("RPC_Action", RpcTarget.AllViaServer, EffectManager.instance.p_unitTarget1.GetComponent<PhotonView>().ViewID,
                     dmg);
                 
-                EffectManager.instance.CheckAllHaveAMilkInGauge();
+                EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
@@ -117,4 +117,8 @@ public class BonesForDamage : MonoBehaviour, IEffects
         isEffectAuto = b;
     }
     
+    public void CancelEffect()
+    {
+        
+    }
 }

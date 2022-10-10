@@ -30,7 +30,7 @@ public class BonesForStrength : MonoBehaviour, IEffects
                         DiceManager.instance.View.RPC("RPC_SynchGaugeDice", RpcTarget.All,
                             DiceManager.instance.DiceGaugeObjet[i].GetComponent<PhotonView>().ViewID, false, DiceListScriptable.enumRessources.Nothing);
                         EffectManager.instance.CancelSelection();
-                        EffectManager.instance.CheckAllHaveAMilkInGauge();
+                        EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                         DeckManager.instance.CheckUnitWithRessources();
                         used = true;
                         GetComponent<MonstreData>().p_model.layer = 6;
@@ -112,4 +112,10 @@ public class BonesForStrength : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
+    
 }

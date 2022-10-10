@@ -647,7 +647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   view: {fileID: 5347874786083823171, guid: 35802c73d3d580445a7bc5d54aaaf439, type: 3}
   conditions: 03000000
-  actions: 
+  actions: 03000000
   isEffectAuto: 0
   used: 0
   isActivable: 1

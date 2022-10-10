@@ -20,4 +20,5 @@ public interface IEffects
     public void SetUsed(bool b);
     public void TransferEffect(IEffects effectMother);
     public void ResetEffect();
+    public void CancelEffect();
 }

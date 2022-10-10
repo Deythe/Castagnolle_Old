@@ -33,7 +33,7 @@ public class DiceManager : MonoBehaviour
         get => view;
     }
     
-    public GameObject[] DiceObjects
+    public GameObject[] p_diceObjects
     {
         get => diceObjet;
     }
@@ -177,7 +177,7 @@ public class DiceManager : MonoBehaviour
                         dicesNotDisponible[i] = null;
                         diceChoosen[i] = DiceListScriptable.enumRessources.Nothing;
                         DeckManager.instance.CheckUnitWithRessources();
-                        EffectManager.instance.CheckAllHaveAMilkInGauge();
+                        EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                         return;
                     }
                 }
@@ -189,7 +189,7 @@ public class DiceManager : MonoBehaviour
                 dicesNotDisponible[i] = null;
                 diceChoosen[i] = DiceListScriptable.enumRessources.Nothing;
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CheckAllHaveAMilkInGauge();
+                EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                 return;
             }
         }
@@ -204,7 +204,7 @@ public class DiceManager : MonoBehaviour
                 view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j].GetComponent<PhotonView>().ViewID, true, resource);
                 diceGauge[j] = resource;
                 DeckManager.instance.CheckUnitWithRessources();
-                EffectManager.instance.CheckAllHaveAMilkInGauge();
+                EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                 return;
             }
         }
@@ -217,7 +217,7 @@ public class DiceManager : MonoBehaviour
             DeleteResource(resource[i]);
         }
 
-        EffectManager.instance.CheckAllHaveAMilkInGauge();
+        EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
         DeckManager.instance.CheckUnitWithRessources();
     }
     

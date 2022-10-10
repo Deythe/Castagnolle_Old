@@ -10,12 +10,12 @@ public class EffectManager : MonoBehaviour
     
     public enum enumEffectConditionActivation
     {
-        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie, WhenItsSpecialInvocation
+        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie
     }
     
     public enum enumActionEffect
     {
-        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, KillCounter, DragUnit, Validate
+        SelectAllyUnit, SelectAllyUnityButNotThisOne, SelectEnemyUnit, Heroism, HaveAMilkInGauge, SelectACard, KillCounter, DragUnit, Validate, HaveANeutralInGauge
     }
 
     public enum enumOrderPriority
@@ -279,8 +279,7 @@ public class EffectManager : MonoBehaviour
     void ActiveEffect()
     {
         Debug.Log( currentUnit.name +"Effet activated");
-        UiManager.instance.EnableDisableMenuYesChoice(false); 
-        UiManager.instance.EnableDisableMenuNoChoice(false); 
+        UiManager.instance.EnableDisableMenuYesChoice(false);
         currentUnit.GetComponent<MonstreData>().ActivateEffects(currentEffectConditionActivation);
     }
 
@@ -377,6 +376,7 @@ public class EffectManager : MonoBehaviour
     {
         Debug.Log(lastPhaseActivation);
         
+        UiManager.instance.EnableDisableMenuNoChoice(false); 
         ClearUnits();
         specialInvocation = false;
 
@@ -433,16 +433,24 @@ public class EffectManager : MonoBehaviour
         }
     }
     
-    public void CheckAllHaveAMilkInGauge()
+    public void CheckAllHaveASpecificRessourceInGauge()
     {
         for (int j = 0; j < PlacementManager.instance.p_board.Count; j++)
         {
             if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().photonView.AmOwner 
-                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null 
-                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetActions()
-                    .Contains(enumActionEffect.HaveAMilkInGauge))
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect!=null
+                && !PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetUsed()
+                && PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetIsActivable())
             {
-                CheckMilkInGauge(PlacementManager.instance.p_board[j].monster.transform);
+                if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetActions()
+                    .Contains(enumActionEffect.HaveAMilkInGauge))
+                {
+                    CheckASpecificResourceInGauge(DiceListScriptable.enumRessources.Milk,PlacementManager.instance.p_board[j].monster.transform);
+                }else if (PlacementManager.instance.p_board[j].monster.GetComponent<MonstreData>().p_effect.GetActions()
+                          .Contains(enumActionEffect.HaveANeutralInGauge))
+                {
+                    CheckASpecificResourceInGauge(DiceListScriptable.enumRessources.Neutral,PlacementManager.instance.p_board[j].monster.transform);
+                }
             }   
         }
     }
@@ -496,13 +504,13 @@ public class EffectManager : MonoBehaviour
         go.GetComponent<MonstreData>().p_model.layer = 6;
     }
 
-    void CheckMilkInGauge(Transform go)
+    void CheckASpecificResourceInGauge(DiceListScriptable.enumRessources ressources, Transform go)
     {
         if (go.GetComponent<MonstreData>().p_effect.GetActions().Contains(enumActionEffect.HaveAMilkInGauge))
         {
             foreach (var milks in DiceManager.instance.p_diceGauge)
             {
-                if (milks == DiceListScriptable.enumRessources.Milk)
+                if (milks == ressources)
                 {
                     go.GetComponent<MonstreData>().p_effect.SetIsActivable( true);
                     go.GetComponent<MonstreData>().p_model.layer = 7;

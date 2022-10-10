@@ -226,7 +226,7 @@ public class PlacementManager : MonoBehaviour
             haveAChampionOnBoard = true;
         }
         
-        EffectManager.instance.CheckAllHaveAMilkInGauge();
+        EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
         EffectManager.instance.CheckAllHeroism();
     }
 

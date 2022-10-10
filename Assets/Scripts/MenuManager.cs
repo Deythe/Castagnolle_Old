@@ -244,7 +244,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         NeedLessRessourceForUnit.motherUnit = null;
         NeedLessRessourceForUnit.unitOnBoard = null;
-        InvokeHimselfWithStat.motherUnit = null;
         NeedLessRessourcesForChampions.motherUnit = null;
         NeedLessRessourcesForChampions.originalCardResources = null;
         NeedLessRessourcesForChampions.originalCardAtk = null;

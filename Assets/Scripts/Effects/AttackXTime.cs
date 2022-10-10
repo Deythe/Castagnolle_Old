@@ -105,4 +105,8 @@ public class AttackXTime : MonoBehaviour, IEffects
         isEffectAuto = b;
     }
     
+    public void CancelEffect()
+    {
+        
+    }
 }

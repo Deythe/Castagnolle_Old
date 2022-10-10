@@ -15,85 +15,81 @@ public class DiceForAtk : MonoBehaviour, IEffects
 
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
-        /*
         if (view.AmOwner)
         {
-            if (phase == usingPhase)
+            if (conditions.Contains(condition))
             {
-                for (int j = 0; j < DiceManager.instance.DiceChoosen.Length + DiceManager.instance.Gauge.Length; j++)
+                for (int j = 0; j < DiceManager.instance.p_diceChoosen.Length + DiceManager.instance.p_diceGauge.Length; j++)
                 {
-                    if (j < DiceManager.instance.DiceChoosen.Length)
+                    if (j < DiceManager.instance.p_diceChoosen.Length)
                     {
-                        if (DiceManager.instance.DiceChoosen[j].Equals(4))
+                        if (DiceManager.instance.p_diceChoosen[j] == DiceListScriptable.enumRessources.Neutral)
                         {
-                            GetComponent<Monster>().p_attacked = false;
-                            DiceManager.instance.DiceObjects[j].GetComponent<MeshRenderer>().enabled = false;
-                            DiceManager.instance.DiceChoosen[j] = 0;
-                            DeckManager.instance.CheckUnitWithRessources();
-                            EffectManager.instance.CancelSelection(1);
-                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            GetComponent<MonstreData>().p_attacked = false;
+                            DiceManager.instance.p_diceObjects[j].GetComponent<MeshRenderer>().enabled = false;
+                            DiceManager.instance.p_diceChoosen[j] = DiceListScriptable.enumRessources.Nothing;
+                            GetComponent<MonstreData>().ChangeMeshRenderer(0);
+                            GetComponent<MonstreData>().p_model.layer = 6;
                             used = true;
+                            EffectManager.instance.CancelSelection();
+                            DeckManager.instance.CheckUnitWithRessources();
                             return;
                         }
                     }
                     else
                     {
-                        if (DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length].Equals(4))
+                        if (DiceManager.instance.p_diceGauge[j-DiceManager.instance.p_diceGauge.Length] == DiceListScriptable.enumRessources.Neutral)
                         {
-                            GetComponent<Monster>().p_attacked = false;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[j-DiceManager.instance.Gauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
-                            DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length] = 0;
-                            DeckManager.instance.CheckUnitWithRessources();
-                            EffectManager.instance.CancelSelection(1);
-                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            GetComponent<MonstreData>().p_attacked = false;
+                            DiceManager.instance.View.RPC("RPC_Synchp_diceGaugeDice",RpcTarget.All,  DiceManager.instance.p_diceObjects[j-DiceManager.instance.p_diceGauge.Length].GetComponent<PhotonView>().ViewID, false, DiceListScriptable.enumRessources.Nothing);
+                            DiceManager.instance.p_diceGauge[j-DiceManager.instance.p_diceGauge.Length] = DiceListScriptable.enumRessources.Nothing;
+                            GetComponent<MonstreData>().ChangeMeshRenderer(0);
                             used = true;
+                            EffectManager.instance.CancelSelection();
+                            DeckManager.instance.CheckUnitWithRessources();
                             return;
                         }
                     }
                 }
                 
-                for (int j = 0; j < DiceManager.instance.DiceChoosen.Length + DiceManager.instance.Gauge.Length; j++)
+                for (int j = 0; j < DiceManager.instance.p_diceChoosen.Length + DiceManager.instance.p_diceGauge.Length; j++)
                 {
-                    if (j < DiceManager.instance.DiceChoosen.Length)
+                    if (j < DiceManager.instance.p_diceChoosen.Length)
                     {
-                        if (DiceManager.instance.DiceChoosen[j]!=0)
+                        if (DiceManager.instance.p_diceChoosen[j]!= DiceListScriptable.enumRessources.Nothing)
                         {
-                            GetComponent<Monster>().p_attacked = false;
-                            DiceManager.instance.DiceObjects[j].GetComponent<MeshRenderer>().enabled = false;
-                            DiceManager.instance.DiceChoosen[j] = 0;
-                            DeckManager.instance.CheckUnitWithRessources();
-                            EffectManager.instance.CancelSelection(1);
-                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            GetComponent<MonstreData>().p_attacked = false;
+                            DiceManager.instance.p_diceObjects[j].GetComponent<MeshRenderer>().enabled = false;
+                            DiceManager.instance.p_diceChoosen[j] = DiceListScriptable.enumRessources.Nothing;
+                            GetComponent<MonstreData>().ChangeMeshRenderer(0);
                             used = true;
+                            EffectManager.instance.CancelSelection();
+                            DeckManager.instance.CheckUnitWithRessources();
                             return;
                         }
                     }
                     else
                     {
-                        if (DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length]!=0)
+                        if (DiceManager.instance.p_diceGauge[j-DiceManager.instance.p_diceGauge.Length]!= DiceListScriptable.enumRessources.Nothing)
                         {
-                            GetComponent<Monster>().p_attacked = false;
-                            DiceManager.instance.View.RPC("RPC_SynchGaugeDice",RpcTarget.All,  DiceManager.instance.DiceGaugeObjet[j-DiceManager.instance.Gauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
-                            DiceManager.instance.Gauge[j-DiceManager.instance.Gauge.Length] = 0;
-                            DeckManager.instance.CheckUnitWithRessources();
-                            EffectManager.instance.CancelSelection(1);
-                            GetComponent<Monster>().ChangeMeshRenderer(0);
+                            GetComponent<MonstreData>().p_attacked = false;
+                            DiceManager.instance.View.RPC("RPC_Synchp_diceGaugeDice",RpcTarget.All,  DiceManager.instance.p_diceObjects[j-DiceManager.instance.p_diceGauge.Length].GetComponent<PhotonView>().ViewID, false, DiceListScriptable.enumRessources.Nothing);
+                            DiceManager.instance.p_diceGauge[j-DiceManager.instance.p_diceGauge.Length] = DiceListScriptable.enumRessources.Nothing;
+                            GetComponent<MonstreData>().ChangeMeshRenderer(0);
                             used = true;
+                            EffectManager.instance.CancelSelection();
+                            DeckManager.instance.CheckUnitWithRessources();
                             return;
                         }
                     }
                 }
-                
-                EffectManager.instance.CancelSelection(1);
-                UiManager.instance.ShowTextFeedBackWithDelay(3);
-                GetComponent<Monster>().p_model.layer = 6;
             }
-        }*/
+        }
     }
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
@@ -153,5 +149,10 @@ public class DiceForAtk : MonoBehaviour, IEffects
     public void SetIsEffectAuto(bool b)
     {
         isEffectAuto = b;
+    }
+    
+    public void CancelEffect()
+    {
+        
     }
 }

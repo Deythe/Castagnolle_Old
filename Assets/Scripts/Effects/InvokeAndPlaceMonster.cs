@@ -92,4 +92,9 @@ public class InvokeAndPlaceMonster : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }

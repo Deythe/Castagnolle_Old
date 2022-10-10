@@ -38,7 +38,7 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
                 view.RPC("RPC_Action", RpcTarget.All, check);
                 check = 0; 
                 
-                EffectManager.instance.CheckAllHaveAMilkInGauge();
+                EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CancelSelection();
                 GetComponent<MonstreData>().p_model.layer = 6;
@@ -115,5 +115,10 @@ public class AllBonesForStrenght : MonoBehaviour, IEffects
     public void SetIsEffectAuto(bool b)
     {
         isEffectAuto = b;
+    }
+    
+    public void CancelEffect()
+    {
+        
     }
 }

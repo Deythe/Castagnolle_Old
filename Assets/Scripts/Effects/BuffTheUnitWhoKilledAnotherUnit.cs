@@ -104,4 +104,9 @@ public class BuffTheUnitWhoKilledAnotherUnit : MonoBehaviour,IEffects
         isEffectAuto = b;
     }
     
+    public void CancelEffect()
+    {
+        
+    }
+    
 }

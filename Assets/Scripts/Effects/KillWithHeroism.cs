@@ -100,4 +100,9 @@ public class KillWithHeroism : MonoBehaviour, IEffects
     {
         isEffectAuto = b;
     }
+    
+    public void CancelEffect()
+    {
+        
+    }
 }
