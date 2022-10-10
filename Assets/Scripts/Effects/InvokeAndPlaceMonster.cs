@@ -3,7 +3,7 @@ using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 
-public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
+public class InvokeAndPlaceMonster : MonoBehaviour, IEffects
 {
     [SerializeField] private GameObject cardInstance;
     [SerializeField] private PhotonView view;
@@ -29,7 +29,7 @@ public class ChooseWhereInvokeMonster : MonoBehaviour, IEffects
 
     public void TransferEffect(IEffects effectMother)
     {
-        ChooseWhereInvokeMonster pivotCard = effectMother as ChooseWhereInvokeMonster;
+        InvokeAndPlaceMonster pivotCard = effectMother as InvokeAndPlaceMonster;
         cardInstance = pivotCard.cardInstance;
         view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());

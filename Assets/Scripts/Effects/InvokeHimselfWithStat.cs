@@ -15,54 +15,36 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     [SerializeField] private bool used;
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
-
+    private int numberUnitOnBoard;
 
     
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
     {
         if (view.AmOwner)
         {
-            if (conditions.Contains(condition))
+            if (conditions[0] == condition)
             {
-                PlacementManager.instance.SetGOPrefabsMonster(GetComponent<MonstreData>().p_stats.GetComponent<CardData>().p_prefabs);
+                numberUnitOnBoard = PlacementManager.instance.p_board.Count;
+                PlacementManager.instance.SetGOPrefabsMonster(gameObject);
                 UiManager.instance.ShowingOffBigCard();
                 motherUnit = gameObject;
-                PlacementManager.instance.RemoveMonsterBoard(GetComponent<MonstreData>().p_id);
-                EffectManager.instance.CancelSelection();
-                UiManager.instance.p_textFeedBack.enabled = true;
-                UiManager.instance.SetTextFeedBack(0);
-                gameObject.SetActive(false);
-            }
-        }
-        
-        else if (condition == EffectManager.enumEffectConditionActivation.WhenThisUnitDie)
-        {
-            if (view.AmOwner)
-            {
-                if (motherUnit != null)
-                {
-                    view.RPC("RPC_Action", RpcTarget.All, GetComponent<MonstreData>().p_id,
-                        motherUnit.GetComponent<MonstreData>().p_atk, motherUnit.GetComponent<MonstreData>().p_isMovable);
-                    
-                    PhotonNetwork.Destroy(motherUnit);
-                    GetComponent<MonstreData>().p_model.layer = 6;
-                    motherUnit = null;
-                    used = true;
-                }
+                GetComponent<MonstreData>().p_model.layer = 6;
+                StartCoroutine(CoroutineOnCast());
             }
         }
     }
 
-    private void OnDestroy()
+    IEnumerator CoroutineOnCast()
     {
-        if (motherUnit != null && !motherUnit.Equals(gameObject))
-        {
-            if (motherUnit.GetComponent<PhotonView>().AmOwner)
-            {
-                PlacementManager.instance.AddMonsterBoard(motherUnit);
-                motherUnit.SetActive(true);
-            }
-        }
+        yield return new WaitUntil(()=> numberUnitOnBoard == PlacementManager.instance.p_board.Count+1);
+        view.RPC("RPC_Action", RpcTarget.All, GetComponent<MonstreData>().p_id,
+            motherUnit.GetComponent<MonstreData>().p_atk, motherUnit.GetComponent<MonstreData>().p_isMovable);
+                    
+        PhotonNetwork.Destroy(motherUnit);
+        GetComponent<MonstreData>().p_model.layer = 6;
+        motherUnit = null;
+        PlacementManager.instance.p_haveAChampionOnBoard = true;
+        used = true;
     }
 
     [PunRPC]
@@ -74,11 +56,13 @@ public class InvokeHimselfWithStat : MonoBehaviour,IEffects
     
     public void TransferEffect(IEffects effectMother)
     {
-        view = effectMother.GetView();
+        view = gameObject.GetPhotonView();
         conditions = new List<EffectManager.enumEffectConditionActivation>(effectMother.GetConditions());
         actions = new List<EffectManager.enumActionEffect>(effectMother.GetActions());
         used = effectMother.GetUsed();
         isActivable = effectMother.GetIsActivable();
+        motherUnit = null;
+        numberUnitOnBoard = 0;
     }
     
     public PhotonView GetView()

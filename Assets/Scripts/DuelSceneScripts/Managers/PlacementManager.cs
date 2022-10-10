@@ -45,6 +45,10 @@ public class PlacementManager : MonoBehaviour
     public bool p_haveAChampionOnBoard
     {
         get => haveAChampionOnBoard;
+        set
+        {
+            haveAChampionOnBoard = value;
+        }
     }
     public CardData p_currentCardSelection
     {

@@ -10,7 +10,7 @@ public class EffectManager : MonoBehaviour
     
     public enum enumEffectConditionActivation
     {
-        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie
+        WhenThisUnitIsInvoke, WhenThisUnitKill, WhenAUnitDie, WhenItsDrawPhase, WhenThisUnitDie, WhenItsSpecialInvocation
     }
     
     public enum enumActionEffect
