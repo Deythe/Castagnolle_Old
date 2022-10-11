@@ -34,6 +34,9 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
     [PunRPC]
     private void RPC_OnCast(int idUnit)
     {
+        
+        PlacementManager.instance.RemoveMonsterBoard(gameObject.GetComponent<MonstreData>().p_id);
+        PlacementManager.instance.RemoveMonsterBoard(gameObject.GetComponent<MonstreData>().p_id);
         tilesPivot = new List<GameObject>();
         boxCollidersCenterPivot = new List<Vector3>();
         boxCollidersSizePivot = new List<Vector3>();
@@ -57,20 +60,21 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
                 transform.GetChild(i).SetParent(targetUnit.transform);
             }
         }
-
+        
         for (i = 0; i < tilesPivot.Count; i++)
         {
             tilesPivot[i].transform.SetParent(transform);
         }
-
-        for (i = targetUnit.GetComponents<BoxCollider>().Length - 1; i > 0; i--)
+        
+        /*
+        for (i = targetUnit.GetComponents<BoxCollider>().Length - 1; i >= 0; i--)
         {
             boxCollidersCenterPivot.Add(targetUnit.GetComponents<BoxCollider>()[i].center);
             boxCollidersSizePivot.Add(targetUnit.GetComponents<BoxCollider>()[i].size);
-
             Destroy(targetUnit.GetComponents<BoxCollider>()[i]);
         }
 
+        
         for (int j = 0; j < GetComponents<BoxCollider>().Length; j++)
         {
             pivotBoxCollider = targetUnit.gameObject.AddComponent<BoxCollider>();
@@ -78,7 +82,7 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
             pivotBoxCollider.size = GetComponents<BoxCollider>()[j].size;
         }
 
-        for (i = GetComponents<BoxCollider>().Length - 1; i > 0; i--)
+        for (i = GetComponents<BoxCollider>().Length - 1; i >= 0; i--)
         {
             Destroy(GetComponents<BoxCollider>()[i]);
         }
@@ -88,7 +92,7 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
             pivotBoxCollider = gameObject.AddComponent<BoxCollider>();
             pivotBoxCollider.center = boxCollidersCenterPivot[j];
             pivotBoxCollider.size = boxCollidersSizePivot[j];
-        }
+        }*/
 
 
         GetComponent<MonstreData>().p_model.layer = 6;
