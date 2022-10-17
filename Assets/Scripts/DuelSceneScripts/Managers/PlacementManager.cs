@@ -218,6 +218,7 @@ public class PlacementManager : MonoBehaviour
         data.emplacement = new List<Vector2>();
         foreach (var center in obj.GetComponent<MonstreData>().GetCenters())
         {
+            Debug.Log(data.monster.name + " : "+new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
             data.emplacement.Add(new Vector2(Mathf.FloorToInt(center.position.x) + 0.5f, Mathf.FloorToInt(center.position.z) + 0.5f));
         }
         board.Add(data);

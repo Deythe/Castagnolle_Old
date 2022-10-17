@@ -127,6 +127,11 @@ public class MonstreData : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallba
         get => extension;
     }
 
+    public GameObject p_hpPackage
+    {
+        get => hpPackage;
+    }
+
     public void CheckDeath()
     {
         if (atk <= 0)
