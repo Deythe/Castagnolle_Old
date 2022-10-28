@@ -14,10 +14,11 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
     [SerializeField] private bool isActivable;
     [SerializeField] private EffectManager.enumOrderPriority orderPriority;
     [SerializeField] private MonstreData targetUnit;
-    private List<Vector3> positionTilesAlly, positionTilesEnnemy;
+
+    private List<Vector3> positionTilesUnit, positionTilesTarget, boxCollidersCenterPivot, boxCollidersSizePivot;
     private BoxCollider pivotBoxCollider;
     private List<GameObject> tilesPivot;
-    private Vector3 positionPivot;
+    private Vector3 positionPivot, positionModelTarget, positionModelUnit;
     private int i;
     
     public void OnCast(EffectManager.enumEffectConditionActivation condition)
@@ -39,29 +40,38 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
         PlacementManager.instance.RemoveMonsterBoard(idUnit);
         
         tilesPivot = new List<GameObject>();
-        positionTilesAlly =  new List<Vector3>();
-        positionTilesEnnemy =  new List<Vector3>();
+        positionTilesUnit =  new List<Vector3>();
+        positionTilesTarget =  new List<Vector3>();
+        boxCollidersCenterPivot = new List<Vector3>();
+        boxCollidersSizePivot = new List<Vector3>();
 
         for (i = 0; i < targetUnit.transform.childCount; i++)
         {
             if (targetUnit.transform.GetChild(i).transform.CompareTag("Tile"))
             {
-                positionTilesEnnemy.Add(targetUnit.transform.GetChild(i).transform.position);
+                positionTilesTarget.Add(targetUnit.transform.GetChild(i).position);
             }
         }
-
+        
         for (i = 0; i < transform.childCount; i++)
         {
-            if (targetUnit.transform.GetChild(i).transform.CompareTag("Tile"))
+            if (transform.GetChild(i).transform.CompareTag("Tile"))
             {
-                tilesPivot.Add(targetUnit.transform.GetChild(i).gameObject);
+                positionTilesUnit.Add(transform.GetChild(i).position);
             }
         }
 
+        positionModelTarget = targetUnit.p_model.transform.position;
+        positionModelUnit = GetComponent<MonstreData>().p_model.transform.position;
+        
         positionPivot = targetUnit.transform.position;
         targetUnit.transform.position = transform.position;
         transform.position = positionPivot;
         
+        targetUnit.p_model.transform.position = positionModelUnit;
+        GetComponent<MonstreData>().p_model.transform.position = positionModelTarget;
+        
+        
         for (i = 0; i < targetUnit.transform.childCount; i++)
         {
             if (targetUnit.transform.GetChild(i).transform.CompareTag("Tile"))
@@ -69,82 +79,22 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
                 tilesPivot.Add(targetUnit.transform.GetChild(i).gameObject);
             }
         }
+        
 
         for (i = 0; i < transform.childCount; i++)
         {
             if (transform.GetChild(i).transform.CompareTag("Tile"))
             {
+                transform.GetChild(i).position = positionTilesUnit[i];
                 transform.GetChild(i).SetParent(targetUnit.transform);
             }
         }
         
         for (i = 0; i < tilesPivot.Count; i++)
         {
+            tilesPivot[i].transform.position = positionTilesTarget[i];
             tilesPivot[i].transform.SetParent(transform);
         }
-        
-        /*
-        for (i = 0; i < targetUnit.transform.childCount; i++)
-        {
-            if (targetUnit.transform.GetChild(i).transform.CompareTag("Tile"))
-            {
-                targetUnit.transform.GetChild(i).transform.position = positionTilesAlly[i];
-            }
-        }
-        
-        for (i = 0; i < transform.childCount; i++)
-        {
-            if (transform.GetChild(i).transform.CompareTag("Tile"))
-            {
-                transform.GetChild(i).transform.position = positionTilesEnnemy[i];
-            }
-        }*/
-        
-        EffectManager.instance.CancelSelection();
-    }
-
-    /*
-    [PunRPC]
-    private void RPC_OnCast(int idUnit)
-    {
-        targetUnit = PlacementManager.instance.FindMobWithID(idUnit);
-        PlacementManager.instance.RemoveMonsterBoard(GetComponent<MonstreData>().p_id);
-        PlacementManager.instance.RemoveMonsterBoard(idUnit);
-        
-        tilesPivot = new List<GameObject>();
-        boxCollidersCenterPivot = new List<Vector3>();
-        boxCollidersSizePivot = new List<Vector3>();
-        positionPivot = targetUnit.p_model.transform.position;
-        targetUnit.p_model.transform.position = transform.position;
-        GetComponent<MonstreData>().p_model.transform.position = positionPivot;
-
-        for (i = 0; i < targetUnit.transform.childCount; i++)
-        {
-            if (targetUnit.transform.GetChild(i).transform.CompareTag("Tile"))
-            {
-                tilesPivot.Add(targetUnit.transform.GetChild(i).gameObject);
-            }
-        }
-
-        for (i = 0; i < transform.childCount; i++)
-        {
-            if (transform.GetChild(i).transform.CompareTag("Tile"))
-            {
-                transform.GetChild(i).SetParent(targetUnit.transform);
-            }
-        }
-        
-        for (i = 0; i < tilesPivot.Count; i++)
-        {
-            tilesPivot[i].transform.SetParent(transform);
-        }
-        
-        PlacementManager.instance.AddMonsterBoard(targetUnit.gameObject);
-        PlacementManager.instance.AddMonsterBoard(gameObject);
-
-        targetUnit.p_hpPackage.transform.position = new Vector3(targetUnit.p_model.transform.position.x, targetUnit.p_hpPackage.transform.position.y, targetUnit.p_model.transform.position.z);
-        GetComponent<MonstreData>().p_hpPackage.transform.position = new Vector3(GetComponent<MonstreData>().p_model.transform.position.x,GetComponent<MonstreData>().p_hpPackage.transform.position.y, GetComponent<MonstreData>().p_model.transform.position.z);
-        
         
         for (i = targetUnit.GetComponents<BoxCollider>().Length - 1; i >= 0; i--)
         {
@@ -161,7 +111,12 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
             Destroy(GetComponents<BoxCollider>()[i]);
         }
         
-        /*
+        for (int j = 0; j < boxCollidersCenterPivot.Count; j++)
+        {
+            pivotBoxCollider = gameObject.AddComponent<BoxCollider>();
+            pivotBoxCollider.center = boxCollidersCenterPivot[j];
+            pivotBoxCollider.size = boxCollidersSizePivot[j];
+        }
         
         for (int j = 0; j < boxCollidersCenterPivot.Count; j++)
         {
@@ -170,26 +125,14 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
             pivotBoxCollider.size = boxCollidersSizePivot[j];
         }
         
-        /*
-        for (i = GetComponents<BoxCollider>().Length - 1; i >= 0; i--)
-        {
-            Destroy(GetComponents<BoxCollider>()[i]);
-        }
-
-        for (int j = 0; j < boxCollidersCenterPivot.Count; j++)
-        {
-            pivotBoxCollider = gameObject.AddComponent<BoxCollider>();
-            pivotBoxCollider.center = boxCollidersCenterPivot[j];
-            pivotBoxCollider.size = boxCollidersSizePivot[j];
-        }
-
-
+        
+        PlacementManager.instance.AddMonsterBoard(targetUnit.gameObject);
+        PlacementManager.instance.AddMonsterBoard(gameObject);
         GetComponent<MonstreData>().p_model.layer = 6;
         EffectManager.instance.CancelSelection();
-        
-        
     }
-        */
+
+  
     public void TransferEffect(IEffects effectMother)
     {
         view = gameObject.GetPhotonView();
