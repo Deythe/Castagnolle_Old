@@ -6,9 +6,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardBuildingManager : MonoBehaviour
+public class Page3 : MonoBehaviour
 {
-    public static CardBuildingManager instance;
+    public static Page3 instance;
     [SerializeField] private Transform cardMovable;
     [SerializeField] private Image cardMovableSprite;
     [SerializeField] private bool isTouchingACard;

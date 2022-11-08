@@ -12,7 +12,7 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (Input.GetTouch(0).phase != TouchPhase.Ended )
             {
                 Debug.Log("Test");
-                CardBuildingManager.instance.p_inDropZone = true;
+                Page3.instance.p_inDropZone = true;
             }
         }
     }
@@ -24,7 +24,7 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (Input.GetTouch(0).phase != TouchPhase.Ended)
             {
                 Debug.Log("Papa");
-                CardBuildingManager.instance.p_inDropZone = false;
+                Page3.instance.p_inDropZone = false;
             }
         }
     }

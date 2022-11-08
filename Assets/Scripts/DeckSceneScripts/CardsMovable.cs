@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardBuildingDeck : MonoBehaviour, IPointerEnterHandler
+public class CardsMovable : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField] private int index;
     [SerializeField] private Sprite miniature;
@@ -22,10 +22,10 @@ public class CardBuildingDeck : MonoBehaviour, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                CardBuildingManager.instance.p_bigCard.sprite = card;
-                CardBuildingManager.instance.p_cardMovableSprite.sprite = miniature;
-                CardBuildingManager.instance.p_isTouchingACard = true;
-                CardBuildingManager.instance.p_currentIndexCard = index;
+                Page3.instance.p_bigCard.sprite = card;
+                Page3.instance.p_cardMovableSprite.sprite = miniature;
+                Page3.instance.p_isTouchingACard = true;
+                Page3.instance.p_currentIndexCard = index;
             }
         }
     }
