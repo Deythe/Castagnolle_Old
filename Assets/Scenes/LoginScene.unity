@@ -1272,8 +1272,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589022529}
-  - component: {fileID: 589022528}
   - component: {fileID: 589022530}
+  - component: {fileID: 589022531}
   m_Layer: 0
   m_Name: ScenesManager
   m_TagString: Untagged
@@ -1281,21 +1281,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &589022528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589022527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85fa39b7e7759ee4fb488c47d50c577a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  create: 0
-  email: 
-  password: 
 --- !u!4 &589022529
 Transform:
   m_ObjectHideFlags: 0
@@ -1321,6 +1306,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b6fa468bffca6c4481ce6944cfe5706, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &589022531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589022527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcbef5e8a4df06e4391189532faa840f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &594403922
@@ -1406,7 +1403,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 589022528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FireBaseManager, Assembly-CSharp
         m_MethodName: Login
         m_Mode: 1
@@ -2728,7 +2725,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 589022528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FireBaseManager, Assembly-CSharp
         m_MethodName: SetEmail
         m_Mode: 0
@@ -3040,6 +3037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -3386,7 +3384,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 589022528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FireBaseManager, Assembly-CSharp
         m_MethodName: SetPassword
         m_Mode: 0
@@ -3537,7 +3535,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 589022528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FireBaseManager, Assembly-CSharp
         m_MethodName: CreateUser
         m_Mode: 1
@@ -3671,7 +3669,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 589022528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FireBaseManager, Assembly-CSharp
         m_MethodName: WriteNewUser
         m_Mode: 1

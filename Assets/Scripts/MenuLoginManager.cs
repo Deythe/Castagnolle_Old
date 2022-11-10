@@ -24,6 +24,7 @@ public class MenuLoginManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (bug)
         {
             bug = false;
@@ -49,13 +50,23 @@ public class MenuLoginManager : MonoBehaviour
                 FireBaseManager.instance.User = JsonUtility.FromJson<User>(FireBaseManager.instance.GetStringRequest());
                 FireBaseManager.instance.OnConnected();
             }
-        }
+        }*/
     }
     
     public void VisitorConnect()
     {
         SoundManager.instance.PlaySFXSound(0, 0.07f);
-        FireBaseManager.instance.User = new User("Visiteur", false, true);
+        LocalSaveManager.instance.ReadLocalUser();
+        //FireBaseManager.instance.User = new User("Visiteur", false, true);
+        /*if ()
+        {
+            LocalSaveManager.instance.User 
+        }
+        else
+        {
+            
+        }*/
+        
         SceneManager.LoadScene(1);
     }
     

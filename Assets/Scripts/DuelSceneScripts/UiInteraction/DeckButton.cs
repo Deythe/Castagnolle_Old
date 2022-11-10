@@ -19,8 +19,8 @@ public class DeckButton : MonoBehaviour
         if (!select)
         {
             MenuManager.instance.PlayButton.interactable = true;
-            FireBaseManager.instance.User.currentDeck = deck.indexCrea;
-            FireBaseManager.instance.User.currentDiceDeck = deck.diceDeck.diceDeck;
+            LocalSaveManager.instance.user.currentDeck = deck.indexCrea;
+            LocalSaveManager.instance.user.currentDiceDeck = deck.diceDeck.diceDeck;
             border.sprite = selected;
             
             for (int i = 0; i < parent.childCount; i++)

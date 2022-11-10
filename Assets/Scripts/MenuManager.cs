@@ -49,9 +49,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
         playButton.interactable = false;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        nickname.text = FireBaseManager.instance.User.userName;
+        nickname.text = LocalSaveManager.instance.user.userName;
         
-        if (FireBaseManager.instance.User.firstTime)
+        if (LocalSaveManager.instance.user.firstTime)
         {
             transparency.SetActive(true);
             tutoObject.transform.DOScale(new Vector3(1.5f,1.5f,1.5f), 1f).SetEase(Ease.OutQuint);
@@ -202,10 +202,11 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public void CancelTuto()
     {
         SoundManager.instance.PlaySFXSound(1, 0.07f);
-        FireBaseManager.instance.User.firstTime = false;
-        if (FireBaseManager.instance.User.isConnected)
+        LocalSaveManager.instance.user.firstTime = false;
+        if (LocalSaveManager.instance.user.isConnected)
         {
-            FireBaseManager.instance.FirstTimeChecked();
+            LocalSaveManager.instance.user.firstTime = false;
+            LocalSaveManager.instance.SaveUserData();
         }
         transparency.SetActive(false);
         tutoObject.transform.DOScale(Vector3.zero, 0.75f).SetEase(Ease.InQuad);
