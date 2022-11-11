@@ -45,9 +45,18 @@ public class DeckBuildingManager : MonoBehaviour
         }
     }
 
+    void ResetPage1()
+    {
+        foreach (RectTransform parche in parchment)
+        {
+            parche.DOLocalMoveX(975, 0f);
+            parche.gameObject.SetActive(false);
+        }
+    }
+
     public void GoToPage2(int c)
     {
-        pages.DOLocalMoveX(-canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear);
+        pages.DOLocalMoveX(-canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear).OnComplete(()=>ResetPage1());
         choicePage2 = c;
         if (choicePage2==0)
         {
