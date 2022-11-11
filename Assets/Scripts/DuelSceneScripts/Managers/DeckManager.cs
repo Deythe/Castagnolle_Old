@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
     [SerializeField] private List<GameObject> cardDeck = new List<GameObject>();
-    [SerializeField] private CardListScriptable cardListDeck;
-    
     [SerializeField] private DiceListScriptable.enumRessources[] checks = new DiceListScriptable.enumRessources[6];
-    
-    private DiceListScriptable.enumRessources[] ressources;
+    private DiceListScriptable.enumRessources[] resources;
     private int check;
     public List<GameObject> CardDeck
     {
@@ -41,7 +39,7 @@ public class DeckManager : MonoBehaviour
     {
         for (int i = 0; i < FireBaseManager.instance.User.currentDeck.Length; i++)
         {
-            cardDeck.Add(UiManager.instance.InitCard(cardListDeck.cards[FireBaseManager.instance.User.currentDeck[i]]));
+            cardDeck.Add(UiManager.instance.InitCard(LocalSaveManager.instance.unitListScriptable.cards[LocalSaveManager.instance.user.currentDeck[i]].miniaCard));
         }
     }
 
@@ -50,41 +48,41 @@ public class DeckManager : MonoBehaviour
         for (int i = 0; i < cardDeck.Count; i++)
         {
             InitCheck();
-            ressources = cardDeck[i].GetComponent<CardData>().p_ressources.ToArray();
+            resources = cardDeck[i].GetComponent<CardData>().p_ressources.ToArray();
             
-            for (int j = 0; j < ressources.Length; j++)
+            for (int j = 0; j < resources.Length; j++)
             {
-                if (!ressources[j].Equals(4))
+                if (!resources[j].Equals(4))
                 {
-                    if (ressources[j].Equals(checks[0]))
+                    if (resources[j].Equals(checks[0]))
                     {
                         checks[0] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
-                    else if (ressources[j].Equals(checks[1]))
+                    else if (resources[j].Equals(checks[1]))
                     {
                         checks[1] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
-                    else if (ressources[j].Equals(checks[2]))
+                    else if (resources[j].Equals(checks[2]))
                     {
                         checks[2] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
-                    else if (ressources[j].Equals(checks[3]))
+                    else if (resources[j].Equals(checks[3]))
                     {
                         checks[3] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
-                    else if (ressources[j].Equals(checks[4]))
+                    else if (resources[j].Equals(checks[4]))
                     {
                         checks[4] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
-                    else if (ressources[j].Equals(checks[5]))
+                    else if (resources[j].Equals(checks[5]))
                     {
                         checks[5] = 0;
-                        ressources[j] = 0;
+                        resources[j] = 0;
                     }
                 }
                 else
@@ -93,7 +91,7 @@ public class DeckManager : MonoBehaviour
                 }
             }
 
-            if (AllCheckValide(ressources) && !(PlacementManager.instance.p_haveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().p_isChampion))
+            if (AllCheckValide(resources) && !(PlacementManager.instance.p_haveAChampionOnBoard && cardDeck[i].GetComponent<CardData>().p_isChampion))
             {
                 cardDeck[i].GetComponent<CardData>().p_enabled = true;
             }
@@ -126,7 +124,7 @@ public class DeckManager : MonoBehaviour
         {
             if (checks[k] != 0)
             {
-                ressources[j] = 0;
+                resources[j] = 0;
                 checks[k] = 0;
                 return;
             }

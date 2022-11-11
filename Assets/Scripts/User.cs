@@ -1,3 +1,5 @@
+using System;
+
 public class User {
     
     public string userName;
@@ -21,35 +23,17 @@ public class User {
         isConnected = connect;
         firstTime = firstTimeCheck;
         
-        /*currentDeck = new int[8];
-        currentDiceDeck = new int[6];
+        currentDeck = Array.Empty<int>();;
+        currentDiceDeck = Array.Empty<int>();;
         
-        monsterDeck1 = new int[8];
-        monsterDeck2 = new int[8];
-        monsterDeck3 = new int[8];
-        monsterDeck4 = new int[8];
+        monsterDeck1 = Array.Empty<int>();
+        monsterDeck2 = Array.Empty<int>();
+        monsterDeck3 = Array.Empty<int>();
+        monsterDeck4 = Array.Empty<int>();
         
-        diceDeck1 = new int[9];
-        diceDeck2 = new int[9];
-        diceDeck3 = new int[9];
-        diceDeck4 = new int[9];
-
-        for (int i = 0; i < 8; i++)
-        {
-            monsterDeck1[i] = -1;
-            monsterDeck2[i] = -1;
-            monsterDeck3[i] = -1;
-            monsterDeck4[i] = -1;
-
-            diceDeck1[i] = -1;
-            diceDeck2[i] = -1;
-            diceDeck3[i] = -1;
-            diceDeck4[i] = -1;
-        }
-        
-        diceDeck1[8] = -1;
-        diceDeck2[8] = -1;
-        diceDeck3[8] = -1;
-        diceDeck4[8] = -1;*/
+        diceDeck1 = Array.Empty<int>();
+        diceDeck2 = Array.Empty<int>();
+        diceDeck3 = Array.Empty<int>();
+        diceDeck4 = Array.Empty<int>();
     }
 }

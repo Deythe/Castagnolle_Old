@@ -5,15 +5,33 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardsMovable : MonoBehaviour, IPointerEnterHandler
+public class CardsMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private int index;
-    [SerializeField] private Sprite miniature;
-    [SerializeField] private Sprite card;
-
+    [SerializeField] private int _index;
+    [SerializeField] private Sprite cardFull;
+    [SerializeField] private Sprite _miniature;
+    private Coroutine lastCoroutine;
+    public int index
+    {
+        get => _index;
+        set
+        {
+            _index = value;
+        }
+    }
+    
+    public Sprite miniature
+    {
+        get => _miniature;
+        set
+        {
+            _miniature = value;
+        }
+    }
+    
     private void Start()
     {
-        card = GetComponent<Image>().sprite;
+        cardFull = GetComponent<Image>().sprite;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -22,11 +40,25 @@ public class CardsMovable : MonoBehaviour, IPointerEnterHandler
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                Page3.instance.p_bigCard.sprite = card;
-                Page3.instance.p_cardMovableSprite.sprite = miniature;
-                Page3.instance.p_isTouchingACard = true;
-                Page3.instance.p_currentIndexCard = index;
+                lastCoroutine = StartCoroutine(CoroutineShowCart());
             }
         }
+    }
+    
+    
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (Input.touchCount > 0)
+        {
+            StopCoroutine(lastCoroutine);
+            DeckBuildingManager.instance.bigCard.SetActive(false);
+        }
+    }
+
+    IEnumerator CoroutineShowCart()
+    {
+        yield return new WaitForSeconds(0.5f);
+        DeckBuildingManager.instance.bigCard.GetComponent<Image>().sprite = cardFull;
+        DeckBuildingManager.instance.bigCard.SetActive(true);
     }
 }

@@ -13,24 +13,66 @@ MonoBehaviour:
   m_Name: CardList
   m_EditorClassIdentifier: 
   cards:
-  - {fileID: 7236249880086410052, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
-  - {fileID: 7236249880086410052, guid: 88e70667a1fe24d43940648e93d4c17a, type: 3}
-  - {fileID: 7236249880086410052, guid: e74b7eaba023a4542af023ee2b544ba6, type: 3}
-  - {fileID: 7236249880086410052, guid: b07587dbd48e8664b80109d9bbb2cd28, type: 3}
-  - {fileID: 7236249880086410052, guid: f2e4fb22cbc748e4280c43bd1dc3d467, type: 3}
-  - {fileID: 7236249880086410052, guid: 6ea2c27475845d64b827d175bab6192a, type: 3}
-  - {fileID: 7236249880086410052, guid: dd0c9dd57869a314880018b46a00c726, type: 3}
-  - {fileID: 7236249880086410052, guid: ff1e445dd71ced84bb949296f7b880b2, type: 3}
-  - {fileID: 7236249880086410052, guid: 6fa11de556a7e7944a55c67d31ab51b2, type: 3}
-  - {fileID: 7236249880086410052, guid: 69cc112825955394d8fa31ef7448e9d3, type: 3}
-  - {fileID: 7236249880086410052, guid: 49ec104b3eb166246854f7c0ac04de17, type: 3}
-  - {fileID: 7236249880086410052, guid: f6cc75c875be09d4691ac303dabfebe0, type: 3}
-  - {fileID: 7236249880086410052, guid: 525cb3910502cad40aee4423ab06b8aa, type: 3}
-  - {fileID: 7236249880086410052, guid: 1f76c86e05c708442b610332a29c0a4b, type: 3}
-  - {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
-  - {fileID: 7236249880086410052, guid: e445753103bfaa9419f29bddb02c4669, type: 3}
-  - {fileID: 7236249880086410052, guid: 15384863e1caa5642a606b6c4e177261, type: 3}
-  - {fileID: 7236249880086410052, guid: b4b6a080283f3264f9e8adbde2c2e865, type: 3}
-  - {fileID: 7236249880086410052, guid: ba8ebf2637e9a744092a48847e1b44ee, type: 3}
-  - {fileID: 7236249880086410052, guid: 3119b84ce0c17314ba89f02df6dc759d, type: 3}
-  - {fileID: 7236249880086410052, guid: 6a3d2faafec3c0442a16dac0a24b3266, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 000bd1335fd43d249903b4ef4c5ff49d, type: 3}
+    model: {fileID: 1764594795200175919, guid: 1699930bff5871b45be02f44277aef68, type: 3}
+    cardStats: {fileID: 21300000, guid: 01699b770901b534eb33714de5b40117, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 88e70667a1fe24d43940648e93d4c17a, type: 3}
+    model: {fileID: 1764594795200175919, guid: 72501a5b2fc68ad45ba4ae6de1900b7a, type: 3}
+    cardStats: {fileID: 21300000, guid: ea7e1e88f8539f14ca229cdcab45d999, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: e74b7eaba023a4542af023ee2b544ba6, type: 3}
+    model: {fileID: 1764594795200175919, guid: 084b635bbe5ad874f8d268c6d6cd026b, type: 3}
+    cardStats: {fileID: 21300000, guid: 5d76a16b14fef11449e2a78d239602d8, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: b07587dbd48e8664b80109d9bbb2cd28, type: 3}
+    model: {fileID: 1764594795200175919, guid: f8eb91343bc2d424a8b65f7d9a75982a, type: 3}
+    cardStats: {fileID: 21300000, guid: c4113305d199e7e4591b99783b0b4424, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: f2e4fb22cbc748e4280c43bd1dc3d467, type: 3}
+    model: {fileID: 1764594795200175919, guid: e77ce7bed9a4bce48899a48019bebf0d, type: 3}
+    cardStats: {fileID: 21300000, guid: c98ec17933741f44fabb6710e2059901, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 6ea2c27475845d64b827d175bab6192a, type: 3}
+    model: {fileID: 1764594795200175919, guid: 20378ca91e371a244b285203e9ec9b92, type: 3}
+    cardStats: {fileID: 21300000, guid: d395eb30b87059e49aa15f1a5e2af244, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: dd0c9dd57869a314880018b46a00c726, type: 3}
+    model: {fileID: 1764594795200175919, guid: 441f8d0906f640c46a0f56cf031058b4, type: 3}
+    cardStats: {fileID: 21300000, guid: 011fcf8406b139c4a8273f843f88dcb5, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: ff1e445dd71ced84bb949296f7b880b2, type: 3}
+    model: {fileID: 1764594795200175919, guid: a48a22bf1bd8a834297c85a178194bda, type: 3}
+    cardStats: {fileID: 21300000, guid: 2e33202addd9e824ea35c790a287ac61, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 6fa11de556a7e7944a55c67d31ab51b2, type: 3}
+    model: {fileID: 1764594795200175919, guid: 3cf6f2c47daec664692643470dcf9c73, type: 3}
+    cardStats: {fileID: 21300000, guid: 46f189b6a6478c247914f8750394f769, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 69cc112825955394d8fa31ef7448e9d3, type: 3}
+    model: {fileID: 1764594795200175919, guid: 1f3796858314cf34aa318a5acec9ea07, type: 3}
+    cardStats: {fileID: 21300000, guid: 6d223ee3fa47b704a95d21e19ed8da54, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 49ec104b3eb166246854f7c0ac04de17, type: 3}
+    model: {fileID: 1764594795200175919, guid: 3c1f050b51b5a074490ef71ad85bb968, type: 3}
+    cardStats: {fileID: 21300000, guid: 55ffe184c30873449a53c7df699ee712, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: f6cc75c875be09d4691ac303dabfebe0, type: 3}
+    model: {fileID: 1764594795200175919, guid: 4ed18f55abc783d4ea1f57a058154766, type: 3}
+    cardStats: {fileID: 21300000, guid: b218f6ed38a4cf5418ce2bf14a83f96c, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 525cb3910502cad40aee4423ab06b8aa, type: 3}
+    model: {fileID: 1764594795200175919, guid: bbf4d342b153af44098b4fd28d51be7f, type: 3}
+    cardStats: {fileID: 21300000, guid: 7c330b82910aea9448eaf9e25c8fd590, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 1f76c86e05c708442b610332a29c0a4b, type: 3}
+    model: {fileID: 1764594795200175919, guid: fd77994d012932b4d9a96226daa37ed5, type: 3}
+    cardStats: {fileID: 21300000, guid: fe5306eeb894e8e4ba24bbaf317f5e79, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: aabe5453f119653499af85d1ce8c85c0, type: 3}
+    model: {fileID: 1764594795200175919, guid: d708ba6ca4a1b9a40be70abce5d5a726, type: 3}
+    cardStats: {fileID: 21300000, guid: e8e2f3f725e50cc468e975a4c2404f42, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: e445753103bfaa9419f29bddb02c4669, type: 3}
+    model: {fileID: 1764594795200175919, guid: 35802c73d3d580445a7bc5d54aaaf439, type: 3}
+    cardStats: {fileID: 21300000, guid: fd1acc0f536563c48aec1e5dca35388e, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 15384863e1caa5642a606b6c4e177261, type: 3}
+    model: {fileID: 1764594795200175919, guid: e9cf83badc6a6b54fb902ed69e16a5f1, type: 3}
+    cardStats: {fileID: 21300000, guid: c5394d28dd5f72c41a6860b36f29521a, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: b4b6a080283f3264f9e8adbde2c2e865, type: 3}
+    model: {fileID: 1764594795200175919, guid: 81b51effeacbda24788cd09d3c64c6f0, type: 3}
+    cardStats: {fileID: 21300000, guid: 63a08c112cc49894a8c249a86517c341, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: ba8ebf2637e9a744092a48847e1b44ee, type: 3}
+    model: {fileID: 1764594795200175919, guid: a8574f98ac0a7204f93c7a54e0cc5b4d, type: 3}
+    cardStats: {fileID: 21300000, guid: cd5d943d74b7c4f41890de8704550b27, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 3119b84ce0c17314ba89f02df6dc759d, type: 3}
+    model: {fileID: 1764594795200175919, guid: fd5cde5de5a8740498b5765ca7c11dd3, type: 3}
+    cardStats: {fileID: 21300000, guid: 56dee1cec0167584fbd858e87f615887, type: 3}
+  - miniaCard: {fileID: 7236249880086410052, guid: 6a3d2faafec3c0442a16dac0a24b3266, type: 3}
+    model: {fileID: 1764594795200175919, guid: d010692599a7e7d4aaab94212f8263b7, type: 3}
+    cardStats: {fileID: 21300000, guid: f26414697918b0744b6015b39b769fa5, type: 3}

@@ -4,47 +4,110 @@ using DG.Tweening;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DeckBuildingManager : MonoBehaviour
 {
+    public static DeckBuildingManager instance;
+    
     [SerializeField] private RectTransform[] parchment;
-    [SerializeField] private RectTransform pages;
+    [SerializeField] private RectTransform pages, page2And3, cardListDisplayContent;
     [SerializeField] private CanvasScaler canvas;
-    [SerializeField] private List<GameObject> listDisplayedDeck;
-    private Dictionary<int, int[]> listDeck = new Dictionary<int, int[]>();
-    private int currentPages, choicePage2;
+    [SerializeField] private List<GameObject> listDisplayedCardsDeck, listDisplayedDicesDeck, listDecksMenu, listElementForP2, listElementForP3, listSwitch;
+    [SerializeField] private Slider slider;
+    [SerializeField] private GameObject _bigCard;
+    private GameObject cardListPivot;
+    private Dictionary<int, int[]> listCardsDeck = new Dictionary<int, int[]>(), listDicesDeck = new Dictionary<int, int[]>();
+    private int currentPage, choicePage2 =0;
+    private int[] currentDeckModifing;
+
+    public GameObject bigCard
+    {
+        get => _bigCard;
+        set
+        {
+            _bigCard = value;
+        }
+    }
     private void Awake()
     {
         PhotonNetwork.Disconnect();
+        instance = this;
     }
 
     private void Start()
     {
-        currentPages = 1;
-        foreach (RectTransform parche in parchment)
+        currentPage = 1;
+        ShowParchment();
+        
+        listCardsDeck[0] = LocalSaveManager.instance.user.monsterDeck1;
+        listCardsDeck[1] = LocalSaveManager.instance.user.monsterDeck2;
+        listCardsDeck[2] = LocalSaveManager.instance.user.monsterDeck3;
+        listCardsDeck[3] = LocalSaveManager.instance.user.monsterDeck4;
+        
+        listDicesDeck[0] = LocalSaveManager.instance.user.diceDeck1;
+        listDicesDeck[1] = LocalSaveManager.instance.user.diceDeck2;
+        listDicesDeck[2] = LocalSaveManager.instance.user.diceDeck3;
+        listDicesDeck[3] = LocalSaveManager.instance.user.diceDeck4;
+        
+        DisplayCardList();
+    }
+
+    void DisplayCardList()
+    {
+        for (int i = 0; i < LocalSaveManager.instance.unitListScriptable.cards.Count; i++)
         {
-            parche.DOLocalMoveX(80, 1f).SetEase(Ease.OutBack).OnComplete(()=>parche.GetComponent<Button>().interactable = true);
+            cardListPivot = new GameObject();
+            cardListPivot.transform.SetParent(cardListDisplayContent);
+            cardListPivot.AddComponent<Image>();
+            cardListPivot.GetComponent<Image>().sprite =
+                LocalSaveManager.instance.unitListScriptable.cards[i].cardStats;
+            cardListPivot.AddComponent<CardsMovable>();
+            cardListPivot.GetComponent<CardsMovable>().index = i;
+            cardListPivot.GetComponent<CardsMovable>().miniature = LocalSaveManager.instance.unitListScriptable.cards[i]
+                .miniaCard.GetComponent<Image>().sprite;
+        }
+    }
+    
+    void DisplayCurrentDeck()
+    {
+        for (int i = 0; i < LocalSaveManager.instance.unitListScriptable.cards.Count; i++)
+        {
+            cardListPivot = Instantiate(new GameObject(), cardListDisplayContent);
+            cardListPivot.AddComponent<Image>();
+            cardListPivot.GetComponent<Image>().sprite =
+                LocalSaveManager.instance.unitListScriptable.cards[i].cardStats;
+        }
+    }
+
+    public void SwitchDiceAndCardsMenu()
+    {
+        listDecksMenu[choicePage2].SetActive(false);
+        choicePage2 = (int)slider.value;
+        
+        listDecksMenu[choicePage2].SetActive(true);
+        if (slider.value.Equals(0))
+        {
+            listSwitch[0].SetActive(true);
+            listSwitch[1].SetActive(false);
+            return;   
         }
         
-        listDeck[0] = LocalSaveManager.instance.user.diceDeck1;
-        listDeck[1] = LocalSaveManager.instance.user.diceDeck2;
-        listDeck[2] = LocalSaveManager.instance.user.diceDeck3;
-        listDeck[3] = LocalSaveManager.instance.user.diceDeck4;
+        listSwitch[1].SetActive(true);
+        listSwitch[0].SetActive(false);
+        
     }
 
-    void DisplayDecks()
+    void ShowParchment()
     {
-        for (int i = 0; i < listDisplayedDeck.Count; i++)
+        foreach (RectTransform parche in parchment)
         {
-            if (!listDeck[i].Length.Equals(0))
-            {
-                listDisplayedDeck[i].SetActive(true);
-                listDisplayedDeck[i].GetComponent<DeckDisplay>().deck = listDeck[i];
-            }
+            parche.gameObject.SetActive(true);
+            parche.DOLocalMoveX(80, 1f).SetEase(Ease.OutBack).OnComplete(()=>parche.GetComponent<Button>().interactable = true);
         }
     }
-
+    
     void ResetPage1()
     {
         foreach (RectTransform parche in parchment)
@@ -54,57 +117,125 @@ public class DeckBuildingManager : MonoBehaviour
         }
     }
 
-    public void GoToPage2(int c)
+    void DisplayCardsDecks()
     {
-        pages.DOLocalMoveX(-canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear).OnComplete(()=>ResetPage1());
-        choicePage2 = c;
-        if (choicePage2==0)
+        for (int i = 0; i < listDisplayedDicesDeck.Count; i++)
         {
-            DisplayDecks();
-        }
-        else
-        {
-            
+            if (!listCardsDeck[i].Length.Equals(0))
+            {
+                listDisplayedCardsDeck[i].SetActive(true);
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().deck = listCardsDeck[i];
+            }
         }
     }
 
-    public void CreateDeck()
+    void DisplayDiceDecks()
+    {
+        
+        for (int i = 0; i < listDisplayedDicesDeck.Count; i++)
+        {
+            if (!listDicesDeck[i].Length.Equals(0))
+            {
+                listDisplayedDicesDeck[i].SetActive(true);
+                listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().deck = listDicesDeck[i];
+            }
+        }
+    }
+    
+    public void CreateDiceDeck()
     {
         for (int i = 0; i < 4; i++)
         {
-            if (listDeck[i].Length.Equals(0))
+            if (listCardsDeck[i].Length.Equals(0))
             {
                 switch (i)
                 {
                     case 0:
-                        LocalSaveManager.instance.user.diceDeck1 = new int[8];
-                        listDeck[0] = LocalSaveManager.instance.user.diceDeck1;
+                        LocalSaveManager.instance.user.monsterDeck1 = new int[8];
+                        listCardsDeck[0] = LocalSaveManager.instance.user.monsterDeck1;
                         break;
                     case 1:
-                        LocalSaveManager.instance.user.diceDeck2 = new int[8];
-                        listDeck[1] = LocalSaveManager.instance.user.diceDeck2;
+                        LocalSaveManager.instance.user.monsterDeck2 = new int[8];
+                        listCardsDeck[1] = LocalSaveManager.instance.user.monsterDeck2;
                         break;
                     case 2:
-                        LocalSaveManager.instance.user.diceDeck3 = new int[8];
-                        listDeck[2] = LocalSaveManager.instance.user.diceDeck3;
+                        LocalSaveManager.instance.user.monsterDeck3 = new int[8];
+                        listCardsDeck[2] = LocalSaveManager.instance.user.monsterDeck3;
                         break;
                     case 3:
-                        LocalSaveManager.instance.user.diceDeck4 = new int[8];
-                        listDeck[3] = LocalSaveManager.instance.user.diceDeck4;
+                        LocalSaveManager.instance.user.monsterDeck4 = new int[8];
+                        listCardsDeck[3] = LocalSaveManager.instance.user.monsterDeck4;
                         break;
                 }
                 
-                listDisplayedDeck[i].SetActive(true);
+                listDisplayedCardsDeck[i].SetActive(true);
                 
                 for (int j = 0; j < 8; j++)
                 {
-                    listDeck[i][j] = -1;
+                    listCardsDeck[i][j] = -1;
                 }
 
                 LocalSaveManager.instance.SaveUserData();
+                GoToPage3(i);
                 return;
             }
         }
+    }
+    
+    public void Return()
+    {
+        if (currentPage == 2)
+        {
+            pages.DOLocalMoveX(0, 0.5f).SetEase(Ease.Linear).OnComplete(()=>ShowParchment());
+
+        }else if (currentPage == 3)
+        {
+            currentPage = 2;
+            page2And3.DOLocalMoveX(canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear);
+            DisplayElementForP2AndP3(true);
+        }
+    }
+
+    void DisplayElementForP2AndP3(bool b)
+    {
+        for (int i = 0; i < listElementForP2.Count; i++)
+        {
+            listElementForP2[i].SetActive(b);
+        }
+        
+        for (int i = 0; i < listElementForP3.Count; i++)
+        {
+            listElementForP3[i].SetActive(!b);
+        }
+    }
+    
+    public void GoToPage2(int c)
+    {
+        slider.value = c;
+        SwitchDiceAndCardsMenu();
+        currentPage = 2;
+
+        DisplayElementForP2AndP3(true);
+        DisplayCardsDecks();
+        DisplayDiceDecks();
+        pages.DOLocalMoveX(-canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear).OnComplete(()=>ResetPage1());
+    }
+    
+    public void GoToPage3(int currentDeckIndex)
+    {
+        currentPage = 3;
+        if (choicePage2 == 0)
+        {
+            currentDeckModifing = listCardsDeck[currentDeckIndex];
+        }
+        else
+        {
+            currentDeckModifing = listDicesDeck[currentDeckIndex];
+        }
+
+        page2And3.DOLocalMoveX(0, 0.5f).SetEase(Ease.Linear);
+        
+        DisplayElementForP2AndP3(false);
     }
 
     public void GoToMainMenu()

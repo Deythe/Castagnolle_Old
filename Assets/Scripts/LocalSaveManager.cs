@@ -10,12 +10,17 @@ using UnityEngine.SceneManagement;
 
 public class LocalSaveManager : MonoBehaviour
 {
+    [SerializeField] private UnitListScriptable _unitListDeck;
     public static LocalSaveManager instance;
     private string path;
     private string test;
     private User _user;
-
-
+    
+    public UnitListScriptable unitListScriptable
+    {
+        get => _unitListDeck;
+    }
+    
     public User user
     {
         get => _user;
@@ -32,9 +37,9 @@ public class LocalSaveManager : MonoBehaviour
         path = Application.dataPath;
     }
 
-    public void WriteNewUser()
+    public void WriteNewUser(string pseudo)
     {
-        _user = new User(MenuLoginManager.instance.GetNickname(), true, true);
+        _user = new User(pseudo, true, true);
         SaveUserData();
     }
 
@@ -48,7 +53,7 @@ public class LocalSaveManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            WriteNewUser();
+            WriteNewUser("Visiteur");
         }
         
     }
