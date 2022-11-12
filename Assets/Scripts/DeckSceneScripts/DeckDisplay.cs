@@ -7,6 +7,7 @@ using UnityEngine;
 public class DeckDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_Text numberCard;
+    [SerializeField] private TMP_Text deckName;
     private int[] _deck;
     private int counter=0;
     public int[] deck
@@ -15,16 +16,25 @@ public class DeckDisplay : MonoBehaviour
         set
         {
             _deck = value;
-            counter = 0;
-            for (int i = 0; i < _deck.Length; i++)
-            {
-                if (_deck[i] != -1)
-                {
-                    counter++;
-                }
-            }
-
-            numberCard.text = counter + "/8";
         }
+    }
+
+    public void UpdateDeckName(string newName)
+    {
+        deckName.text = ""+newName;
+    }
+
+    public void UpdateCounterCard()
+    {
+        counter = 0;
+        for (int i = 0; i < _deck.Length; i++)
+        {
+            if (_deck[i] != -1)
+            {
+                counter++;
+            }
+        }
+
+        numberCard.text = counter + "/8";
     }
 }

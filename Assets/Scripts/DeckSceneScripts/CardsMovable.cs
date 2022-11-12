@@ -50,8 +50,18 @@ public class CardsMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         if (Input.touchCount > 0)
         {
-            StopCoroutine(lastCoroutine);
-            DeckBuildingManager.instance.bigCard.SetActive(false);
+            if(lastCoroutine==null) return;
+            if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Moved)
+            {
+                StopCoroutine(lastCoroutine);
+                DeckBuildingManager.instance.bigCard.SetActive(false);
+                if (Input.GetTouch(0).deltaPosition.x > 4)
+                {
+                    DeckBuildingManager.instance.cardMovableSprite = _miniature;
+                    DeckBuildingManager.instance.currentIndexCardMovable = index;
+                    DeckBuildingManager.instance.isMovingACard = true;
+                }
+            }
         }
     }
 

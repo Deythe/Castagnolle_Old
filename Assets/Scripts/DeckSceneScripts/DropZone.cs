@@ -11,8 +11,7 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             if (Input.GetTouch(0).phase != TouchPhase.Ended )
             {
-                Debug.Log("Test");
-                Page3.instance.p_inDropZone = true;
+                DeckBuildingManager.instance.hoverDropZone = true;
             }
         }
     }
@@ -23,8 +22,7 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             if (Input.GetTouch(0).phase != TouchPhase.Ended)
             {
-                Debug.Log("Papa");
-                Page3.instance.p_inDropZone = false;
+                DeckBuildingManager.instance.hoverDropZone = false;
             }
         }
     }

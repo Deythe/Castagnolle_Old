@@ -7,7 +7,7 @@ public class User {
     public bool isConnected;
     public int[] currentDeck;
     public int[] currentDiceDeck;
-    
+
     public int[] monsterDeck1;
     public int[] monsterDeck2;
     public int[] monsterDeck3;
@@ -17,6 +17,9 @@ public class User {
     public int[] diceDeck2;
     public int[] diceDeck3;
     public int[] diceDeck4;
+
+    public string[] monsterDeckName;
+    public string[] diceDeckName;
     
     public User(string usernameEnv, bool connect, bool firstTimeCheck) {
         userName = usernameEnv;
@@ -35,5 +38,8 @@ public class User {
         diceDeck2 = Array.Empty<int>();
         diceDeck3 = Array.Empty<int>();
         diceDeck4 = Array.Empty<int>();
+
+        monsterDeckName = new string[4];
+        diceDeckName = new string[4];
     }
 }
