@@ -33,17 +33,8 @@ public class DeckBuildingManager : MonoBehaviour
         get => _totalMonsterInCurrentDeckModifying;
         set
         {
-            if (totalMonsterInCurrentDeckModifying.Equals(8) && value.Equals(7))
-            {
-                EnableDisableAllCardInList(true);
-                
-            }
             _totalMonsterInCurrentDeckModifying = value;
             totalTextMonsterInCurrentDeckModifying.text = _totalMonsterInCurrentDeckModifying + "/8";
-            if (totalMonsterInCurrentDeckModifying.Equals(8))
-            {
-                EnableDisableAllCardInList(false);
-            }
         }
     }
     public int currentIndexCardMovable
@@ -161,14 +152,6 @@ public class DeckBuildingManager : MonoBehaviour
         {
             if (b)
             {
-                for (int j = 0; j < currentDeckModifying.Length; j++)
-                {
-                    if (i.Equals(currentDeckModifying[j]))
-                    {
-                        break;
-                    }
-                }
-                
                 cardListDisplayContent.GetChild(i).GetComponent<Image>().color = Color.white;
                 cardListDisplayContent.GetChild(i).GetComponent<CardsMovable>().enabled = true;
             }
@@ -225,7 +208,19 @@ public class DeckBuildingManager : MonoBehaviour
         totalMonsterInCurrentDeckModifying--;
         LocalSaveManager.instance.SaveUserData();
     }
-    
+
+    void ResetDisplayCurrentCardsDeck()
+    {
+        for (int i = 0; i < listDisplayedCurrentDeckModifying.Count; i++)
+        {
+            if (!currentDeckModifying[i].Equals(-1))
+            {
+                listDisplayedCurrentDeckModifying[i].GetComponent<Image>().sprite = null;
+                listDisplayedCurrentDeckModifying[i].SetActive(false);
+            }
+        }
+    }
+
     void DisplayCurrentCardsDeck()
     {
         totalMonsterInCurrentDeckModifying = 0;
@@ -357,6 +352,8 @@ public class DeckBuildingManager : MonoBehaviour
             page2And3.DOLocalMoveX(canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear);
             DisplayElementForP2AndP3(true);
             DisplayCardsDecks();
+            ResetDisplayCurrentCardsDeck();
+            EnableDisableAllCardInList(true);
         }
     }
 

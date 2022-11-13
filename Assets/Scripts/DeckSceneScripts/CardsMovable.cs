@@ -50,7 +50,7 @@ public class CardsMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         if (Input.touchCount > 0)
         {
-            if(lastCoroutine==null) return;
+            if(lastCoroutine==null || DeckBuildingManager.instance.isMovingACard) return;
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Moved)
             {
                 StopCoroutine(lastCoroutine);
