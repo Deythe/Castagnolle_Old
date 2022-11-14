@@ -634,6 +634,7 @@ MonoBehaviour:
   isEffectAuto: 0
   used: 0
   isActivable: 1
+  orderPriority: 0
 --- !u!1 &7754618810438040477
 GameObject:
   m_ObjectHideFlags: 0
