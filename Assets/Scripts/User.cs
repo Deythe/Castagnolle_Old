@@ -5,8 +5,9 @@ public class User {
     public string userName;
     public bool firstTime;
     public bool isConnected;
-    public int[] currentDeck;
-    public int[] currentDiceDeck;
+    
+    public int[] currentCardsDeck;
+    public int[] currentDicesDeck;
 
     public int[] monsterDeck1;
     public int[] monsterDeck2;
@@ -26,8 +27,8 @@ public class User {
         isConnected = connect;
         firstTime = firstTimeCheck;
         
-        currentDeck = Array.Empty<int>();;
-        currentDiceDeck = Array.Empty<int>();;
+        currentCardsDeck = Array.Empty<int>();;
+        currentDicesDeck = Array.Empty<int>();;
         
         monsterDeck1 = Array.Empty<int>();
         monsterDeck2 = Array.Empty<int>();

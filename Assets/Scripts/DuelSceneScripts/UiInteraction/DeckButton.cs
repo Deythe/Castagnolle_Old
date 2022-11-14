@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class DeckButton : MonoBehaviour
 {
-    [SerializeField] private DeckScriptable deck;
     [SerializeField] private Image border;
     [SerializeField] private Sprite unselected;
     [SerializeField] private Sprite selected;
     [SerializeField] private Transform parent;
+    [SerializeField] private int[] premakeCardsDeck, premakeDicesDeck;
     private bool select;
     public void Action()
     {
@@ -19,8 +19,9 @@ public class DeckButton : MonoBehaviour
         if (!select)
         {
             MenuManager.instance.PlayButton.interactable = true;
-            LocalSaveManager.instance.user.currentDeck = deck.indexCrea;
-            LocalSaveManager.instance.user.currentDiceDeck = deck.diceDeck.diceDeck;
+            LocalSaveManager.instance.user.currentCardsDeck = premakeCardsDeck;
+            LocalSaveManager.instance.user.currentDicesDeck = premakeDicesDeck;
+            
             border.sprite = selected;
             
             for (int i = 0; i < parent.childCount; i++)

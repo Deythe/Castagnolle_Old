@@ -37,9 +37,9 @@ public class DeckManager : MonoBehaviour
 
     private void InitDeck()
     {
-        for (int i = 0; i < FireBaseManager.instance.User.currentDeck.Length; i++)
+        for (int i = 0; i < FireBaseManager.instance.User.currentCardsDeck.Length; i++)
         {
-            cardDeck.Add(UiManager.instance.InitCard(LocalSaveManager.instance.unitListScriptable.cards[LocalSaveManager.instance.user.currentDeck[i]].miniaCard));
+            cardDeck.Add(UiManager.instance.InitCard(LocalSaveManager.instance.unitListScriptable.cards[LocalSaveManager.instance.user.currentCardsDeck[i]].miniaCard));
         }
     }
 

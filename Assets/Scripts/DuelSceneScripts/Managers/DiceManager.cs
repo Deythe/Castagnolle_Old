@@ -10,9 +10,9 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private PhotonView view;
     
     [SerializeField] private DiceListScriptable diceListDeck;
-    
-    [SerializeField] private List<DiceScriptable> diceDeck = new List<DiceScriptable>();
-    [SerializeField] private DiceScriptable[] dicesNotDisponible = new DiceScriptable[6];
+
+    [SerializeField] private List<DiceListScriptable.enumRessources[]> _diceDeck = new List<DiceListScriptable.enumRessources[]>();
+    [SerializeField] private DiceListScriptable.enumRessources[]_dicesNotDisponible = new DiceListScriptable.enumRessources[6];
 
     [SerializeField] private GameObject[] diceObjet = new GameObject[3];
     [SerializeField] private GameObject[] diceGaugeObjet = new GameObject[3];
@@ -78,9 +78,9 @@ public class DiceManager : MonoBehaviour
 
     private void InitDeck()
     {
-        for(int i = 0; i < FireBaseManager.instance.User.currentDiceDeck.Length; i++)
+        for(int i = 0; i < FireBaseManager.instance.User.currentDicesDeck.Length; i++)
         {
-            diceDeck.Add(diceListDeck.diceDeck[FireBaseManager.instance.User.currentDiceDeck[i]]);
+            _diceDeck.Add(diceListDeck.dicesList[FireBaseManager.instance.User.currentDicesDeck[i]].faces);
         }
     }
 
@@ -106,11 +106,11 @@ public class DiceManager : MonoBehaviour
     {
         for (int i = 0; i < diceChoosen.Length; i++)
         {
-            random = Random.Range(0, diceDeck.Count);
-            diceChoosen[i] = PickDice(random).faces[Random.Range(0, 6)];
+            random = Random.Range(0, _diceDeck.Count);
+            diceChoosen[i] = PickDice(random)[Random.Range(0, 6)];
 
-            dicesNotDisponible[i] = PickDice(random);
-            diceDeck.Remove(PickDice(random));
+            _dicesNotDisponible[i] = PickDice(random);
+            _diceDeck.Remove(PickDice(random));
             
             diceObjet[i].GetComponent<MeshRenderer>().material.mainTexture =
                 ChooseTextureDice(diceChoosen[i]);
@@ -173,8 +173,8 @@ public class DiceManager : MonoBehaviour
                     {
                         view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[j].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
                         diceGauge[j] = diceChoosen[i];
-                        dicesNotDisponible[diceGauge.Length + j] = dicesNotDisponible[i];
-                        dicesNotDisponible[i] = null;
+                        _dicesNotDisponible[diceGauge.Length + j] = _dicesNotDisponible[i];
+                        _dicesNotDisponible[i] = null;
                         diceChoosen[i] = DiceListScriptable.enumRessources.Nothing;
                         DeckManager.instance.CheckUnitWithRessources();
                         EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
@@ -184,9 +184,9 @@ public class DiceManager : MonoBehaviour
                 
                 view.RPC("RPC_SynchGaugeDice",RpcTarget.All, diceGaugeObjet[index].GetComponent<PhotonView>().ViewID, true, diceChoosen[i]);
                 diceGauge[index] = diceChoosen[i];
-                diceDeck.Add(dicesNotDisponible[diceGauge.Length + index]);
-                dicesNotDisponible[diceGauge.Length + index] = dicesNotDisponible[i];
-                dicesNotDisponible[i] = null;
+                _diceDeck.Add(_dicesNotDisponible[diceGauge.Length + index]);
+                _dicesNotDisponible[diceGauge.Length + index] = _dicesNotDisponible[i];
+                _dicesNotDisponible[i] = null;
                 diceChoosen[i] = DiceListScriptable.enumRessources.Nothing;
                 DeckManager.instance.CheckUnitWithRessources();
                 EffectManager.instance.CheckAllHaveASpecificRessourceInGauge();
@@ -242,11 +242,11 @@ public class DiceManager : MonoBehaviour
                     if (diceChoosen[j].Equals(i))
                     {
                         diceChoosen[j] = DiceListScriptable.enumRessources.Nothing;
-                        if (dicesNotDisponible[j] != null)
+                        if (_dicesNotDisponible[j] != null)
                         {
-                            diceDeck.Add(dicesNotDisponible[j]);
+                            _diceDeck.Add(_dicesNotDisponible[j]);
                         }
-                        dicesNotDisponible[j] = null;
+                        _dicesNotDisponible[j] = null;
                         diceObjet[j].GetComponent<MeshRenderer>().enabled = false;
                         return;
                     }
@@ -255,13 +255,13 @@ public class DiceManager : MonoBehaviour
                 {
                     if (i.Equals(diceGauge[j - diceGauge.Length]))
                     {
-                        if (dicesNotDisponible[j] != null)
+                        if (_dicesNotDisponible[j] != null)
                         {
-                            diceDeck.Add(dicesNotDisponible[j]);
+                            _diceDeck.Add(_dicesNotDisponible[j]);
                         }
 
                         diceGauge[j - diceGauge.Length] = DiceListScriptable.enumRessources.Nothing;
-                        dicesNotDisponible[j] = null;
+                        _dicesNotDisponible[j] = null;
                         view.RPC("RPC_SynchGaugeDice", RpcTarget.All,
                             diceGaugeObjet[j - diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
                         return;
@@ -277,12 +277,12 @@ public class DiceManager : MonoBehaviour
                 if (i.Equals(diceChoosen[j]) || (i.Equals(4) && diceChoosen[j]!=0))
                 {
                     diceChoosen[j] = DiceListScriptable.enumRessources.Nothing;
-                    if (dicesNotDisponible[j] != null)
+                    if (_dicesNotDisponible[j] != null)
                     {
-                        diceDeck.Add(dicesNotDisponible[j]);
+                        _diceDeck.Add(_dicesNotDisponible[j]);
                     }
 
-                    dicesNotDisponible[j] = null;
+                    _dicesNotDisponible[j] = null;
                     diceObjet[j].GetComponent<MeshRenderer>().enabled = false;
                     return;
                 }
@@ -292,13 +292,13 @@ public class DiceManager : MonoBehaviour
                 if (i.Equals(diceGauge[j - diceGauge.Length]) || (i.Equals(4) && diceGauge[j - diceGauge.Length]!=0))
                 {
                     diceGauge[j - diceGauge.Length] = DiceListScriptable.enumRessources.Nothing;
-                    if (dicesNotDisponible[j] != null)
+                    if (_dicesNotDisponible[j] != null)
                     {
-                        diceDeck.Add(dicesNotDisponible[j]);
+                        _diceDeck.Add(_dicesNotDisponible[j]);
                     }
 
                     
-                    dicesNotDisponible[j] = null;
+                    _dicesNotDisponible[j] = null;
                     view.RPC("RPC_SynchGaugeDice", RpcTarget.All,
                         diceGaugeObjet[j - diceGauge.Length].GetComponent<PhotonView>().ViewID, false, 0);
                     return;
@@ -308,9 +308,9 @@ public class DiceManager : MonoBehaviour
 
     }
 
-    private DiceScriptable PickDice(int random)
+    private DiceListScriptable.enumRessources[] PickDice(int random)
     {
-        return diceDeck[random];
+        return _diceDeck[random];
     }
     
     [PunRPC]
