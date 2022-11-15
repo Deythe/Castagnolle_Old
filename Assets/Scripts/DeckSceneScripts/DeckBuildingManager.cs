@@ -11,38 +11,51 @@ public class DeckBuildingManager : MonoBehaviour
     public static DeckBuildingManager instance;
     
     [SerializeField] private RectTransform[] parchment;
-    [SerializeField] private RectTransform pages, page2And3, cardListDisplayContent, miniatureMovable;
+    [SerializeField] private RectTransform pages, page2And3, cardListDisplayContent, diceListDisplayContent, miniatureMovable;
     [SerializeField] private CanvasScaler canvas;
-    [SerializeField] private List<GameObject> listDisplayedCardsDeck, listDisplayedDicesDeck, listDecksMenu, listElementForP2, listElementForP3, listSwitch;
-    [SerializeField] private List<GameObject> listDisplayedCurrentDeckModifying;
+
+    [SerializeField] private List<GameObject> listDisplayedCardsDeck,
+        listDisplayedDicesDeck,
+        listDecksMenu,
+        listElementForP2,
+        listElementForP3,
+        listSwitch,
+        listP3Pages;
+    
+    [SerializeField] private List<GameObject> listDisplayedCurrentCardDeckModifying, listDisplayedCurrentDicesDeckModifying;
     [SerializeField] private Slider slider;
     [SerializeField] private GameObject _bigCard;
-    [SerializeField] private TMP_Text totalTextMonsterInCurrentDeckModifying;
+    [SerializeField] private TMP_Text totalTextObjectInCurrentDeckModifying;
     [SerializeField] private TMP_InputField nameOfCurrentDeckModifying;
     [SerializeField] private ScrollRect _scroll;
     
-    private int _totalMonsterInCurrentDeckModifying;
     private GameObject cardListPivot;
     private Dictionary<int, int[]> listCardsDeck = new Dictionary<int, int[]>(), listDicesDeck = new Dictionary<int, int[]>();
-    private int currentPage, choicePage2 =0, _currentIndexCardMovable = 0, indexCurrentDeckModifying;
+
+    private int currentPage,
+        choicePage2 = 0,
+        _currentIndexObjectMovable = 0,
+        indexCurrentDeckModifying,
+        _totalObjectInCurrentDeckModifying;
     private int[] currentDeckModifying;
     private bool _isMovingACard, _hoverDropZone;
     private Color transparency = new Color(1,1,1,0.25f);
-    int totalMonsterInCurrentDeckModifying
+    int totalObjectInCurrentDeckModifying
     {
-        get => _totalMonsterInCurrentDeckModifying;
+        get => _totalObjectInCurrentDeckModifying;
         set
         {
-            _totalMonsterInCurrentDeckModifying = value;
-            totalTextMonsterInCurrentDeckModifying.text = _totalMonsterInCurrentDeckModifying + "/8";
+            _totalObjectInCurrentDeckModifying = value;
+            totalTextObjectInCurrentDeckModifying.text = _totalObjectInCurrentDeckModifying + "/" + currentDeckModifying.Length;
         }
     }
-    public int currentIndexCardMovable
+
+    public int currentIndexObjectMovable
     {
-        get => _currentIndexCardMovable;
+        get => _currentIndexObjectMovable;
         set
         {
-            _currentIndexCardMovable = value;
+            _currentIndexObjectMovable = value;
         }
     }
     public bool hoverDropZone
@@ -103,6 +116,7 @@ public class DeckBuildingManager : MonoBehaviour
         listDicesDeck[3] = LocalSaveManager.instance.user.diceDeck4;
         
         DisplayCardList();
+        DisplayDiceList();
     }
 
     private void Update()
@@ -114,9 +128,9 @@ public class DeckBuildingManager : MonoBehaviour
             {
                 if (hoverDropZone)
                 {
-                    PutInCardDeck(_currentIndexCardMovable);
-                    _currentIndexCardMovable = 0;
-                    totalMonsterInCurrentDeckModifying++;
+                    PutInCardDeck(_currentIndexObjectMovable);
+                    _currentIndexObjectMovable = 0;
+                    totalObjectInCurrentDeckModifying++;
                 }
                 
                 hoverDropZone = false;
@@ -145,7 +159,6 @@ public class DeckBuildingManager : MonoBehaviour
             }
         }
     }
-
     void EnableDisableAllCardInList(bool b)
     {
         for (int i = 0; i < cardListDisplayContent.childCount; i++)
@@ -169,73 +182,119 @@ public class DeckBuildingManager : MonoBehaviour
             if (currentDeckModifying[j].Equals(-1))
             {
                 currentDeckModifying[j] = i;
-                listDisplayedCurrentDeckModifying[j].GetComponent<Image>().sprite =
+                listDisplayedCurrentCardDeckModifying[j].GetComponent<Image>().sprite =
                     miniatureMovable.GetComponent<Image>().sprite;
-                listDisplayedCurrentDeckModifying[j].SetActive(true);
+                listDisplayedCurrentCardDeckModifying[j].SetActive(true);
                 LocalSaveManager.instance.SaveUserData();
                 EnableDisableCardInListOfCardInGame(false, i);
                 return;
             }
         }
     }
-
     void DisplayCardList()
     {
-        for (int i = 0; i < LocalSaveManager.instance.unitListScriptable.cards.Count; i++)
+        for (int i = 0; i < LocalSaveManager.instance.unitList.cards.Count; i++)
         {
             cardListPivot = new GameObject();
             cardListPivot.transform.SetParent(cardListDisplayContent);
             cardListPivot.AddComponent<Image>();
             cardListPivot.GetComponent<Image>().sprite =
-                LocalSaveManager.instance.unitListScriptable.cards[i].cardStats;
+                LocalSaveManager.instance.unitList.cards[i].cardStats;
             cardListPivot.AddComponent<CardsMovable>();
             cardListPivot.GetComponent<CardsMovable>().index = i;
-            cardListPivot.GetComponent<CardsMovable>().miniature = LocalSaveManager.instance.unitListScriptable.cards[i]
+            cardListPivot.GetComponent<CardsMovable>().miniature = LocalSaveManager.instance.unitList.cards[i]
                 .miniaCard.GetComponent<Image>().sprite;
+        }
+    }
+    
+    void DisplayDiceList()
+    {
+        for (int i = 0; i < LocalSaveManager.instance.dicesList.dicesList.Count; i++)
+        {
+            cardListPivot = new GameObject();
+            cardListPivot.transform.SetParent(diceListDisplayContent);
+            cardListPivot.AddComponent<Image>();
+            cardListPivot.GetComponent<Image>().sprite =
+                LocalSaveManager.instance.dicesList.dicesList[i].sprite;
+            cardListPivot.AddComponent<DicesMovable>();
+            cardListPivot.GetComponent<DicesMovable>().index = i;
+            cardListPivot.GetComponent<DicesMovable>().sprite = LocalSaveManager.instance.dicesList.dicesList[i].sprite;
         }
     }
 
     public void SavedCurrentDeckName()
     {
-        LocalSaveManager.instance.user.monsterDeckName[indexCurrentDeckModifying] = nameOfCurrentDeckModifying.text;
+        LocalSaveManager.instance.user.ObjectDeckName[indexCurrentDeckModifying] = nameOfCurrentDeckModifying.text;
         LocalSaveManager.instance.SaveUserData();
     }
-    public void RemoveFromDeck(int index)
+    public void RemoveFromCardDeck(int index)
     {
         EnableDisableCardInListOfCardInGame(true, currentDeckModifying[index]);
         currentDeckModifying[index] = -1;
-        listDisplayedCurrentDeckModifying[index].SetActive(false);
-        totalMonsterInCurrentDeckModifying--;
+        listDisplayedCurrentCardDeckModifying[index].SetActive(false);
+        totalObjectInCurrentDeckModifying--;
+        LocalSaveManager.instance.SaveUserData();
+    }
+    
+    public void RemoveFromDicesDeck(int index)
+    {
+        currentDeckModifying[index] = -1;
+        listDisplayedCurrentDicesDeckModifying[index].SetActive(false);
+        totalObjectInCurrentDeckModifying--;
         LocalSaveManager.instance.SaveUserData();
     }
 
     void ResetDisplayCurrentCardsDeck()
     {
-        for (int i = 0; i < listDisplayedCurrentDeckModifying.Count; i++)
+        for (int i = 0; i < listDisplayedCurrentCardDeckModifying.Count; i++)
         {
             if (!currentDeckModifying[i].Equals(-1))
             {
-                listDisplayedCurrentDeckModifying[i].GetComponent<Image>().sprite = null;
-                listDisplayedCurrentDeckModifying[i].SetActive(false);
+                listDisplayedCurrentCardDeckModifying[i].GetComponent<Image>().sprite = null;
+                listDisplayedCurrentCardDeckModifying[i].SetActive(false);
+            }
+        }
+    }
+    
+    void ResetDisplayCurrentDicesDeck()
+    {
+        for (int i = 0; i < listDisplayedCurrentDicesDeckModifying.Count; i++)
+        {
+            if (!currentDeckModifying[i].Equals(-1))
+            {
+                listDisplayedCurrentDicesDeckModifying[i].GetComponent<Image>().sprite = null;
+                listDisplayedCurrentDicesDeckModifying[i].SetActive(false);
             }
         }
     }
 
     void DisplayCurrentCardsDeck()
     {
-        totalMonsterInCurrentDeckModifying = 0;
+        totalObjectInCurrentDeckModifying = 0;
         for (int i = 0; i < currentDeckModifying.Length; i++)
         {
             if (!currentDeckModifying[i].Equals(-1))
             {
-                listDisplayedCurrentDeckModifying[i].GetComponent<Image>().sprite = LocalSaveManager.instance
-                    .unitListScriptable.cards[i].miniaCard.GetComponent<Image>().sprite;
-                listDisplayedCurrentDeckModifying[i].SetActive(true);
-                totalMonsterInCurrentDeckModifying++;
+                listDisplayedCurrentCardDeckModifying[i].GetComponent<Image>().sprite = LocalSaveManager.instance
+                    .unitList.cards[i].miniaCard.GetComponent<Image>().sprite;
+                listDisplayedCurrentCardDeckModifying[i].SetActive(true);
+                totalObjectInCurrentDeckModifying++;
             }
         }
-
-        totalTextMonsterInCurrentDeckModifying.text = totalMonsterInCurrentDeckModifying + "/8";
+    }
+    
+    void DisplayCurrentDicesDeck()
+    {
+        totalObjectInCurrentDeckModifying = 0;
+        for (int i = 0; i < currentDeckModifying.Length; i++)
+        {
+            if (!currentDeckModifying[i].Equals(-1))
+            {
+                listDisplayedCurrentDicesDeckModifying[i].GetComponent<Image>().sprite = LocalSaveManager.instance
+                    .dicesList.dicesList[i].sprite;
+                listDisplayedCurrentDicesDeckModifying[i].SetActive(true);
+            }
+        }
     }
 
     public void SwitchDiceAndCardsMenu()
@@ -248,12 +307,15 @@ public class DeckBuildingManager : MonoBehaviour
         {
             listSwitch[0].SetActive(true);
             listSwitch[1].SetActive(false);
+            listP3Pages[0].SetActive(true);
+            listP3Pages[1].SetActive(false);
             return;   
         }
         
         listSwitch[1].SetActive(true);
         listSwitch[0].SetActive(false);
-        
+        listP3Pages[1].SetActive(true);
+        listP3Pages[0].SetActive(false);
     }
 
     void ShowParchment()
@@ -276,14 +338,14 @@ public class DeckBuildingManager : MonoBehaviour
 
     void DisplayCardsDecks()
     {
-        for (int i = 0; i < listDisplayedDicesDeck.Count; i++)
+        for (int i = 0; i < listDisplayedCardsDeck.Count; i++)
         {
             if (!listCardsDeck[i].Length.Equals(0))
             {
                 listDisplayedCardsDeck[i].SetActive(true);
                 listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().deck = listCardsDeck[i];
-                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateCounterCard();
-                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.monsterDeckName[i]);
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateCounterObject();
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.ObjectDeckName[i]);
             }
         }
     }
@@ -296,11 +358,13 @@ public class DeckBuildingManager : MonoBehaviour
             {
                 listDisplayedDicesDeck[i].SetActive(true);
                 listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().deck = listDicesDeck[i];
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateCounterObject();
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.ObjectDeckName[i]);
             }
         }
     }
     
-    public void CreateDiceDeck()
+    public void CreateCardDeck()
     {
         for (int i = 0; i < 4; i++)
         {
@@ -340,6 +404,46 @@ public class DeckBuildingManager : MonoBehaviour
         }
     }
     
+    public void CreateDiceDeck()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (listDicesDeck[i].Length.Equals(0))
+            {
+                switch (i)
+                {
+                    case 0:
+                        LocalSaveManager.instance.user.diceDeck1 = new int[9];
+                        listDicesDeck[0] = LocalSaveManager.instance.user.diceDeck1;
+                        break;
+                    case 1:
+                        LocalSaveManager.instance.user.diceDeck2 = new int[9];
+                        listDicesDeck[1] = LocalSaveManager.instance.user.diceDeck2;
+                        break;
+                    case 2:
+                        LocalSaveManager.instance.user.diceDeck3 = new int[9];
+                        listDicesDeck[2] = LocalSaveManager.instance.user.diceDeck3;
+                        break;
+                    case 3:
+                        LocalSaveManager.instance.user.diceDeck4 = new int[9];
+                        listDicesDeck[3] = LocalSaveManager.instance.user.diceDeck4;
+                        break;
+                }
+                
+                listDisplayedDicesDeck[i].SetActive(true);
+                
+                for (int j = 0; j < 9; j++)
+                {
+                    listDicesDeck[i][j] = -1;
+                }
+
+                LocalSaveManager.instance.SaveUserData();
+                GoToPage3(i);
+                return;
+            }
+        }
+    }
+    
     public void Return()
     {
         if (currentPage == 2)
@@ -352,7 +456,9 @@ public class DeckBuildingManager : MonoBehaviour
             page2And3.DOLocalMoveX(canvas.referenceResolution.x, 0.5f).SetEase(Ease.Linear);
             DisplayElementForP2AndP3(true);
             DisplayCardsDecks();
+            DisplayDiceDecks();
             ResetDisplayCurrentCardsDeck();
+            ResetDisplayCurrentDicesDeck();
             EnableDisableAllCardInList(true);
         }
     }
@@ -398,11 +504,12 @@ public class DeckBuildingManager : MonoBehaviour
                 }
             }
 
-            nameOfCurrentDeckModifying.text = LocalSaveManager.instance.user.monsterDeckName[currentDeckIndex];
+            nameOfCurrentDeckModifying.text = LocalSaveManager.instance.user.ObjectDeckName[currentDeckIndex];
         }
         else
         {
             currentDeckModifying = listDicesDeck[currentDeckIndex];
+            DisplayCurrentDicesDeck();
         }
 
         page2And3.DOLocalMoveX(0, 0.5f).SetEase(Ease.Linear);

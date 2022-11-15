@@ -7,18 +7,27 @@ using Firebase.Auth;
 using Firebase.Extensions;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class LocalSaveManager : MonoBehaviour
 {
-    [SerializeField] private UnitListScriptable _unitListDeck;
     public static LocalSaveManager instance;
+    
+    [SerializeField] private UnitListScriptable _unitList;
+    [SerializeField] private DiceListScriptable _dicesList;
+    
     private string path;
     private string test;
     private User _user;
     
-    public UnitListScriptable unitListScriptable
+    public UnitListScriptable unitList
     {
-        get => _unitListDeck;
+        get => _unitList;
+    }
+
+    public DiceListScriptable dicesList
+    {
+        get => _dicesList;
     }
     
     public User user

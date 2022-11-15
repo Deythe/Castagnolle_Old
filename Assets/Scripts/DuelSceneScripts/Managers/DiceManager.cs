@@ -11,8 +11,8 @@ public class DiceManager : MonoBehaviour
     
     [SerializeField] private DiceListScriptable diceListDeck;
 
-    [SerializeField] private List<DiceListScriptable.enumRessources[]> _diceDeck = new List<DiceListScriptable.enumRessources[]>();
-    [SerializeField] private DiceListScriptable.enumRessources[]_dicesNotDisponible = new DiceListScriptable.enumRessources[6];
+    [SerializeField] private List<DiceListScriptable.Dice> _diceDeck = new List<DiceListScriptable.Dice>();
+    [SerializeField] private DiceListScriptable.Dice[] _dicesNotDisponible = new DiceListScriptable.Dice[6];
 
     [SerializeField] private GameObject[] diceObjet = new GameObject[3];
     [SerializeField] private GameObject[] diceGaugeObjet = new GameObject[3];
@@ -80,7 +80,7 @@ public class DiceManager : MonoBehaviour
     {
         for(int i = 0; i < FireBaseManager.instance.User.currentDicesDeck.Length; i++)
         {
-            _diceDeck.Add(diceListDeck.dicesList[FireBaseManager.instance.User.currentDicesDeck[i]].faces);
+            _diceDeck.Add(diceListDeck.dicesList[FireBaseManager.instance.User.currentDicesDeck[i]]);
         }
     }
 
@@ -107,7 +107,7 @@ public class DiceManager : MonoBehaviour
         for (int i = 0; i < diceChoosen.Length; i++)
         {
             random = Random.Range(0, _diceDeck.Count);
-            diceChoosen[i] = PickDice(random)[Random.Range(0, 6)];
+            diceChoosen[i] = PickDice(random).faces[Random.Range(0, 6)];
 
             _dicesNotDisponible[i] = PickDice(random);
             _diceDeck.Remove(PickDice(random));
@@ -308,7 +308,7 @@ public class DiceManager : MonoBehaviour
 
     }
 
-    private DiceListScriptable.enumRessources[] PickDice(int random)
+    private DiceListScriptable.Dice PickDice(int random)
     {
         return _diceDeck[random];
     }

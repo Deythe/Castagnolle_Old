@@ -12,21 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b3e15b9ca5b3b046bf1c1cb616620a0, type: 3}
   m_Name: DiceList
   m_EditorClassIdentifier: 
-  diceDeck:
-  - {fileID: 11400000, guid: 0b4d03e6e061203488cc6b49882f7a1c, type: 2}
-  - {fileID: 11400000, guid: bd3ceced824984647aba2741aeb12309, type: 2}
-  - {fileID: 11400000, guid: 44738c580e959f348a06af84b8acd1be, type: 2}
-  - {fileID: 11400000, guid: 0ffe199ba49c08444b46f3bc0230a23b, type: 2}
-  - {fileID: 11400000, guid: 5857616e0aba16d46b8c1f708cab2e2b, type: 2}
-  - {fileID: 11400000, guid: 5915d33a354b8db4297d7c8edc8adf05, type: 2}
-  - {fileID: 11400000, guid: 2a7563a624775d641981080b32b2795c, type: 2}
-  - {fileID: 11400000, guid: d0f4a59618726864b80b6951302e9748, type: 2}
-  - {fileID: 11400000, guid: e77dbc3a27bd0704ab9f66b5e87061f4, type: 2}
-  - {fileID: 11400000, guid: 4cc7fccf39dad124f99e8c478d9e4cd0, type: 2}
-  - {fileID: 11400000, guid: 444cf76729c4efe43845e0a8ba0bd383, type: 2}
-  - {fileID: 11400000, guid: 483834373fec47f4ba3efe1b2bb6093c, type: 2}
-  - {fileID: 11400000, guid: a15ad9c33459f134f84449b918b2a395, type: 2}
-  - {fileID: 11400000, guid: 684a0243317ff244eb476be8e839d675, type: 2}
+  dicesList:
+  - name: FullRed
+    sprite: {fileID: 21300000, guid: 786ff968ad565d04ab69e602723cc914, type: 3}
+    faces: 020000000200000002000000020000000200000002000000
   textureList:
   - {fileID: 2800000, guid: a7c91d485397e7d4ba2b7ff5fd8c5cfe, type: 3}
   - {fileID: 2800000, guid: 0ec3307e5d0573a49a3b78839058cd48, type: 3}

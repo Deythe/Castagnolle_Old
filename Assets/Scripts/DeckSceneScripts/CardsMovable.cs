@@ -58,7 +58,7 @@ public class CardsMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 if (Input.GetTouch(0).deltaPosition.x > 4)
                 {
                     DeckBuildingManager.instance.cardMovableSprite = _miniature;
-                    DeckBuildingManager.instance.currentIndexCardMovable = index;
+                    DeckBuildingManager.instance.currentIndexObjectMovable = index;
                     DeckBuildingManager.instance.isMovingACard = true;
                 }
             }

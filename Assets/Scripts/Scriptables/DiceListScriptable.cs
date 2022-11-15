@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [CreateAssetMenu(menuName = "Create Dice List", fileName = "DiceList")]
 public class DiceListScriptable : ScriptableObject
 {
+    [Serializable]
     public class Dice
     {
-        public Sprite logo;
         public string name;
+        public Sprite sprite;
         public enumRessources[] faces;
     }
     

@@ -24,7 +24,7 @@ public class DeckDisplay : MonoBehaviour
         deckName.text = ""+newName;
     }
 
-    public void UpdateCounterCard()
+    public void UpdateCounterObject()
     {
         counter = 0;
         for (int i = 0; i < _deck.Length; i++)
