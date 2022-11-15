@@ -35,6 +35,6 @@ public class DeckDisplay : MonoBehaviour
             }
         }
 
-        numberCard.text = counter + "/8";
+        numberCard.text = counter + "/" +_deck.Length;;
     }
 }

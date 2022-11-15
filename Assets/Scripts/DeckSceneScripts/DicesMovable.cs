@@ -52,9 +52,10 @@ public class DicesMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Moved)
             {
                 StopCoroutine(lastCoroutine);
-                DeckBuildingManager.instance.bigCard.SetActive(false);
+                //DeckBuildingManager.instance.bigCard.SetActive(false);
                 if (Input.GetTouch(0).deltaPosition.x > 4)
                 {
+                    DeckBuildingManager.instance.cardMovableSprite = _sprite;
                     DeckBuildingManager.instance.currentIndexObjectMovable = index;
                     DeckBuildingManager.instance.isMovingACard = true;
                 }
