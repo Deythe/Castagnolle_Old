@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardsMovable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CardsInBuildingDeck : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private int _index;
     [SerializeField] private Sprite cardFull;

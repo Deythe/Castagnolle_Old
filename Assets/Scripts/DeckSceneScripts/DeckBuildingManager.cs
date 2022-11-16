@@ -11,7 +11,7 @@ public class DeckBuildingManager : MonoBehaviour
     public static DeckBuildingManager instance;
     
     [SerializeField] private RectTransform[] parchment;
-    [SerializeField] private RectTransform pages, page2And3, cardListDisplayContent, diceListDisplayContent, miniatureMovable;
+    [SerializeField] private RectTransform pages, page2And3, cardListDisplayContent, _diceListDisplayContent, miniatureMovable, _diceDetails;
     [SerializeField] private CanvasScaler canvas;
 
     [SerializeField] private List<GameObject> listDisplayedCardsDeck,
@@ -40,6 +40,11 @@ public class DeckBuildingManager : MonoBehaviour
     private int[] currentDeckModifying;
     private bool _isMovingACard, _hoverDropZone;
     private Color transparency = new Color(1,1,1,0.25f);
+
+    public RectTransform diceListDisplayContent
+    {
+        get => _diceListDisplayContent;
+    }
     int totalObjectInCurrentDeckModifying
     {
         get => _totalObjectInCurrentDeckModifying;
@@ -84,8 +89,18 @@ public class DeckBuildingManager : MonoBehaviour
             _isMovingACard = value;
             miniatureMovable.gameObject.SetActive(_isMovingACard);
             _scroll.vertical = !isMovingACard;
+            
         }
     }
+    public RectTransform diceDetails
+    {
+        get => _diceDetails;
+        set
+        {
+            _diceDetails = value;
+        }
+    }
+    
     public GameObject bigCard
     {
         get => _bigCard;
@@ -153,7 +168,7 @@ public class DeckBuildingManager : MonoBehaviour
         {
             if (i.Equals(index))
             {
-                cardListDisplayContent.GetChild(i).GetComponent<CardsMovable>().enabled = b;
+                cardListDisplayContent.GetChild(i).GetComponent<CardsInBuildingDeck>().enabled = b;
                 if (b)
                 {
                     cardListDisplayContent.GetChild(i).GetComponent<Image>().color = Color.white;
@@ -174,12 +189,12 @@ public class DeckBuildingManager : MonoBehaviour
             if (b)
             {
                 cardListDisplayContent.GetChild(i).GetComponent<Image>().color = Color.white;
-                cardListDisplayContent.GetChild(i).GetComponent<CardsMovable>().enabled = true;
+                cardListDisplayContent.GetChild(i).GetComponent<CardsInBuildingDeck>().enabled = true;
             }
             else
             {
                 cardListDisplayContent.GetChild(i).GetComponent<Image>().color = transparency;
-                cardListDisplayContent.GetChild(i).GetComponent<CardsMovable>().enabled = false;
+                cardListDisplayContent.GetChild(i).GetComponent<CardsInBuildingDeck>().enabled = false;
             }
         }
     }
@@ -225,9 +240,9 @@ public class DeckBuildingManager : MonoBehaviour
             cardListPivot.AddComponent<Image>();
             cardListPivot.GetComponent<Image>().sprite =
                 LocalSaveManager.instance.unitList.cards[i].cardStats;
-            cardListPivot.AddComponent<CardsMovable>();
-            cardListPivot.GetComponent<CardsMovable>().index = i;
-            cardListPivot.GetComponent<CardsMovable>().miniature = LocalSaveManager.instance.unitList.cards[i]
+            cardListPivot.AddComponent<CardsInBuildingDeck>();
+            cardListPivot.GetComponent<CardsInBuildingDeck>().index = i;
+            cardListPivot.GetComponent<CardsInBuildingDeck>().miniature = LocalSaveManager.instance.unitList.cards[i]
                 .miniaCard.GetComponent<Image>().sprite;
         }
     }
@@ -237,19 +252,19 @@ public class DeckBuildingManager : MonoBehaviour
         for (int i = 0; i < LocalSaveManager.instance.dicesList.dicesList.Count; i++)
         {
             cardListPivot = new GameObject();
-            cardListPivot.transform.SetParent(diceListDisplayContent);
+            cardListPivot.transform.SetParent(_diceListDisplayContent);
             cardListPivot.AddComponent<Image>();
             cardListPivot.GetComponent<Image>().sprite =
                 LocalSaveManager.instance.dicesList.dicesList[i].sprite;
-            cardListPivot.AddComponent<DicesMovable>();
-            cardListPivot.GetComponent<DicesMovable>().index = i;
-            cardListPivot.GetComponent<DicesMovable>().sprite = LocalSaveManager.instance.dicesList.dicesList[i].sprite;
+            cardListPivot.AddComponent<DicesInBuildingDeck>();
+            cardListPivot.GetComponent<DicesInBuildingDeck>().index = i;
+            cardListPivot.GetComponent<DicesInBuildingDeck>().sprite = LocalSaveManager.instance.dicesList.dicesList[i].sprite;
         }
     }
 
     public void SavedCurrentDeckName()
     {
-        LocalSaveManager.instance.user.ObjectDeckName[indexCurrentDeckModifying] = nameOfCurrentDeckModifying.text;
+        LocalSaveManager.instance.user.cardDeckName[indexCurrentDeckModifying] = nameOfCurrentDeckModifying.text;
         LocalSaveManager.instance.SaveUserData();
     }
     public void RemoveFromCardDeck(int index)
@@ -362,7 +377,7 @@ public class DeckBuildingManager : MonoBehaviour
                 listDisplayedCardsDeck[i].SetActive(true);
                 listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().deck = listCardsDeck[i];
                 listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateCounterObject();
-                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.ObjectDeckName[i]);
+                listDisplayedCardsDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.cardDeckName[i]);
             }
         }
     }
@@ -376,7 +391,7 @@ public class DeckBuildingManager : MonoBehaviour
                 listDisplayedDicesDeck[i].SetActive(true);
                 listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().deck = listDicesDeck[i];
                 listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().UpdateCounterObject();
-                listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.ObjectDeckName[i]);
+                listDisplayedDicesDeck[i].GetComponent<DeckDisplay>().UpdateDeckName(LocalSaveManager.instance.user.cardDeckName[i]);
             }
         }
     }
@@ -520,12 +535,13 @@ public class DeckBuildingManager : MonoBehaviour
                 }
             }
 
-            nameOfCurrentDeckModifying.text = LocalSaveManager.instance.user.ObjectDeckName[currentDeckIndex];
+            nameOfCurrentDeckModifying.text = LocalSaveManager.instance.user.cardDeckName[currentDeckIndex];
         }
         else
         {
             currentDeckModifying = listDicesDeck[currentDeckIndex];
             DisplayCurrentDicesDeck();
+            nameOfCurrentDeckModifying.text = LocalSaveManager.instance.user.diceDeckName[currentDeckIndex];
         }
 
         page2And3.DOLocalMoveX(0, 0.5f).SetEase(Ease.Linear);

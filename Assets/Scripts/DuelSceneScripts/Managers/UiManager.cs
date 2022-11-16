@@ -400,31 +400,13 @@ public class UiManager : MonoBehaviour
 
         for (int i = 0; i <  pivotResources.Count; i++)
         {
-            ressourceCard.GetChild(i).GetComponent<Image>().sprite = ChooseGoodSprite(pivotResources, i);
+            ressourceCard.GetChild(i).GetComponent<Image>().sprite =  LocalSaveManager.instance.dicesList.ChooseGoodSprite(pivotResources, i);
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         
         bigCart.SetActive(true);
     }
     
-    public Sprite ChooseGoodSprite(List<DiceListScriptable.enumRessources> resources,int index)
-    {
-        switch (resources[index])
-        {
-            case DiceListScriptable.enumRessources.Whatever:
-                return DiceManager.instance.DiceListScriptable.symbolsList[0];
-            case DiceListScriptable.enumRessources.Red:
-                return DiceManager.instance.DiceListScriptable.symbolsList[1];
-            case DiceListScriptable.enumRessources.Purple:
-                return DiceManager.instance.DiceListScriptable.symbolsList[2];
-            case DiceListScriptable.enumRessources.Blue:
-                return DiceManager.instance.DiceListScriptable.symbolsList[3];
-            case DiceListScriptable.enumRessources.Milk:
-                return DiceManager.instance.DiceListScriptable.symbolsList[4];
-        }
-
-        return null;
-    }
 
     public void AbleDeckCardTouch(Transform img)
     {
@@ -434,7 +416,7 @@ public class UiManager : MonoBehaviour
         for (int i = 0; i < img.GetComponent<CardData>().p_ressources.Count; i++)
         {
             ressourceCard.GetChild(i).GetComponent<Image>().sprite =
-                ChooseGoodSprite(img.GetComponent<CardData>().p_ressources, i);
+                LocalSaveManager.instance.dicesList.ChooseGoodSprite(img.GetComponent<CardData>().p_ressources, i);
             ressourceCard.GetChild(i).gameObject.SetActive(true);
         }
         

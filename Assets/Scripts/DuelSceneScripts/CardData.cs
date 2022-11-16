@@ -101,7 +101,7 @@ public class CardData : MonoBehaviour, IPointerEnterHandler
         
         for (int i = 0; i < resources.Count; i++)
         {
-            resourceCard.GetChild(i).GetComponent<Image>().sprite = UiManager.instance.ChooseGoodSprite(resources, i);
+            resourceCard.GetChild(i).GetComponent<Image>().sprite = LocalSaveManager.instance.dicesList.ChooseGoodSprite(resources, i);
             resourceCard.GetChild(i).gameObject.SetActive(true);
         }
     }

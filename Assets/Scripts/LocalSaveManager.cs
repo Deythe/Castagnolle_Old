@@ -13,8 +13,8 @@ public class LocalSaveManager : MonoBehaviour
 {
     public static LocalSaveManager instance;
     
-    [SerializeField] private UnitListScriptable _unitList;
-    [SerializeField] private DiceListScriptable _dicesList;
+    public UnitListScriptable _unitList;
+    public DiceListScriptable _dicesList;
     
     private string path;
     private string test;

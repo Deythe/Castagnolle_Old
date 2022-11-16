@@ -19,7 +19,7 @@ public class User {
     public int[] diceDeck3;
     public int[] diceDeck4;
 
-    public string[] ObjectDeckName;
+    public string[] cardDeckName;
     public string[] diceDeckName;
     
     public User(string usernameEnv, bool connect, bool firstTimeCheck) {
@@ -40,7 +40,7 @@ public class User {
         diceDeck3 = Array.Empty<int>();
         diceDeck4 = Array.Empty<int>();
 
-        ObjectDeckName = new string[4];
+        cardDeckName = new string[4];
         diceDeckName = new string[4];
     }
 }
