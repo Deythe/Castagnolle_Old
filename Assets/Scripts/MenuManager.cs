@@ -32,7 +32,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private CanvasScaler canvasScaler;
     [SerializeField] private int numberPlayer;
     private bool find;
-    private Hashtable hash = new Hashtable();
     private void Awake()
     {
         Time.timeScale = 1;
