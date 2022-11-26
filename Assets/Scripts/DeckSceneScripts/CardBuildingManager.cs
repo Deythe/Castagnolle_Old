@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,14 +14,17 @@ public class CardBuildingManager : MonoBehaviour
     [SerializeField] private Image cardMovableSprite;
     [SerializeField] private bool isTouchingACard;
     [SerializeField] private int currentIndexCard = -1;
+    
     [SerializeField] private List<int> cardsInDeck = new List<int>();
-    [SerializeField] private List<Image> cardsInDeckSprite;
-    [SerializeField] private Transform parentCarteSprite;
+    [SerializeField] private Transform viewportCardsInDeck, viewportCardsInGame;
+    
     [SerializeField] private bool inDropZone;
     [SerializeField] private Image bigCard;
     [SerializeField] private ScrollRect scrollRect;
-    [SerializeField] private TMP_Text countCardInDeck;
-
+   
+    [SerializeField] private TMP_Text textCountCardInDeck;
+    [SerializeField] private List<Image> listCardsInDeckSprite = new List<Image>();
+    
     private Image pivotImage;
     private WaitForSeconds timer = new WaitForSeconds(0.5f);
     private Coroutine currentCoroutine = null;
@@ -87,11 +91,13 @@ public class CardBuildingManager : MonoBehaviour
 
     private void Start()
     {
+        UpdateCard();
         ResetButtonActionCardInDeck();
     }
 
     private void Update()
     {
+        /*
         if (Input.touchCount > 0)
         {
             if (isTouchingACard)
@@ -126,12 +132,13 @@ public class CardBuildingManager : MonoBehaviour
                 inDropZone = false;
             }
         }
+        */
     }
 
-    public void PutCardInDeck()
+    void PutCardInDeck()
     {
         cardsInDeck.Add(currentIndexCard);
-        foreach (var sprite in cardsInDeckSprite)
+        foreach (var sprite in listCardsInDeckSprite)
         {
             if (!sprite.enabled)
             {
@@ -140,17 +147,25 @@ public class CardBuildingManager : MonoBehaviour
                 currentIndexCard = -1;
                 isTouchingACard = false;
                 cardMovableSprite.enabled = false;
-                countCardInDeck.text = cardsInDeck.Count + " / 8";
+                textCountCardInDeck.text = cardsInDeck.Count + " / 8";
                 return;
             }
         }
     }
 
-    public void ResetButtonActionCardInDeck()
+    void UpdateCard()
     {
-        for (int j = 0; j < parentCarteSprite.childCount; j++)
+        for (int i = 0; i < viewportCardsInGame.childCount; i++)
         {
-            parentCarteSprite.GetChild(j).GetComponent<Button>().onClick.RemoveAllListeners();
+            listCardsInDeckSprite.Add(viewportCardsInDeck.GetChild(i).GetComponent<Image>());
+        }
+    }
+
+    void ResetButtonActionCardInDeck()
+    {
+        for (int j = 0; j < viewportCardsInDeck.childCount; j++)
+        {
+            viewportCardsInDeck.GetChild(j).GetComponent<Button>().onClick.RemoveAllListeners();
             switch (j)
             {
                 case 0:
@@ -178,29 +193,30 @@ public class CardBuildingManager : MonoBehaviour
                     buttonCallback = ()=> RemoveCardFromDeck(7);
                     break;
             }
-            parentCarteSprite.GetChild(j).GetComponent<Button>().onClick.AddListener(buttonCallback);
+            
+            viewportCardsInDeck.GetChild(j).GetComponent<Button>().onClick.AddListener(buttonCallback);
         }
     }
     
-    public void RemoveCardFromDeck(int i)
+    void RemoveCardFromDeck(int i)
     {
         cardsInDeck.RemoveAt(i);
-        for (int j = 0; j < parentCarteSprite.childCount; j++)
+        for (int j = 0; j < viewportCardsInDeck.childCount; j++)
         {
             if (j.Equals(i))
             {
-                cardsInDeckSprite.RemoveAt(j);
-                cardsInDeckSprite[j].enabled = false;
-                pivotImage = cardsInDeckSprite[j];
-                cardsInDeckSprite.RemoveAt(j);
-                cardsInDeckSprite.Add(pivotImage);
+                listCardsInDeckSprite.RemoveAt(j);
+                listCardsInDeckSprite[j].enabled = false;
+                pivotImage = listCardsInDeckSprite[j];
+                listCardsInDeckSprite.RemoveAt(j);
+                listCardsInDeckSprite.Add(pivotImage);
                 pivotImage = null;
-                parentCarteSprite.GetChild(j).SetAsLastSibling();
+                viewportCardsInDeck.GetChild(j).SetAsLastSibling();
             }
         }
         
         ResetButtonActionCardInDeck();
-        countCardInDeck.text = cardsInDeck.Count + " / 8";
+        textCountCardInDeck.text = cardsInDeck.Count + " / 8";
     }
 
     public void ResetCurrentDeck()

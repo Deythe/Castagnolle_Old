@@ -28,6 +28,8 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
             if (conditions.Contains(condition))
             {
                 view.RPC("RPC_OnCast", RpcTarget.All,EffectManager.instance.p_unitTarget1.GetComponent<MonstreData>().p_id);
+                GetComponent<MonstreData>().p_model.layer = 6;
+                EffectManager.instance.CancelSelection();
             }
         }
     }
@@ -128,8 +130,6 @@ public class SwapThisUnitWithAnother : MonoBehaviour, IEffects
         
         PlacementManager.instance.AddMonsterBoard(targetUnit.gameObject);
         PlacementManager.instance.AddMonsterBoard(gameObject);
-        GetComponent<MonstreData>().p_model.layer = 6;
-        EffectManager.instance.CancelSelection();
     }
 
   
