@@ -31,6 +31,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Image sfxButton;
     [SerializeField] private CanvasScaler canvasScaler;
     [SerializeField] private int numberPlayer;
+    
     private bool find;
     private void Awake()
     {
@@ -53,7 +54,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         if (LocalSaveManager.instance.user.firstTime)
         {
             transparency.SetActive(true);
-            tutoObject.transform.DOScale(new Vector3(1.5f,1.5f,1.5f), 1f).SetEase(Ease.OutQuint);
+            tutoObject.transform.DOScale(new Vector3(1.5f,1.5f,1.5f), 1f).SetEase(Ease.OutBack);
         }
         
         if (SoundManager.instance.p_musicEnabled)
